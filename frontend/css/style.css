@@ -1,0 +1,225 @@
+body{
+
+font-family: Arial;
+margin:0;
+
+}
+
+
+/* NAVBAR */
+
+.navbar-custom{
+
+background:#2c2457;
+padding:14px 0;
+
+}
+
+.navbar-brand{
+
+font-weight:700;
+font-size:20px;
+
+}
+
+.nav-link{
+
+color:#d6d6ff !important;
+margin-left:18px;
+font-weight:500;
+transition:0.2s;
+
+}
+
+.nav-link:hover{
+
+color:white !important;
+
+}
+
+.btn-primary{
+
+background:linear-gradient(135deg,#5b6cff,#7a88ff);
+border:none;
+padding:12px 28px;
+font-weight:600;
+border-radius:12px;
+box-shadow:0 6px 15px rgba(91,108,255,0.35);
+transition:all 0.25s ease;
+
+}
+
+.btn-primary:hover{
+
+transform:translateY(-2px);
+box-shadow:0 10px 25px rgba(91,108,255,0.5);
+background:linear-gradient(135deg,#4a59e8,#6d7cff);
+
+}
+
+
+/* HERO */
+
+.hero{
+padding:120px 20px;
+background: linear-gradient(135deg,#eef1ff,#dfe6ff);
+text-align:center;
+}
+
+.hero h1{
+font-size:42px;
+font-weight:800;
+color:#2c2457;
+margin-top:15px;
+}
+
+.hero-logo{
+width:180px;
+margin-bottom:15px;
+}
+
+.hero-img{
+width:100%;
+max-width:220px;
+}
+
+.hero-text{
+max-width:650px;
+margin:auto;
+margin-top:15px;
+font-size:18px;
+color:#555;
+}
+
+.hero-award img{
+width:80px;
+margin-top:20px;
+}
+
+/* BOTÃO HERO */
+
+.btn-hero{
+padding:12px 32px;
+font-size:18px;
+border-radius:30px;
+background:linear-gradient(135deg,#4f7cff,#6aa8ff);
+border:none;
+box-shadow:0 6px 18px rgba(0,0,0,0.15);
+}
+
+.btn-hero:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 22px rgba(0,0,0,0.2);
+}
+
+
+/* SECTION TITLE */
+
+.section-title{
+
+font-size:32px;
+font-weight:700;
+color:#2c2457;
+
+}
+
+
+/* COMO FUNCIONA */
+
+.how-it-works{
+
+padding:80px 20px;
+background:#f8f9ff;
+
+}
+
+.feature-card{
+
+background:white;
+padding:40px 30px;
+border-radius:18px;
+box-shadow:0 15px 35px rgba(0,0,0,0.08);
+transition:all 0.3s ease;
+text-align:center;
+height:100%;
+
+}
+
+.feature-card:hover{
+
+transform:translateY(-10px);
+box-shadow:0 20px 40px rgba(0,0,0,0.12);
+
+}
+
+.feature-card h4{
+
+margin-top:15px;
+font-weight:700;
+color:#2c2457;
+
+}
+
+.feature-card p{
+
+margin-top:10px;
+color:#666;
+
+}
+
+.icon{
+
+font-size:48px;
+
+}
+
+
+/* SKILLS */
+
+.skills{
+
+padding:80px 20px;
+background:#2c2457;
+color:white;
+
+}
+
+.skill{
+
+font-size:40px;
+margin-bottom:20px;
+
+}
+
+.skill p{
+
+margin-top:10px;
+font-size:18px;
+font-weight:600;
+
+}
+
+.skill-icon{
+
+width:80px;
+height:80px;
+border-radius:50%;
+background:#443a7a;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:35px;
+margin:auto;
+
+}
+
+
+/* FOOTER */
+
+footer{
+
+padding:30px;
+background:#1c173a;
+color:white;
+
+}
