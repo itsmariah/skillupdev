@@ -1,4 +1,4 @@
-/* CONTROLE DE INTERAÇÕES DA LANDING PAGE */
+/* LANDING PAGE */
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -50,6 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 });
+/* FIM LANDING PAGE */
 
 /* LOGIN PAGE */
     /*FUNÇÃO PARA TOGGLE DE SENHA */
@@ -89,3 +90,95 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     });
+
+    /* LOADING BOTÃO 'ENTRANDO...' */
+    const form = document.querySelector("form");
+    const btn = document.getElementById("loginBtn");
+
+    form.addEventListener("submit", function(e) {
+
+        e.preventDefault();
+
+        btn.innerText = "Entrando...";
+        btn.disabled = true;
+
+        // simulação de login
+        setTimeout(() => {
+            btn.innerText = "Entrar";
+            btn.disabled = false;
+            alert("Login realizado (simulação)");
+        }, 2000);
+
+    });
+
+    /* FEEDBACK DE ERRO */
+    const email = document.getElementById("email");
+    const senha = document.getElementById("senha");
+
+    email.addEventListener("input", () => {
+        if (!email.checkValidity()) {
+            email.style.borderColor = "#ff4d4d";
+        } else {
+            email.style.borderColor = "#28a745";
+        }
+    });
+
+    senha.addEventListener("input", () => {
+        if (senha.value.length < 6) {
+            senha.style.borderColor = "#ff4d4d";
+        } else {
+            senha.style.borderColor = "#28a745";
+        }
+    });
+/* FIM LOGIN PAGE */
+
+/* REGISTRATION PAGE */
+    /* REGISTER */
+    const registerForm = document.getElementById("registerForm");
+
+    if (registerForm) {
+
+        const btn = document.getElementById("registerBtn");
+        const senha = document.getElementById("senha");
+        const confirmarSenha = document.getElementById("confirmarSenha");
+
+        registerForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            // valida senha
+            if (senha.value !== confirmarSenha.value) {
+                alert("As senhas não coincidem!");
+                return;
+            }
+
+            btn.innerText = "Criando conta...";
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerText = "Criar conta";
+                btn.disabled = false;
+                alert("Conta criada (simulação)");
+            }, 2000);
+        });
+
+    }
+/* FIM REGISTRATION PAGE */
+
+/* DASHBOARD PAGE */
+     /* SIMULAÇÃO USUÁRIO */
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const nome = localStorage.getItem("userName");
+
+            if (nome) {
+                document.getElementById("userName").innerText = nome;
+            }
+
+        });
+
+        /* LOGOUT */
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "login.html";
+        }

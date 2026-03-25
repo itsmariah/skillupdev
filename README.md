@@ -2,4 +2,4 @@
 
 Plataforma gamificada de treinamento de soft skills para desenvolvedores.
 
-TCC - UNIPÊ Centro Universitário - Maria Mariah Queiroga Fernandes Soares - 2026
+Trabalho de Graduação Interdiscilinar (TCC)- UNIPÊ Centro Universitário - Maria Mariah Queiroga Fernandes Soares, Weslley Batista Vasconcelos - 2026
