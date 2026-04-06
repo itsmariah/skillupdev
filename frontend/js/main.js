@@ -182,3 +182,114 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.clear();
             window.location.href = "login.html";
         }
+/* FIM DASHBOARD PAGE */
+
+    /* DESAFIOS */
+
+    const desafios = [
+    {
+        pergunta: "Você discorda de um colega em uma reunião. O que faz?",
+        respostas: [
+        { texto: "Ignorar a situação", xp: 10, feedback: "Evitar conflitos pode prejudicar o time." },
+        { texto: "Responder de forma agressiva", xp: 30, feedback: "Comunicação agressiva não é ideal." },
+        { texto: "Dialogar com respeito", xp: 100, feedback: "Ótima escolha! Comunicação assertiva é essencial." }
+        ]
+    },
+    {
+        pergunta: "Você recebeu um feedback negativo. Como reage?",
+        respostas: [
+        { texto: "Ignora", xp: 10, feedback: "Isso impede seu crescimento." },
+        { texto: "Fica chateado mas escuta", xp: 50, feedback: "Você está no caminho certo." },
+        { texto: "Agradece e aplica melhorias", xp: 100, feedback: "Excelente mentalidade de crescimento!" }
+        ]
+    }
+    ];
+
+    let desafioAtual = 0;
+
+    /* embaralhar */
+    function embaralhar(lista) {
+        return lista.sort(() => Math.random() - 0.5);
+    }
+
+    /* mostrar desafio */
+    function carregarDesafio() {
+
+        const desafio = desafios[desafioAtual];
+
+        document.getElementById("pergunta").innerText = desafio.pergunta;
+
+        const respostasDiv = document.getElementById("respostas");
+        respostasDiv.innerHTML = "";
+
+        const respostas = embaralhar([...desafio.respostas]);
+
+        respostas.forEach(resp => {
+
+            const btn = document.createElement("button");
+
+            btn.className = "btn btn-outline-primary resposta-btn";
+            btn.innerText = resp.texto;
+
+            btn.onclick = () => responder(resp);
+
+            respostasDiv.appendChild(btn);
+        });
+
+    }
+
+    /* responder */
+    function responder(resp) {
+
+        const feedbackDiv = document.getElementById("feedback");
+        const nextBtn = document.getElementById("nextBtn");
+
+        // desabilitar botões
+        document.querySelectorAll(".resposta-btn").forEach(btn => {
+            btn.disabled = true;
+        });
+
+        // salvar XP
+        let xp = parseInt(localStorage.getItem("xp")) || 0;
+        xp += resp.xp;
+        localStorage.setItem("xp", xp);
+
+        // feedback visual
+        if (resp.xp >= 100) {
+            feedbackDiv.className = "feedback-certo";
+        } else if (resp.xp >= 50) {
+            feedbackDiv.className = "feedback-medio";
+        } else {
+            feedbackDiv.className = "feedback-ruim";
+        }
+
+        feedbackDiv.innerText = `${resp.feedback} (+${resp.xp} XP)`;
+
+        nextBtn.classList.remove("d-none");
+    }
+
+    /* próximo desafio */
+    document.addEventListener("DOMContentLoaded", () => {
+
+        if (document.getElementById("pergunta")) {
+
+            carregarDesafio();
+
+            document.getElementById("nextBtn").addEventListener("click", () => {
+
+                desafioAtual++;
+
+                if (desafioAtual >= desafios.length) {
+                    alert("Você completou todos os desafios! 🎉");
+                    window.location.href = "dashboard.html";
+                    return;
+                }
+
+                document.getElementById("feedback").innerText = "";
+                document.getElementById("nextBtn").classList.add("d-none");
+
+                carregarDesafio();
+            });
+        }
+
+    });

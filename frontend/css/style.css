@@ -650,3 +650,42 @@
          transform: translateY(-5px);
       }
 /* FIM DASHBOARD */
+
+/* CHALENGES PAGE */
+      .challenge-section {
+    padding: 120px 20px;
+      }
+
+      .challenge-card {
+         background: white;
+         padding: 40px;
+         border-radius: 20px;
+         max-width: 600px;
+         margin: auto;
+
+         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      }
+
+      /* respostas */
+      .resposta-btn {
+         width: 100%;
+         margin-bottom: 10px;
+         text-align: left;
+      }
+
+      /* feedback */
+      .feedback-certo {
+         color: #28a745;
+         font-weight: 600;
+      }
+
+      .feedback-medio {
+         color: #ffc107;
+         font-weight: 600;
+      }
+
+      .feedback-ruim {
+         color: #ff4d4d;
+         font-weight: 600;
+      }
+/* FIM CHALLENGES PAGE */
