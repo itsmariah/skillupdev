@@ -199,6 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 /* FIM DASHBOARD PAGE */
 
+/* CHALLENGES PAGE */
     /* DESAFIOS */
 
     const desafios = [
@@ -234,6 +235,8 @@ document.addEventListener("DOMContentLoaded", () => {
         descricao: "Escreva sua resposta com suas próprias palavras. A IA vai avaliar clareza, empatia e profissionalismo."
     }
     ];
+
+    
 
     /* lógica principal */
     let desafioAtualIndex = 0;
