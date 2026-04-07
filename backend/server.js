@@ -9,61 +9,53 @@ app.use(cors());
 app.use(express.json());
 
 /* ROTA DE AVALIAÇÃO IA */
-app.post("/avaliar", async (req, res) => {
+    aapp.post("/avaliar", async (req, res) => {
+      const { resposta, categoria, pergunta } = req.body;
 
-  const { resposta } = req.body;
+      try {
+        const respostaIA = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [
+              {
+                role: "user",
+                content: `
+    Avalie a resposta de um usuário em um desafio de soft skills.
 
-  try {
+    Categoria: ${categoria}
+    Pergunta: ${pergunta}
+    Resposta do usuário: ${resposta}
 
-    const respostaIA = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "user",
-            content: `
-    Avalie a seguinte resposta de soft skill:
+    Avalie considerando:
+    - clareza
+    - empatia
+    - profissionalismo
+    - adequação ao cenário
 
-    "${resposta}"
-
-    Critérios:
-    - Comunicação
-    - Clareza
-    - Empatia
-    - Profissionalismo
-
-    Retorne APENAS em JSON:
+    Retorne APENAS em JSON válido, no formato:
     {
-    "nota": número de 0 a 100,
-    "feedback": "texto curto"
+      "nota": número de 0 a 100,
+      "feedback": "texto curto com feedback construtivo"
     }
     `
-            }
+              }
             ]
-        })
+          })
         });
 
         const data = await respostaIA.json();
-
         const texto = data.choices[0].message.content;
-
         const resultado = JSON.parse(texto);
 
         res.json(resultado);
-
-    } catch (erro) {
+      } catch (erro) {
         console.error(erro);
         res.status(500).json({ erro: "Erro na IA" });
-    }
-
-    });
-
-    app.listen(3000, () => {
-    console.log("🔥 Servidor rodando em http://localhost:3000");
+      }
     });
     /* FIM ROTA IA */

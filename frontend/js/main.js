@@ -182,117 +182,219 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.clear();
             window.location.href = "login.html";
         }
+
+    /* LÓGICA DE XP E NÍVEL */
+            function adicionarXp(valor) {
+            const xpAtual = parseInt(localStorage.getItem("xp")) || 0;
+            const novoXp = xpAtual + valor;
+
+            localStorage.setItem("xp", novoXp);
+
+            const nivel = calcularNivel(novoXp);
+            localStorage.setItem("nivel", nivel);
+        }
+
+        function calcularNivel(xp) {
+            return Math.floor(xp / 200) + 1;
+        }
 /* FIM DASHBOARD PAGE */
 
     /* DESAFIOS */
 
     const desafios = [
     {
-        pergunta: "Você discorda de um colega em uma reunião. O que faz?",
+        id: 1,
+        tipo: "fechado",
+        categoria: "Comunicação",
+        pergunta: "Um cliente está irritado dizendo que o sistema caiu. Como você responde?",
+        descricao: "Escolha a alternativa que melhor se adequa à situação.",
         respostas: [
-        { texto: "Ignorar a situação", xp: 10, feedback: "Evitar conflitos pode prejudicar o time." },
-        { texto: "Responder de forma agressiva", xp: 30, feedback: "Comunicação agressiva não é ideal." },
-        { texto: "Dialogar com respeito", xp: 100, feedback: "Ótima escolha! Comunicação assertiva é essencial." }
+        {
+            texto: "Não é problema nosso, deve ser sua rede.",
+            xp: 5,
+            feedback: "Essa resposta tende a piorar o conflito e demonstra pouca empatia."
+        },
+        {
+            texto: "Entendo sua frustração. Vamos verificar e te atualizar.",
+            xp: 100,
+            feedback: "Ótima escolha. Você demonstrou empatia, transparência e postura profissional."
+        },
+        {
+            texto: "Explicar em termos técnicos complexos sobre servidor.",
+            xp: 40,
+            feedback: "Há intenção de explicar, mas faltou clareza e empatia."
+        }
         ]
     },
     {
-        pergunta: "Você recebeu um feedback negativo. Como reage?",
-        respostas: [
-        { texto: "Ignora", xp: 10, feedback: "Isso impede seu crescimento." },
-        { texto: "Fica chateado mas escuta", xp: 50, feedback: "Você está no caminho certo." },
-        { texto: "Agradece e aplica melhorias", xp: 100, feedback: "Excelente mentalidade de crescimento!" }
-        ]
+        id: 2,
+        tipo: "aberto",
+        categoria: "Comunicação",
+        pergunta: "Como você responderia a um cliente irritado com a instabilidade do sistema?",
+        descricao: "Escreva sua resposta com suas próprias palavras. A IA vai avaliar clareza, empatia e profissionalismo."
     }
     ];
 
-    let desafioAtual = 0;
+    /* lógica principal */
+    let desafioAtualIndex = 0;
 
-    /* embaralhar */
-    function embaralhar(lista) {
-        return lista.sort(() => Math.random() - 0.5);
-    }
+    document.addEventListener("DOMContentLoaded", () => {
+        const perguntaEl = document.getElementById("pergunta");
 
-    /* mostrar desafio */
-    function carregarDesafio() {
+        if (!perguntaEl) return;
 
-        const desafio = desafios[desafioAtual];
+        carregarDesafio();
 
-        document.getElementById("pergunta").innerText = desafio.pergunta;
-
-        const respostasDiv = document.getElementById("respostas");
-        respostasDiv.innerHTML = "";
-
-        const respostas = embaralhar([...desafio.respostas]);
-
-        respostas.forEach(resp => {
-
-            const btn = document.createElement("button");
-
-            btn.className = "btn btn-outline-primary resposta-btn";
-            btn.innerText = resp.texto;
-
-            btn.onclick = () => responder(resp);
-
-            respostasDiv.appendChild(btn);
-        });
-
-    }
-
-    /* responder */
-    function responder(resp) {
-
-        const feedbackDiv = document.getElementById("feedback");
         const nextBtn = document.getElementById("nextBtn");
+        nextBtn.addEventListener("click", proximoDesafio);
+    });
 
-        // desabilitar botões
-        document.querySelectorAll(".resposta-btn").forEach(btn => {
-            btn.disabled = true;
-        });
+    function carregarDesafio() {
+        const desafio = desafios[desafioAtualIndex];
 
-        // salvar XP
-        let xp = parseInt(localStorage.getItem("xp")) || 0;
-        xp += resp.xp;
-        localStorage.setItem("xp", xp);
+        document.getElementById("categoria").textContent = desafio.categoria;
+        document.getElementById("pergunta").textContent = desafio.pergunta;
+        document.getElementById("descricao").textContent = desafio.descricao || "";
 
-        // feedback visual
-        if (resp.xp >= 100) {
-            feedbackDiv.className = "feedback-certo";
-        } else if (resp.xp >= 50) {
-            feedbackDiv.className = "feedback-medio";
-        } else {
-            feedbackDiv.className = "feedback-ruim";
+        document.getElementById("feedback").innerHTML = "";
+        document.getElementById("nextBtn").classList.add("d-none");
+
+        const respostasContainer = document.getElementById("respostas");
+        respostasContainer.innerHTML = "";
+
+        if (desafio.tipo === "fechado") {
+            renderizarDesafioFechado(desafio, respostasContainer);
+        } else if (desafio.tipo === "aberto") {
+            renderizarDesafioAberto(desafio, respostasContainer);
+        }
+    }
+
+    /* render desafio fechado */
+            function embaralharRespostas(lista) {
+            return [...lista].sort(() => Math.random() - 0.5);
         }
 
-        feedbackDiv.innerText = `${resp.feedback} (+${resp.xp} XP)`;
+        function renderizarDesafioFechado(desafio, container) {
+            const respostas = embaralharRespostas(desafio.respostas);
 
-        nextBtn.classList.remove("d-none");
-    }
+            respostas.forEach((resposta) => {
+                const botao = document.createElement("button");
+                botao.className = "challenge-option";
+                botao.textContent = resposta.texto;
 
-    /* próximo desafio */
-    document.addEventListener("DOMContentLoaded", () => {
+                botao.addEventListener("click", () => {
+                    responderDesafioFechado(resposta);
+                });
 
-        if (document.getElementById("pergunta")) {
-
-            carregarDesafio();
-
-            document.getElementById("nextBtn").addEventListener("click", () => {
-
-                desafioAtual++;
-
-                if (desafioAtual >= desafios.length) {
-                    alert("Você completou todos os desafios! 🎉");
-                    window.location.href = "dashboard.html";
-                    return;
-                }
-
-                document.getElementById("feedback").innerText = "";
-                document.getElementById("nextBtn").classList.add("d-none");
-
-                carregarDesafio();
+                container.appendChild(botao);
             });
         }
 
-    });
+        function responderDesafioFechado(resposta) {
+            adicionarXp(resposta.xp);
+
+            document.getElementById("feedback").innerHTML = `
+                <div class="feedback-box">
+                    <p class="feedback-score">XP ganho: ${resposta.xp}</p>
+                    <p>${resposta.feedback}</p>
+                </div>
+            `;
+
+            desabilitarOpcoesFechadas();
+            document.getElementById("nextBtn").classList.remove("d-none");
+        }
+
+        function desabilitarOpcoesFechadas() {
+            document.querySelectorAll(".challenge-option").forEach((btn) => {
+                btn.disabled = true;
+            });
+        }
+
+    /* render desafio aberto com IA */
+        function renderizarDesafioAberto(desafio, container) {
+        container.innerHTML = `
+            <textarea
+                id="respostaUsuario"
+                class="form-control challenge-textarea"
+                placeholder="Digite sua resposta aqui..."
+            ></textarea>
+
+            <button id="submitOpenChallenge" class="btn btn-primary challenge-submit-btn">
+                Enviar resposta
+            </button>
+        `;
+
+        const submitBtn = document.getElementById("submitOpenChallenge");
+
+        submitBtn.addEventListener("click", async () => {
+            await responderDesafioAberto(submitBtn);
+        });
+    }
+
+    /* responder desafio aberto */
+        async function responderDesafioAberto(botao) {
+        const textarea = document.getElementById("respostaUsuario");
+        const texto = textarea.value.trim();
+        const desafio = desafios[desafioAtualIndex];
+
+        if (!texto) {
+            document.getElementById("feedback").innerHTML = `
+                <div class="feedback-box">
+                    <p>Digite uma resposta antes de enviar.</p>
+                </div>
+            `;
+            return;
+        }
+
+        botao.disabled = true;
+        botao.textContent = "Analisando...";
+
+        document.getElementById("feedback").innerHTML = `
+            <div class="feedback-box">
+                <p>Analisando sua resposta com IA...</p>
+            </div>
+        `;
+
+        try {
+            const resultado = await enviarRespostaIA(texto, desafio);
+
+            adicionarXp(resultado.nota);
+
+            document.getElementById("feedback").innerHTML = `
+                <div class="feedback-box">
+                    <p class="feedback-score">XP ganho: ${resultado.nota}</p>
+                    <p>${resultado.feedback}</p>
+                </div>
+            `;
+
+            textarea.disabled = true;
+            botao.classList.add("d-none");
+            document.getElementById("nextBtn").classList.remove("d-none");
+        } catch (error) {
+            document.getElementById("feedback").innerHTML = `
+                <div class="feedback-box">
+                    <p>Não foi possível avaliar sua resposta agora. Tente novamente.</p>
+                </div>
+            `;
+
+            botao.disabled = false;
+            botao.textContent = "Enviar resposta";
+            console.error(error);
+        }
+    }
+
+    /* lógica de próximo desafio */
+        function proximoDesafio() {
+        desafioAtualIndex++;
+
+        if (desafioAtualIndex >= desafios.length) {
+            window.location.href = "dashboard.html";
+            return;
+        }
+
+        carregarDesafio();
+    }
+
     /* FIM DESAFIOS */
 
     /* implementação IA */
