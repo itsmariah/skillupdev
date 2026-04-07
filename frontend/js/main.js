@@ -293,3 +293,44 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
     });
+    /* FIM DESAFIOS */
+
+    /* implementação IA */
+    async function enviarRespostaIA(texto) {
+
+    const response = await fetch("http://localhost:3000/avaliar", {
+        method: "POST",
+        headers: {
+        "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ resposta: texto })
+    });
+
+    return await response.json();
+    }
+
+    /* ligando com a página de desafios */
+    async function enviarResposta() {
+
+    const texto = document.getElementById("respostaUsuario").value;
+
+    const resultado = await enviarRespostaIA(texto);
+
+    mostrarFeedbackIA(resultado);
+    }
+
+    /* mostrando resultado */
+    function mostrarFeedbackIA(data) {
+
+    const feedbackDiv = document.getElementById("feedback");
+
+    feedbackDiv.innerHTML = `
+        <p><strong>XP ganho:</strong> ${data.nota}</p>
+        <p>${data.feedback}</p>
+    `;
+
+    let xp = parseInt(localStorage.getItem("xp")) || 0;
+    xp += data.nota;
+
+    localStorage.setItem("xp", xp);
+    }
