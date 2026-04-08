@@ -533,7 +533,7 @@
       .about-section.alt p {
          color: #555;
       }
-      
+
       /* IMAGENS */
       .about-img {
          max-width: 250px;
@@ -746,15 +746,24 @@
 
    /* Feedback */
    .feedback-box {
-      background: white;
-      border-left: 5px solid #5b6cff;
-      border-radius: 14px;
-      padding: 18px;
-      color: #2c2457;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    background: white;
+    border-left: 5px solid #5b6cff;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+
+    color: #2c2457 !important; /* FORÇA a cor */
+}
+
+   /* TEXTO DO FEEDBACK */
+   .feedback-box p {
+      color: #5b6cff !important;
+      margin: 0;
    }
 
+   /* XP */
    .feedback-score {
+      color: #5b6cff !important;
       font-weight: 700;
       margin-bottom: 8px;
    }
