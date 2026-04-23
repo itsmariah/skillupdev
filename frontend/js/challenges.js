@@ -1,253 +1,261 @@
-/* CHALLENGES PAGE */
+let challenges = [];
+let currentChallengeIndex = 0;
 
-        /* DESAFIOS
-        - Desafios fechados e abertos
-        - Integração com backend/IA
-        - Cálculo de XP e nível
-        */
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!window.skillUpAuth?.requireSession()) {
+    return;
+  }
 
-        /* BASE DE DESAFIOS */
-        const desafios = [
-            {
-                id: 1,
-                tipo: "fechado",
-                categoria: "Comunicação",
-                pergunta: "Um cliente está irritado dizendo que o sistema caiu. Como você responde?",
-                descricao: "Escolha a alternativa que melhor se adequa à situação.",
-                respostas: [
-                    {
-                        texto: "Não é problema nosso, deve ser sua rede.",
-                        xp: 5,
-                        feedback: "Essa resposta tende a piorar o conflito e demonstra pouca empatia."
-                    },
-                    {
-                        texto: "Entendo sua frustração. Vamos verificar e te atualizar.",
-                        xp: 100,
-                        feedback: "Ótima escolha. Você demonstrou empatia, transparência e postura profissional."
-                    },
-                    {
-                        texto: "Explicar em termos técnicos complexos sobre servidor.",
-                        xp: 40,
-                        feedback: "Há intenção de explicar, mas faltou clareza e empatia."
-                    }
-                ]
-            },
-            {
-                id: 2,
-                tipo: "aberto",
-                categoria: "Comunicação",
-                pergunta: "Como você responderia a um cliente irritado com a instabilidade do sistema?",
-                descricao: "Escreva sua resposta com suas próprias palavras. A IA vai avaliar clareza, empatia e profissionalismo."
-            }
-        ];
+  const nextButton = document.getElementById("nextBtn");
+  if (nextButton) {
+    nextButton.addEventListener("click", goToNextChallenge);
+  }
 
-        /* ESTADO GLOBAL DA PÁGINA */
-        let desafioAtualIndex = 0;
+  await loadChallenges();
+});
 
-        /* INICIALIZAÇÃO */
-        document.addEventListener("DOMContentLoaded", () => {
-            const perguntaEl = document.getElementById("pergunta");
-            const nextBtn = document.getElementById("nextBtn");
+async function loadChallenges() {
+  try {
+    const payload = await window.skillUpApi.getChallenges();
+    challenges = payload.challenges.filter((challenge) => !challenge.completed);
+    currentChallengeIndex = 0;
 
-            if (!perguntaEl || !nextBtn) return;
+    if (!challenges.length) {
+      renderFinishedState();
+      return;
+    }
 
-            carregarDesafio();
+    renderCurrentChallenge();
+  } catch (error) {
+    renderError(`Nao foi possivel carregar os desafios. ${error.message}`);
+  }
+}
 
-            nextBtn.addEventListener("click", proximoDesafio);
-        });
+function renderCurrentChallenge() {
+  const challenge = challenges[currentChallengeIndex];
+  const nextButton = document.getElementById("nextBtn");
+  const categoryElement = document.getElementById("categoria");
+  const questionElement = document.getElementById("pergunta");
+  const descriptionElement = document.getElementById("descricao");
+  const answersContainer = document.getElementById("respostas");
+  const feedbackElement = document.getElementById("feedback");
 
-        /* CARREGAR DESAFIO ATUAL */
-        function carregarDesafio() {
-            const desafio = desafios[desafioAtualIndex];
+  if (!challenge || !nextButton || !categoryElement || !questionElement || !descriptionElement) {
+    return;
+  }
 
-            if (!desafio) return;
+  categoryElement.textContent = challenge.titulo
+    ? `${challenge.categoria} | ${challenge.titulo}`
+    : challenge.categoria;
+  questionElement.textContent = challenge.pergunta;
+  descriptionElement.textContent = buildChallengeDescription(challenge);
+  answersContainer.innerHTML = "";
+  feedbackElement.innerHTML = "";
+  nextButton.classList.add("d-none");
+  nextButton.textContent = "Proximo desafio";
 
-            const categoriaEl = document.getElementById("categoria");
-            const perguntaEl = document.getElementById("pergunta");
-            const descricaoEl = document.getElementById("descricao");
-            const respostasContainer = document.getElementById("respostas");
-            const feedbackEl = document.getElementById("feedback");
-            const nextBtn = document.getElementById("nextBtn");
+  if (challenge.tipo === "fechado") {
+    renderClosedChallenge(challenge, answersContainer);
+    return;
+  }
 
-            categoriaEl.textContent = desafio.categoria;
-            perguntaEl.textContent = desafio.pergunta;
-            descricaoEl.textContent = desafio.descricao || "";
+  renderOpenChallenge(challenge, answersContainer);
+}
 
-            respostasContainer.innerHTML = "";
-            feedbackEl.innerHTML = "";
-            nextBtn.classList.add("d-none");
+function renderClosedChallenge(challenge, container) {
+  const shuffledAnswers = [...challenge.respostas].sort(() => Math.random() - 0.5);
 
-            if (desafio.tipo === "fechado") {
-                renderizarDesafioFechado(desafio, respostasContainer);
-            } else if (desafio.tipo === "aberto") {
-                renderizarDesafioAberto(desafio, respostasContainer);
-            }
-        }
+  shuffledAnswers.forEach((answer) => {
+    const button = document.createElement("button");
 
-        /* DESAFIO FECHADO */
-        function embaralharRespostas(lista) {
-            return [...lista].sort(() => Math.random() - 0.5);
-        }
+    button.type = "button";
+    button.className = "challenge-option";
+    button.textContent = answer.texto;
+    button.addEventListener("click", async () => {
+      await submitClosedChallenge(challenge.id, answer.id);
+    });
 
-        function renderizarDesafioFechado(desafio, container) {
-            const respostas = embaralharRespostas(desafio.respostas);
+    container.appendChild(button);
+  });
+}
 
-            respostas.forEach((resposta) => {
-                const botao = document.createElement("button");
-                botao.className = "challenge-option";
-                botao.textContent = resposta.texto;
-                botao.type = "button";
+function renderOpenChallenge(_challenge, container) {
+  container.innerHTML = `
+    <textarea
+      id="respostaUsuario"
+      class="form-control challenge-textarea"
+      placeholder="Digite sua resposta aqui..."
+    ></textarea>
+    <button
+      id="submitOpenChallenge"
+      class="btn btn-primary challenge-submit-btn"
+      type="button"
+    >
+      Enviar resposta
+    </button>
+  `;
 
-                botao.addEventListener("click", () => {
-                    responderDesafioFechado(resposta);
-                });
+  const submitButton = document.getElementById("submitOpenChallenge");
 
-                container.appendChild(botao);
-            });
-        }
+  submitButton?.addEventListener("click", async () => {
+    await submitOpenChallenge(submitButton);
+  });
+}
 
-        function responderDesafioFechado(resposta) {
-            adicionarXp(resposta.xp);
+async function submitClosedChallenge(challengeId, answerId) {
+  const buttons = document.querySelectorAll(".challenge-option");
+  buttons.forEach((button) => {
+    button.disabled = true;
+  });
 
-            document.getElementById("feedback").innerHTML = `
-                <div class="feedback-box">
-                    <p class="feedback-score">XP ganho: ${resposta.xp}</p>
-                    <p>${resposta.feedback}</p>
-                </div>
-            `;
+  try {
+    const payload = await window.skillUpApi.submitChallenge(challengeId, {
+      respostaId: answerId,
+    });
 
-            desabilitarOpcoesFechadas();
-            document.getElementById("nextBtn").classList.remove("d-none");
-        }
+    window.skillUpAuth?.updateStoredUser(payload.user);
+    renderResult(payload.result);
+  } catch (error) {
+    buttons.forEach((button) => {
+      button.disabled = false;
+    });
+    renderError(error.message);
+  }
+}
 
-        function desabilitarOpcoesFechadas() {
-            document.querySelectorAll(".challenge-option").forEach((btn) => {
-                btn.disabled = true;
-            });
-        }
+async function submitOpenChallenge(button) {
+  const challenge = challenges[currentChallengeIndex];
+  const feedbackElement = document.getElementById("feedback");
+  const textarea = document.getElementById("respostaUsuario");
+  const text = textarea?.value.trim() || "";
 
-        /* DESAFIO ABERTO */
-        function renderizarDesafioAberto(desafio, container) {
-            container.innerHTML = `
-                <textarea
-                    id="respostaUsuario"
-                    class="form-control challenge-textarea"
-                    placeholder="Digite sua resposta aqui..."
-                ></textarea>
+  if (!challenge || !feedbackElement || !textarea) {
+    return;
+  }
 
-                <button
-                    id="submitOpenChallenge"
-                    class="btn btn-primary challenge-submit-btn"
-                    type="button"
-                >
-                    Enviar resposta
-                </button>
-            `;
+  if (!text) {
+    renderError("Digite uma resposta antes de enviar.");
+    return;
+  }
 
-            const submitBtn = document.getElementById("submitOpenChallenge");
+  button.disabled = true;
+  button.textContent = "Analisando...";
+  feedbackElement.innerHTML = `
+    <div class="feedback-box">
+      <p>Analisando sua resposta...</p>
+    </div>
+  `;
 
-            submitBtn.addEventListener("click", async () => {
-                await responderDesafioAberto(submitBtn);
-            });
-        }
+  try {
+    const payload = await window.skillUpApi.submitChallenge(challenge.id, {
+      texto: text,
+    });
 
-        async function responderDesafioAberto(botao) {
-            const textarea = document.getElementById("respostaUsuario");
-            const texto = textarea.value.trim();
-            const desafio = desafios[desafioAtualIndex];
-            const feedbackEl = document.getElementById("feedback");
+    window.skillUpAuth?.updateStoredUser(payload.user);
+    textarea.disabled = true;
+    button.classList.add("d-none");
+    renderResult(payload.result);
+  } catch (error) {
+    button.disabled = false;
+    button.textContent = "Enviar resposta";
+    renderError(error.message);
+  }
+}
 
-            if (!texto) {
-                feedbackEl.innerHTML = `
-                    <div class="feedback-box">
-                        <p>Digite uma resposta antes de enviar.</p>
-                    </div>
-                `;
-                return;
-            }
+function renderResult(result) {
+  const feedbackElement = document.getElementById("feedback");
+  const nextButton = document.getElementById("nextBtn");
 
-            botao.disabled = true;
-            botao.textContent = "Analisando...";
+  if (!feedbackElement || !nextButton) {
+    return;
+  }
 
-            feedbackEl.innerHTML = `
-                <div class="feedback-box">
-                    <p>Analisando sua resposta com IA...</p>
-                </div>
-            `;
+  feedbackElement.innerHTML = `
+    <div class="feedback-box">
+      <p class="feedback-score">Nota: ${result.nota} | XP ganho: ${result.xpGanho}</p>
+      <p>${result.feedback}</p>
+    </div>
+  `;
 
-            try {
-                const resultado = await enviarRespostaIA(texto, desafio);
+  nextButton.classList.remove("d-none");
+}
 
-                adicionarXp(resultado.nota);
+function buildChallengeDescription(challenge) {
+  const parts = [];
 
-                feedbackEl.innerHTML = `
-                    <div class="feedback-box">
-                        <p class="feedback-score">XP ganho: ${resultado.nota}</p>
-                        <p>${resultado.feedback}</p>
-                    </div>
-                `;
+  if (challenge.descricao) {
+    parts.push(challenge.descricao);
+  }
 
-                textarea.disabled = true;
-                botao.classList.add("d-none");
-                document.getElementById("nextBtn").classList.remove("d-none");
-            } catch (error) {
-                    feedbackEl.innerHTML = `
-                        <div class="feedback-box">
-                            <p>Não foi possível avaliar sua resposta agora.</p>
-                            <p class="feedback-text">Detalhe: ${error.message}</p>
-                        </div>
-                    `;
+  if (challenge.tipo === "aberto" && Array.isArray(challenge.criteriosAvaliacao)) {
+    const criteria = challenge.criteriosAvaliacao.filter(Boolean);
+    if (criteria.length > 0) {
+      parts.push(`IA avalia: ${criteria.join(", ")}.`);
+    }
+  }
 
-                    botao.disabled = false;
-                    botao.textContent = "Enviar resposta";
-                    console.error("Erro ao avaliar resposta com IA:", error);
-                }
-        }
+  if (challenge.tipo === "fechado" && challenge.dica) {
+    parts.push(`Dica: ${challenge.dica}`);
+  }
 
-        /*BACKEND / IA */
-        async function enviarRespostaIA(texto, desafio) {
-            const response = await fetch("http://localhost:3000/avaliar", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    resposta: texto,
-                    categoria: desafio.categoria,
-                    pergunta: desafio.pergunta
-                })
-            });
+  return parts.join(" ");
+}
 
-            if (!response.ok) {
-                throw new Error("Erro ao avaliar resposta com a IA.");
-            }
+function renderError(message) {
+  const feedbackElement = document.getElementById("feedback");
 
-            return await response.json();
-        }
+  if (!feedbackElement) {
+    return;
+  }
 
-        /* XP E NÍVEL */
-        function adicionarXp(valor) {
-            const xpAtual = parseInt(localStorage.getItem("xp")) || 0;
-            const novoXp = xpAtual + valor;
+  feedbackElement.innerHTML = `
+    <div class="feedback-box">
+      <p>${message}</p>
+    </div>
+  `;
+}
 
-            localStorage.setItem("xp", novoXp);
+function renderFinishedState() {
+  const categoryElement = document.getElementById("categoria");
+  const questionElement = document.getElementById("pergunta");
+  const descriptionElement = document.getElementById("descricao");
+  const answersContainer = document.getElementById("respostas");
+  const feedbackElement = document.getElementById("feedback");
+  const nextButton = document.getElementById("nextBtn");
 
-            const nivel = calcularNivel(novoXp);
-            localStorage.setItem("nivel", nivel);
-        }
+  if (!categoryElement || !questionElement || !descriptionElement || !answersContainer) {
+    return;
+  }
 
-        function calcularNivel(xp) {
-            return Math.floor(xp / 200) + 1;
-        }
+  categoryElement.textContent = "Missao concluida";
+  questionElement.textContent = "Voce finalizou todos os desafios disponiveis.";
+  descriptionElement.textContent = "Volte ao dashboard para acompanhar seu progresso.";
+  answersContainer.innerHTML = "";
 
-        /* PRÓXIMO DESAFIO */
-        function proximoDesafio() {
-            desafioAtualIndex++;
+  if (feedbackElement) {
+    feedbackElement.innerHTML = `
+      <div class="feedback-box">
+        <p>Novos desafios podem ser adicionados depois sem mudar a estrutura da API.</p>
+      </div>
+    `;
+  }
 
-            if (desafioAtualIndex >= desafios.length) {
-                window.location.href = "dashboard.html";
-                return;
-            }
+  if (nextButton) {
+    nextButton.textContent = "Voltar ao dashboard";
+    nextButton.classList.remove("d-none");
+    nextButton.onclick = () => {
+      window.location.href = "dashboard.html";
+    };
+  }
+}
 
-            carregarDesafio();
-        }
+function goToNextChallenge() {
+  currentChallengeIndex += 1;
+
+  if (currentChallengeIndex >= challenges.length) {
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  renderCurrentChallenge();
+}

@@ -4,7 +4,10 @@
   "description": "Plataforma gamificada de treinamento de soft skills para desenvolvedores.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js",
+    "check": "node --check backend/server.js",
+    "test": "echo \"Sem testes automatizados configurados\""
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,56 @@
+{
+  "users": [
+    {
+      "id": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "nome": "Mariah",
+      "usuario": "mad",
+      "email": "mariamariahqfs@gmail.com",
+      "passwordHash": "3d45646b9b7cd4439d13263c7e9b8366:50bafbb9f906e9addc2b1dd245c41855b7b20c56d7cd3e61cc9285fb81709edea4ab1f57b4ee8edbbdc9825a0e4976db336dc89506ae4c3ae75947628e52bbd1",
+      "xp": 270,
+      "nivel": 2,
+      "createdAt": "2026-04-23T23:33:48.838Z"
+    }
+  ],
+  "sessions": [
+    {
+      "token": "1b70151cc3775a1cbd55def3e47b4340e799c8f483c11252367d8a46b667cf5b",
+      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "createdAt": "2026-04-23T23:46:55.073Z"
+    }
+  ],
+  "challengeAttempts": [
+    {
+      "id": "e28c7e6e-6484-433e-a21c-1c9b970b0a39",
+      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "challengeId": "communication-1",
+      "challengeType": "fechado",
+      "answer": "Entendo sua frustracao. Vou verificar agora e te atualizar em seguida.",
+      "feedback": "Boa resposta. Ela demonstra empatia, calma e senso de responsabilidade.",
+      "score": 100,
+      "xpAwarded": 100,
+      "createdAt": "2026-04-23T23:34:11.322Z"
+    },
+    {
+      "id": "07d73671-ddf8-4f62-ac65-13d80249e405",
+      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "challengeId": "communication-2",
+      "challengeType": "aberto",
+      "answer": "Entendo sua frustração, iremos trabalhar imediatamente para resolver seu problema.",
+      "feedback": "A resposta demonstra boa intencao. Para ficar mais forte, deixe o proximo passo mais explicito.",
+      "score": 70,
+      "xpAwarded": 70,
+      "createdAt": "2026-04-23T23:34:41.286Z"
+    },
+    {
+      "id": "bf2de664-fc32-4708-bbc9-333ac5f07a5e",
+      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "challengeId": "teamwork-1",
+      "challengeType": "fechado",
+      "answer": "Converso com a pessoa, entendo o contexto e proponho ajustes com o time.",
+      "feedback": "Boa escolha. A resposta equilibra responsabilidade, respeito e colaboracao.",
+      "score": 100,
+      "xpAwarded": 100,
+      "createdAt": "2026-04-23T23:35:10.653Z"
+    }
+  ]
+}
