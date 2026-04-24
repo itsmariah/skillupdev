@@ -6,7 +6,7 @@
       "usuario": "mad",
       "email": "mariamariahqfs@gmail.com",
       "passwordHash": "3d45646b9b7cd4439d13263c7e9b8366:50bafbb9f906e9addc2b1dd245c41855b7b20c56d7cd3e61cc9285fb81709edea4ab1f57b4ee8edbbdc9825a0e4976db336dc89506ae4c3ae75947628e52bbd1",
-      "xp": 1540,
+      "xp": 2020,
       "nivel": 5,
       "createdAt": "2026-04-23T23:33:48.838Z",
       "badges": [
@@ -30,21 +30,39 @@
         "acessorio": "glasses"
       },
       "gamification": {
-        "perfectStreak": 8,
+        "perfectStreak": 11,
         "dailyLoginStreak": 1,
         "lastDailyLoginDate": "2026-04-24",
-        "idealAnswers": 8,
+        "idealAnswers": 11,
         "lastRewardAt": "2026-04-24T00:57:17.217Z"
       }
-    }
-  ],
-  "sessions": [
+    },
     {
-      "token": "922862be0de646d9644f7d3eefb6f7c933fa70d51a3631fa85961de8db33e7f3",
-      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
-      "createdAt": "2026-04-24T00:57:17.217Z"
+      "id": "93f789b0-e9ea-46cc-86ec-d9f87a060ae6",
+      "nome": "Luíza",
+      "email": "lulu123@gmail.com",
+      "passwordHash": "aefb5aaa55e5a1d5eda08be2181584e8:6e026359694c67fc30b164768585523bde41f9b3a7b85b6ce75fda17ac4e792b5069df90d3d0e5a82ac24cb0853f1e8ac82fbc740b331439484e9206fa887a38",
+      "xp": 10,
+      "nivel": 1,
+      "badges": [],
+      "avatarConfig": {
+        "cabelo": "short",
+        "roupa": "hoodie",
+        "cor": "indigo",
+        "acessorio": "none"
+      },
+      "gamification": {
+        "perfectStreak": 0,
+        "dailyLoginStreak": 1,
+        "lastDailyLoginDate": "2026-04-24",
+        "idealAnswers": 0,
+        "lastRewardAt": "2026-04-24T01:18:32.160Z"
+      },
+      "createdAt": "2026-04-24T01:18:32.160Z",
+      "usuario": null
     }
   ],
+  "sessions": [],
   "challengeAttempts": [
     {
       "id": "e28c7e6e-6484-433e-a21c-1c9b970b0a39",
@@ -336,6 +354,88 @@
       ],
       "unlockedBadges": [],
       "createdAt": "2026-04-24T01:01:33.433Z"
+    },
+    {
+      "id": "926a4666-da48-4926-b5bd-dda9b28d1973",
+      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "challengeId": "problem-solving-closed-3",
+      "challengeType": "fechado",
+      "category": "Resolucao de Problemas",
+      "answer": "Usar logs, metricas e formular hipoteses antes de agir.",
+      "feedback": "Boa escolha. Voce transforma um problema difuso em uma investigacao orientada por evidencias. Dica: Investigacao estruturada costuma vencer tentativa e erro no longo prazo.",
+      "consequence": "Sua decisao tende a aumentar a confianca, reduzir atrito e melhorar o resultado do cenario.",
+      "score": 100,
+      "qualityTier": "ideal",
+      "wasIdeal": true,
+      "xpAwarded": 180,
+      "xpBreakdown": [
+        {
+          "label": "Desafio concluido",
+          "xp": 100
+        },
+        {
+          "label": "Qualidade da resposta",
+          "xp": 50
+        },
+        {
+          "label": "Sequencia perfeita x3",
+          "xp": 30
+        }
+      ],
+      "unlockedBadges": [],
+      "createdAt": "2026-04-24T01:16:03.611Z"
+    },
+    {
+      "id": "a7fa7d18-350e-4da0-bc2a-e99a22380901",
+      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "challengeId": "time-management-closed-1",
+      "challengeType": "fechado",
+      "category": "Gestao de Tempo",
+      "answer": "Priorizar pelo impacto e pelo prazo de cada entrega.",
+      "feedback": "Boa escolha. Voce cria ordem com base em valor e urgencia reais. Dica: Impacto e prazo sao um bom ponto de partida para ordenar trabalho sob pressao.",
+      "consequence": "Sua decisao tende a aumentar a confianca, reduzir atrito e melhorar o resultado do cenario.",
+      "score": 100,
+      "qualityTier": "ideal",
+      "wasIdeal": true,
+      "xpAwarded": 150,
+      "xpBreakdown": [
+        {
+          "label": "Desafio concluido",
+          "xp": 100
+        },
+        {
+          "label": "Qualidade da resposta",
+          "xp": 50
+        }
+      ],
+      "unlockedBadges": [],
+      "createdAt": "2026-04-24T01:16:44.417Z"
+    },
+    {
+      "id": "40707d1a-5447-4b99-acd2-82a3108780e6",
+      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "challengeId": "time-management-closed-2",
+      "challengeType": "fechado",
+      "category": "Gestao de Tempo",
+      "answer": "Usar uma matriz de urgencia x impacto.",
+      "feedback": "Boa escolha. Voce transforma pressao difusa em uma fila mais racional de execucao. Dica: Comparar urgencia com impacto ajuda a fugir do caos quando tudo parece importante.",
+      "consequence": "Sua decisao tende a aumentar a confianca, reduzir atrito e melhorar o resultado do cenario.",
+      "score": 100,
+      "qualityTier": "ideal",
+      "wasIdeal": true,
+      "xpAwarded": 150,
+      "xpBreakdown": [
+        {
+          "label": "Desafio concluido",
+          "xp": 100
+        },
+        {
+          "label": "Qualidade da resposta",
+          "xp": 50
+        }
+      ],
+      "unlockedBadges": [],
+      "createdAt": "2026-04-24T01:17:07.402Z"
     }
   ]
 }

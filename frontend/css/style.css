@@ -1,8 +1,16 @@
 /* LANDING PAGE CSS */
    /* ESTILOS GERAIS */
 
+      :root{
+      --navbar-height:90px;
+      }
+
+      html{
+      scroll-padding-top:var(--navbar-height);
+      }
+
       body{
-      padding-top:90px;
+      padding-top:var(--navbar-height);
       background:#1d183a;
       color:white;
       font-family:Arial, sans-serif;
@@ -13,9 +21,10 @@
 
       .navbar-custom{
 
-      position:fixed;
-      top:0;
+      position:fixed !important;
+      top:0 !important;
       left:0;
+      right:0;
       width:100%;
       z-index:1000;
 
@@ -28,6 +37,7 @@
       box-shadow:0 4px 20px rgba(0,0,0,0.15);
 
       transition:all 0.3s ease;
+      will-change:transform, background, box-shadow;
 
       }
 
@@ -1388,4 +1398,8 @@
          .avatar-shadow {
             left: 40px;
          }
+      }
+
+      body {
+         padding-top: var(--navbar-height);
       }

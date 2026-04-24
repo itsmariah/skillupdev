@@ -2,13 +2,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const navbar = document.querySelector(".navbar");
 
   if (navbar) {
-    window.addEventListener("scroll", () => {
+    const syncNavbarHeight = () => {
+      document.documentElement.style.setProperty(
+        "--navbar-height",
+        `${navbar.offsetHeight}px`
+      );
+    };
+
+    const handleNavbarScroll = () => {
       if (window.scrollY > 50) {
         navbar.classList.add("navbar-scrolled");
       } else {
         navbar.classList.remove("navbar-scrolled");
       }
-    });
+    };
+
+    syncNavbarHeight();
+    handleNavbarScroll();
+
+    window.addEventListener("resize", syncNavbarHeight);
+    window.addEventListener("scroll", handleNavbarScroll, { passive: true });
   }
 
   const container = document.getElementById("code-particles");
