@@ -1,4 +1,7 @@
 (function attachSkillUpAuth() {
+  const DAILY_REWARD_KEY = "skillup_last_daily_reward";
+  let dashboardUser = null;
+
   function setFeedback(elementId, message, type) {
     const element = document.getElementById(elementId);
     if (!element) {
@@ -25,7 +28,7 @@
       return;
     }
 
-    window.localStorage.setItem("userName", user.nome || user.usuario || "Dev");
+    window.localStorage.setItem("userName", user.nome || "Dev");
     window.localStorage.setItem("xp", String(user.xp || 0));
     window.localStorage.setItem("nivel", String(user.level || 1));
     window.localStorage.setItem("skillup_user", JSON.stringify(user));
@@ -64,6 +67,29 @@
     button.textContent = loading ? loadingText : idleText;
   }
 
+  function storeDailyReward(reward) {
+    if (!reward) {
+      return;
+    }
+
+    window.sessionStorage.setItem(DAILY_REWARD_KEY, JSON.stringify(reward));
+  }
+
+  function readAndClearDailyReward() {
+    const raw = window.sessionStorage.getItem(DAILY_REWARD_KEY);
+    if (!raw) {
+      return null;
+    }
+
+    window.sessionStorage.removeItem(DAILY_REWARD_KEY);
+
+    try {
+      return JSON.parse(raw);
+    } catch (_error) {
+      return null;
+    }
+  }
+
   async function handleLoginSubmit(event) {
     event.preventDefault();
 
@@ -79,6 +105,7 @@
       const payload = await window.skillUpApi.login({ email, senha });
       window.skillUpApi.setSession(payload);
       updateStoredUser(payload.user);
+      storeDailyReward(payload.dailyLoginReward);
       form.reset();
       window.location.href = "dashboard.html";
     } catch (error) {
@@ -106,13 +133,13 @@
     try {
       const payload = await window.skillUpApi.register({
         nome: document.getElementById("nome")?.value.trim() || "",
-        usuario: document.getElementById("usuario")?.value.trim() || "",
         email: document.getElementById("email")?.value.trim() || "",
         senha,
       });
 
       window.skillUpApi.setSession(payload);
       updateStoredUser(payload.user);
+      storeDailyReward(payload.dailyLoginReward);
       window.location.href = "dashboard.html";
     } catch (error) {
       setFeedback("registerFeedback", error.message, "danger");
@@ -120,25 +147,70 @@
     }
   }
 
-  function renderDashboard(user) {
+  function renderRewardBanner(user) {
+    const banner = document.getElementById("rewardBanner");
+    if (!banner) {
+      return;
+    }
+
+    const reward = readAndClearDailyReward();
+
+    if (reward) {
+      banner.textContent = `${reward.label}: +${reward.xp} XP recebidos hoje.`;
+      banner.className = "dashboard-banner";
+      banner.classList.remove("d-none");
+      return;
+    }
+
+    if (user?.gamification?.dailyLoginAwardedToday) {
+      banner.textContent = "Bonus diario ja contabilizado hoje. Continue a sequencia.";
+      banner.className = "dashboard-banner dashboard-banner-muted";
+      banner.classList.remove("d-none");
+      return;
+    }
+
+    banner.classList.add("d-none");
+  }
+
+  function renderProgressSummary(user) {
     const nameElement = document.getElementById("userName");
     const levelElement = document.getElementById("userLevel");
+    const levelDescriptionElement = document.getElementById("levelDescription");
     const xpSummaryElement = document.getElementById("xpSummary");
+    const nextLevelHintElement = document.getElementById("nextLevelHint");
     const progressBarElement = document.getElementById("progressBar");
     const challengeCountElement = document.getElementById("challengeCount");
     const pendingCountElement = document.getElementById("pendingCount");
-    const profileNickElement = document.getElementById("profileNick");
+    const badgeCountElement = document.getElementById("badgeCount");
+    const perfectStreakCountElement = document.getElementById("perfectStreakCount");
+    const dailyLoginStreakElement = document.getElementById("dailyLoginStreakCount");
+    const idealAnswerCountElement = document.getElementById("idealAnswerCount");
+    const userLevelMirrorElement = document.getElementById("userLevelMirror");
 
     if (nameElement) {
-      nameElement.textContent = user.nome || user.usuario || "Dev";
+      nameElement.textContent = user.nome || "Dev";
     }
 
     if (levelElement) {
-      levelElement.textContent = `Nivel ${user.level}`;
+      levelElement.textContent = `Nivel ${user.level} | ${user.levelLabel}`;
+    }
+
+    if (levelDescriptionElement) {
+      levelDescriptionElement.textContent = user.isMaxLevel
+        ? "Voce chegou ao topo atual da trilha de soft skills."
+        : `Faltam ${user.xpToNextLevel} XP para avancar para o proximo nivel.`;
     }
 
     if (xpSummaryElement) {
-      xpSummaryElement.textContent = `${user.currentLevelXp} XP / ${user.nextLevelXp} XP`;
+      xpSummaryElement.textContent = user.isMaxLevel
+        ? `${user.xp} XP totais | Nivel maximo`
+        : `${user.currentLevelXp} XP / ${user.nextLevelXp} XP`;
+    }
+
+    if (nextLevelHintElement) {
+      nextLevelHintElement.textContent = user.isMaxLevel
+        ? "Novos desafios agora servem para badges, avatar e consistencia."
+        : "Respostas ideais e sequencias perfeitas aceleram a progressao.";
     }
 
     if (progressBarElement) {
@@ -154,9 +226,201 @@
       pendingCountElement.textContent = String(user.pendingChallenges);
     }
 
-    if (profileNickElement) {
-      profileNickElement.textContent = user.usuario || "-";
+    if (badgeCountElement) {
+      badgeCountElement.textContent = String(user.gamification?.totalBadges || 0);
     }
+
+    if (perfectStreakCountElement) {
+      perfectStreakCountElement.textContent = String(user.gamification?.perfectStreak || 0);
+    }
+
+    if (dailyLoginStreakElement) {
+      dailyLoginStreakElement.textContent = String(user.gamification?.dailyLoginStreak || 0);
+    }
+
+    if (idealAnswerCountElement) {
+      idealAnswerCountElement.textContent = String(user.gamification?.idealAnswers || 0);
+    }
+
+    if (userLevelMirrorElement) {
+      userLevelMirrorElement.textContent = user.levelLabel || `Nivel ${user.level}`;
+    }
+  }
+
+  function renderBadgeCatalog(user) {
+    const badgeGrid = document.getElementById("badgeGrid");
+    if (!badgeGrid) {
+      return;
+    }
+
+    const badgeCatalog = Array.isArray(user.badgeCatalog) ? user.badgeCatalog : [];
+
+    if (badgeCatalog.length === 0) {
+      badgeGrid.innerHTML = '<p class="dashboard-empty">Nenhuma badge configurada ainda.</p>';
+      return;
+    }
+
+    badgeGrid.innerHTML = badgeCatalog
+      .map((badge) => {
+        const statusLabel = badge.unlocked ? "Desbloqueada" : "Bloqueada";
+        return `
+          <article class="badge-card ${badge.unlocked ? "unlocked" : "locked"}">
+            <div class="badge-mark">${badge.name.charAt(0)}</div>
+            <div>
+              <h4>${badge.name}</h4>
+              <p>${badge.description}</p>
+              <span class="badge-status">${statusLabel}</span>
+            </div>
+          </article>
+        `;
+      })
+      .join("");
+  }
+
+  function renderCategoryProgress(user) {
+    const container = document.getElementById("categoryProgress");
+    if (!container) {
+      return;
+    }
+
+    const progressList = Array.isArray(user.categoryProgress) ? user.categoryProgress : [];
+
+    container.innerHTML = progressList
+      .map((item) => {
+        const percent = item.total > 0 ? Math.round((item.completed / item.total) * 100) : 0;
+        return `
+          <div class="category-progress-item">
+            <div class="category-progress-header">
+              <strong>${item.categoria}</strong>
+              <span>${item.completed}/${item.total}</span>
+            </div>
+            <div class="progress">
+              <div class="progress-bar" style="width: ${percent}%"></div>
+            </div>
+          </div>
+        `;
+      })
+      .join("");
+  }
+
+  function getAvatarOptions(key) {
+    return dashboardUser?.avatarCatalog?.[key] || [];
+  }
+
+  function populateAvatarSelect(selectId, options, selectedValue) {
+    const select = document.getElementById(selectId);
+    if (!select) {
+      return;
+    }
+
+    select.innerHTML = options
+      .map((option) => {
+        const levelSuffix = option.unlocked ? "" : ` (Nivel ${option.minLevel})`;
+        const disabledAttr = option.unlocked ? "" : "disabled";
+        const selectedAttr = option.id === selectedValue ? "selected" : "";
+        return `<option value="${option.id}" ${disabledAttr} ${selectedAttr}>${option.label}${levelSuffix}</option>`;
+      })
+      .join("");
+  }
+
+  function getColorMeta(colorId) {
+    return getAvatarOptions("cor").find((color) => color.id === colorId) || {
+      value: "#5b6cff",
+      secondary: "#8994ff",
+    };
+  }
+
+  function readAvatarFormConfig() {
+    return {
+      cabelo: document.getElementById("avatarHair")?.value || "short",
+      roupa: document.getElementById("avatarOutfit")?.value || "hoodie",
+      cor: document.getElementById("avatarColor")?.value || "indigo",
+      acessorio: document.getElementById("avatarAccessory")?.value || "none",
+    };
+  }
+
+  function renderAvatarPreview(config) {
+    const preview = document.getElementById("avatarPreview");
+    if (!preview) {
+      return;
+    }
+
+    const colorMeta = getColorMeta(config.cor);
+
+    preview.className = `avatar-preview hair-${config.cabelo} outfit-${config.roupa} accessory-${config.acessorio}`;
+    preview.style.setProperty("--avatar-primary", colorMeta.value || "#5b6cff");
+    preview.style.setProperty("--avatar-secondary", colorMeta.secondary || "#8994ff");
+  }
+
+  function renderAvatarBuilder(user) {
+    const avatarConfig = user.avatarConfig || {
+      cabelo: "short",
+      roupa: "hoodie",
+      cor: "indigo",
+      acessorio: "none",
+    };
+
+    populateAvatarSelect("avatarHair", getAvatarOptions("cabelo"), avatarConfig.cabelo);
+    populateAvatarSelect("avatarOutfit", getAvatarOptions("roupa"), avatarConfig.roupa);
+    populateAvatarSelect("avatarColor", getAvatarOptions("cor"), avatarConfig.cor);
+    populateAvatarSelect("avatarAccessory", getAvatarOptions("acessorio"), avatarConfig.acessorio);
+    renderAvatarPreview(avatarConfig);
+  }
+
+  function bindAvatarControls() {
+    const form = document.getElementById("avatarForm");
+    if (!form || form.dataset.bound === "true") {
+      return;
+    }
+
+    form.dataset.bound = "true";
+    form.addEventListener("submit", handleAvatarSubmit);
+
+    ["avatarHair", "avatarOutfit", "avatarColor", "avatarAccessory"].forEach((fieldId) => {
+      const field = document.getElementById(fieldId);
+      if (!field) {
+        return;
+      }
+
+      field.addEventListener("change", () => {
+        renderAvatarPreview(readAvatarFormConfig());
+      });
+    });
+  }
+
+  async function handleAvatarSubmit(event) {
+    event.preventDefault();
+
+    const button = document.getElementById("avatarSaveBtn");
+    const avatarConfig = readAvatarFormConfig();
+
+    clearFeedback("avatarFeedback");
+    setButtonState(button, true, "Salvando...", "Salvar avatar");
+
+    try {
+      const payload = await window.skillUpApi.updateAvatar(avatarConfig);
+      dashboardUser = payload.user;
+      updateStoredUser(payload.user);
+      renderAvatarBuilder(payload.user);
+      renderProgressSummary(payload.user);
+      renderBadgeCatalog(payload.user);
+      renderCategoryProgress(payload.user);
+      setFeedback("avatarFeedback", payload.message || "Avatar salvo com sucesso.", "success");
+    } catch (error) {
+      setFeedback("avatarFeedback", error.message, "danger");
+    } finally {
+      setButtonState(button, false, "Salvando...", "Salvar avatar");
+    }
+  }
+
+  function renderDashboard(user) {
+    dashboardUser = user;
+    renderRewardBanner(user);
+    renderProgressSummary(user);
+    renderBadgeCatalog(user);
+    renderCategoryProgress(user);
+    renderAvatarBuilder(user);
+    bindAvatarControls();
   }
 
   async function loadDashboard() {
@@ -190,6 +454,7 @@
       window.localStorage.removeItem("userName");
       window.localStorage.removeItem("xp");
       window.localStorage.removeItem("nivel");
+      window.sessionStorage.removeItem(DAILY_REWARD_KEY);
       window.location.href = "login.html";
     }
   }

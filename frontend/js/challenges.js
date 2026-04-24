@@ -170,35 +170,39 @@ function renderResult(result) {
     return;
   }
 
+  const breakdownMarkup = Array.isArray(result.xpBreakdown)
+    ? result.xpBreakdown
+        .map((item) => {
+          const signal = item.xp > 0 ? "+" : "";
+          return `<li><span>${item.label}</span><strong>${signal}${item.xp} XP</strong></li>`;
+        })
+        .join("")
+    : "";
+
+  const badgesMarkup =
+    Array.isArray(result.unlockedBadges) && result.unlockedBadges.length > 0
+      ? `
+        <div class="result-badges">
+          ${result.unlockedBadges
+            .map((badge) => `<span class="badge-pill">${badge.name}</span>`)
+            .join("")}
+        </div>
+      `
+      : "";
+
   feedbackElement.innerHTML = `
     <div class="feedback-box">
-      <p class="feedback-score">Nota: ${result.nota} | XP ganho: ${result.xpGanho}</p>
+      <p class="feedback-score">
+        ${getQualityLabel(result.qualityTier)} | Nota: ${result.nota} | XP ganho: ${result.xpGanho}
+      </p>
       <p>${result.feedback}</p>
+      <p class="feedback-consequence"><strong>Consequencia:</strong> ${result.consequence}</p>
+      ${breakdownMarkup ? `<ul class="result-breakdown">${breakdownMarkup}</ul>` : ""}
+      ${badgesMarkup}
     </div>
   `;
 
   nextButton.classList.remove("d-none");
-}
-
-function buildChallengeDescription(challenge) {
-  const parts = [];
-
-  if (challenge.descricao) {
-    parts.push(challenge.descricao);
-  }
-
-  if (challenge.tipo === "aberto" && Array.isArray(challenge.criteriosAvaliacao)) {
-    const criteria = challenge.criteriosAvaliacao.filter(Boolean);
-    if (criteria.length > 0) {
-      parts.push(`IA avalia: ${criteria.join(", ")}.`);
-    }
-  }
-
-  if (challenge.tipo === "fechado" && challenge.dica) {
-    parts.push(`Dica: ${challenge.dica}`);
-  }
-
-  return parts.join(" ");
 }
 
 function renderError(message) {
@@ -215,6 +219,43 @@ function renderError(message) {
   `;
 }
 
+function buildChallengeDescription(challenge) {
+  const parts = [];
+
+  if (challenge.descricao) {
+    parts.push(challenge.descricao);
+  }
+
+  parts.push(
+    "Recompensas: +100 XP por concluir, +50 XP em resposta ideal e bonus de +30 XP a cada 3 respostas ideais seguidas."
+  );
+
+  if (challenge.tipo === "aberto" && Array.isArray(challenge.criteriosAvaliacao)) {
+    const criteria = challenge.criteriosAvaliacao.filter(Boolean);
+    if (criteria.length > 0) {
+      parts.push(`IA avalia: ${criteria.join(", ")}.`);
+    }
+  }
+
+  if (challenge.tipo === "fechado" && challenge.dica) {
+    parts.push(`Dica: ${challenge.dica}`);
+  }
+
+  return parts.join(" ");
+}
+
+function getQualityLabel(qualityTier) {
+  if (qualityTier === "ideal") {
+    return "Resposta ideal";
+  }
+
+  if (qualityTier === "medium") {
+    return "Boa resposta";
+  }
+
+  return "Resposta em desenvolvimento";
+}
+
 function renderFinishedState() {
   const categoryElement = document.getElementById("categoria");
   const questionElement = document.getElementById("pergunta");
@@ -229,13 +270,14 @@ function renderFinishedState() {
 
   categoryElement.textContent = "Missao concluida";
   questionElement.textContent = "Voce finalizou todos os desafios disponiveis.";
-  descriptionElement.textContent = "Volte ao dashboard para acompanhar seu progresso.";
+  descriptionElement.textContent =
+    "Volte ao dashboard para acompanhar niveis, badges, avatar e a sua evolucao por categoria.";
   answersContainer.innerHTML = "";
 
   if (feedbackElement) {
     feedbackElement.innerHTML = `
       <div class="feedback-box">
-        <p>Novos desafios podem ser adicionados depois sem mudar a estrutura da API.</p>
+        <p>Agora e um bom momento para revisar badges desbloqueadas e personalizar o avatar.</p>
       </div>
     `;
   }

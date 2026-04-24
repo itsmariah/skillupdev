@@ -29,17 +29,32 @@
 
   <section class="dashboard-section">
     <div class="container">
+      <div id="rewardBanner" class="dashboard-banner d-none"></div>
+
       <div class="dashboard-header">
-        <h2>Ola, <span id="userName">Dev</span></h2>
-        <p>Continue evoluindo suas soft skills.</p>
+        <div>
+          <p class="dashboard-kicker">Seu hub gamificado</p>
+          <h2>Ola, <span id="userName">Dev</span></h2>
+          <p id="levelDescription">Continue evoluindo suas soft skills.</p>
+        </div>
+
+        <button class="btn btn-primary dashboard-cta" onclick="window.location.href='challenges.html'">
+          Acessar desafios
+        </button>
       </div>
 
-      <button class="btn btn-primary" onclick="window.location.href='challenges.html'">
-        Acessar desafios
-      </button>
+      <div class="dashboard-card progress-card">
+        <div class="progress-card-header">
+          <div>
+            <p class="progress-label">Nivel atual</p>
+            <h4 id="userLevel">Nivel 1</h4>
+          </div>
 
-      <div class="dashboard-card">
-        <h4 id="userLevel">Nivel 1</h4>
+          <div class="progress-copy">
+            <p id="xpSummary" class="mb-1">0 XP / 250 XP</p>
+            <small id="nextLevelHint">Respostas ideais aceleram sua progressao.</small>
+          </div>
+        </div>
 
         <div class="progress mt-3">
           <div
@@ -52,38 +67,149 @@
             aria-valuenow="0"
           ></div>
         </div>
-
-        <p id="xpSummary" class="mt-2">0 XP / 200 XP</p>
       </div>
 
       <div class="row mt-4 g-4">
-        <div class="col-md-4">
-          <div class="dashboard-box">
-            <h5>Desafios concluidos</h5>
-            <p id="challengeCount">0/0</p>
-            <button class="btn btn-primary" onclick="window.location.href='challenges.html'">
-              Acessar
-            </button>
+        <div class="col-md-6 col-xl-3">
+          <div class="dashboard-box stat-card">
+            <p class="stat-label">Desafios concluidos</p>
+            <h3 id="challengeCount">0/0</h3>
+            <p class="stat-helper">Cada conclusão soma progresso no nivel.</p>
           </div>
         </div>
 
-        <div class="col-md-4">
-          <div class="dashboard-box">
-            <h5>Desafios pendentes</h5>
-            <p id="pendingCount">0</p>
-            <button class="btn btn-primary" onclick="window.location.href='challenges.html'">
-              Ver
-            </button>
+        <div class="col-md-6 col-xl-3">
+          <div class="dashboard-box stat-card">
+            <p class="stat-label">Pendentes</p>
+            <h3 id="pendingCount">0</h3>
+            <p class="stat-helper">Desafios restantes para fechar a trilha.</p>
           </div>
         </div>
 
-        <div class="col-md-4">
-          <div class="dashboard-box">
-            <h5>Perfil</h5>
-            <p>Nickname: <span id="profileNick">-</span></p>
-            <button class="btn btn-primary" onclick="window.location.href='register.html'">
-              Editar depois
-            </button>
+        <div class="col-md-6 col-xl-3">
+          <div class="dashboard-box stat-card">
+            <p class="stat-label">Badges</p>
+            <h3 id="badgeCount">0</h3>
+            <p class="stat-helper">Conquistas desbloqueadas até aqui.</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+          <div class="dashboard-box stat-card">
+            <p class="stat-label">Sequência perfeita</p>
+            <h3 id="perfectStreakCount">0</h3>
+            <p class="stat-helper">A cada 3 respostas ideais, bonus extra.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4 g-4">
+        <div class="col-lg-7">
+          <div class="dashboard-panel">
+            <div class="dashboard-panel-header">
+              <div>
+                <h3>Badges</h3>
+                <p>Suas conquistas aparecem aqui conforme você avanca.</p>
+              </div>
+            </div>
+
+            <div id="badgeGrid" class="badge-grid"></div>
+          </div>
+
+          <div class="dashboard-panel mt-4">
+            <div class="dashboard-panel-header">
+              <div>
+                <h3>Progresso por categoria</h3>
+                <p>Veja em quais soft skills você já tem mais consistência.</p>
+              </div>
+            </div>
+
+            <div id="categoryProgress" class="category-progress"></div>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="dashboard-panel">
+            <div class="dashboard-panel-header">
+              <div>
+                <h3>Avatar</h3>
+                <p>Itens novos são liberados conforme seu nivel sobe.</p>
+              </div>
+            </div>
+
+            <div class="avatar-builder">
+              <div id="avatarPreview" class="avatar-preview hair-short outfit-hoodie accessory-none">
+                <div class="avatar-orbit"></div>
+                <div class="avatar-character">
+                  <div class="avatar-shadow"></div>
+                  <div class="avatar-torso"></div>
+                  <div class="avatar-neck"></div>
+                  <div class="avatar-head"></div>
+                  <div class="avatar-hair"></div>
+                  <div class="avatar-fringe"></div>
+                  <div class="avatar-eye avatar-eye-left"></div>
+                  <div class="avatar-eye avatar-eye-right"></div>
+                  <div class="avatar-mouth"></div>
+                  <div class="avatar-accessory"></div>
+                </div>
+              </div>
+
+              <form id="avatarForm" class="avatar-form">
+                <div class="row g-3">
+                  <div class="col-sm-6">
+                    <label for="avatarHair" class="form-label">Cabelo</label>
+                    <select id="avatarHair" class="form-select"></select>
+                  </div>
+
+                  <div class="col-sm-6">
+                    <label for="avatarOutfit" class="form-label">Roupa</label>
+                    <select id="avatarOutfit" class="form-select"></select>
+                  </div>
+
+                  <div class="col-sm-6">
+                    <label for="avatarColor" class="form-label">Cor</label>
+                    <select id="avatarColor" class="form-select"></select>
+                  </div>
+
+                  <div class="col-sm-6">
+                    <label for="avatarAccessory" class="form-label">Acessorio</label>
+                    <select id="avatarAccessory" class="form-select"></select>
+                  </div>
+                </div>
+
+                <button id="avatarSaveBtn" class="btn btn-primary w-100 mt-3" type="submit">
+                  Salvar avatar
+                </button>
+              </form>
+
+              <div id="avatarFeedback" class="alert d-none mt-3" role="alert"></div>
+            </div>
+          </div>
+
+          <div class="dashboard-panel mt-4">
+            <div class="dashboard-panel-header">
+              <div>
+                <h3>Ritmo</h3>
+                <p>Pequenos sinais para manter consistência na trilha.</p>
+              </div>
+            </div>
+
+            <div class="dashboard-mini-list">
+              <div class="mini-row">
+                <span>Logins diários</span>
+                <strong id="dailyLoginStreakCount">0</strong>
+              </div>
+
+              <div class="mini-row">
+                <span>Respostas ideais</span>
+                <strong id="idealAnswerCount">0</strong>
+              </div>
+
+              <div class="mini-row">
+                <span>Nivel atual</span>
+                <strong id="userLevelMirror">Gamificado</strong>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -12,7 +12,6 @@ const PORT = Number(process.env.PORT) || 3000;
 const FRONTEND_DIR = path.join(__dirname, "..", "frontend");
 const DATA_DIR = path.join(__dirname, "data");
 const DATA_FILE = path.join(DATA_DIR, "db.json");
-const XP_PER_LEVEL = 200;
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const OPEN_CHALLENGE_XP_MULTIPLIER = 1.2;
 
@@ -591,6 +590,110 @@ const CHALLENGES = [
 ];
 
 const VALID_CHALLENGE_IDS = new Set(CHALLENGES.map((challenge) => challenge.id));
+const CHALLENGE_COMPLETION_XP = 100;
+const IDEAL_ANSWER_BONUS_XP = 50;
+const LOW_QUALITY_ADJUSTMENT_XP = -40;
+const DAILY_LOGIN_XP = 10;
+const PERFECT_STREAK_TARGET = 3;
+const PERFECT_STREAK_BONUS_XP = 30;
+const OPEN_CHALLENGE_IDEAL_SCORE = 85;
+const OPEN_CHALLENGE_MEDIUM_SCORE = 60;
+
+const LEVELS = [
+  { level: 1, title: "Trainee Soft Skills", minXp: 0 },
+  { level: 2, title: "Colaborador", minXp: 250 },
+  { level: 3, title: "Profissional Colaborativo", minXp: 550 },
+  { level: 4, title: "Dev Influente", minXp: 950 },
+  { level: 5, title: "Soft Skill Master", minXp: 1400 },
+];
+
+const DEFAULT_AVATAR = {
+  cabelo: "short",
+  roupa: "hoodie",
+  cor: "indigo",
+  acessorio: "none",
+};
+
+const AVATAR_CATALOG = {
+  cabelo: [
+    { id: "short", label: "Curto", minLevel: 1 },
+    { id: "curly", label: "Cacheado", minLevel: 1 },
+    { id: "spiky", label: "Pontudo", minLevel: 2 },
+    { id: "long", label: "Longo", minLevel: 3 },
+    { id: "braids", label: "Trancas", minLevel: 4 },
+  ],
+  roupa: [
+    { id: "hoodie", label: "Moletom", minLevel: 1 },
+    { id: "jacket", label: "Jaqueta", minLevel: 1 },
+    { id: "blazer", label: "Blazer", minLevel: 3 },
+    { id: "cape", label: "Capa tech", minLevel: 5 },
+  ],
+  cor: [
+    { id: "indigo", label: "Indigo", value: "#5b6cff", secondary: "#8994ff", minLevel: 1 },
+    { id: "teal", label: "Teal", value: "#0ea5a1", secondary: "#58d7cf", minLevel: 1 },
+    { id: "sunset", label: "Sunset", value: "#f97316", secondary: "#fdba74", minLevel: 2 },
+    { id: "rose", label: "Rose", value: "#e11d48", secondary: "#fb7185", minLevel: 3 },
+    { id: "gold", label: "Gold", value: "#d4a017", secondary: "#f5d36f", minLevel: 5 },
+  ],
+  acessorio: [
+    { id: "none", label: "Nenhum", minLevel: 1 },
+    { id: "glasses", label: "Oculos", minLevel: 1 },
+    { id: "headset", label: "Headset", minLevel: 2 },
+    { id: "badge", label: "Broche", minLevel: 3 },
+    { id: "crown", label: "Coroa", minLevel: 5 },
+  ],
+};
+
+const BADGE_DEFINITIONS = [
+  {
+    id: "communicator-beginner",
+    name: "Comunicador Iniciante",
+    description: "Complete 3 desafios de Comunicacao.",
+    theme: "communication",
+    predicate(context) {
+      return countAttemptsByCategory(context.attempts, "Comunicacao") >= 3;
+    },
+  },
+  {
+    id: "conflict-mediator",
+    name: "Mediador de Conflitos",
+    description: "Tenha uma resposta ideal no desafio de conflito entre colegas.",
+    theme: "teamwork",
+    predicate(context) {
+      return (
+        hasIdealAttempt(context.attempts, "teamwork-closed-2") ||
+        hasIdealAttempt(context.attempts, "teamwork-open-2")
+      );
+    },
+  },
+  {
+    id: "sprint-master",
+    name: "Mestre da Sprint",
+    description: "Complete todos os desafios de Gestao de Tempo.",
+    theme: "time",
+    predicate(context) {
+      return countAttemptsByCategory(context.attempts, "Gestao de Tempo") >= 6;
+    },
+  },
+  {
+    id: "collaborative-dev",
+    name: "Dev Colaborativo",
+    description: "Complete ao menos 4 desafios de Trabalho em Equipe.",
+    theme: "teamwork",
+    predicate(context) {
+      return countAttemptsByCategory(context.attempts, "Trabalho em Equipe") >= 4;
+    },
+  },
+  {
+    id: "leader-in-formation",
+    name: "Lider em Formacao",
+    description: "Alcance o nivel 3.",
+    theme: "leadership",
+    predicate(context) {
+      return context.level >= 3;
+    },
+  },
+];
 
 const CRITERIA_KEYWORDS = {
   empatia: ["entendo", "compreendo", "desculpe", "ajudar", "obrigado"],
@@ -653,6 +756,162 @@ function createEmptyDatabase() {
   };
 }
 
+function normalizeEmail(email) {
+  return String(email || "").trim().toLowerCase();
+}
+
+function getTodayKey(date = new Date()) {
+  return date.toISOString().slice(0, 10);
+}
+
+function isYesterdayKey(dateKey, todayKey = getTodayKey()) {
+  if (!dateKey) {
+    return false;
+  }
+
+  const today = new Date(`${todayKey}T00:00:00.000Z`);
+  today.setUTCDate(today.getUTCDate() - 1);
+
+  return dateKey === today.toISOString().slice(0, 10);
+}
+
+function getLevelDetails(xp) {
+  const safeXp = Math.max(Number(xp) || 0, 0);
+  let currentLevel = LEVELS[0];
+
+  for (const level of LEVELS) {
+    if (safeXp >= level.minXp) {
+      currentLevel = level;
+    }
+  }
+
+  return currentLevel;
+}
+
+function getNextLevel(level) {
+  return LEVELS.find((item) => item.level === level + 1) || null;
+}
+
+function calculateLevel(xp) {
+  return getLevelDetails(xp).level;
+}
+
+function buildAvatarCatalog(level) {
+  return Object.fromEntries(
+    Object.entries(AVATAR_CATALOG).map(([key, options]) => [
+      key,
+      options.map((option) => ({
+        ...option,
+        unlocked: option.minLevel <= level,
+      })),
+    ])
+  );
+}
+
+function getFallbackAvatarOption(category, level) {
+  const options = AVATAR_CATALOG[category] || [];
+  return options.find((option) => option.minLevel <= level) || options[0];
+}
+
+function normalizeAvatarSelection(category, selectedId, level) {
+  const options = AVATAR_CATALOG[category] || [];
+  const selected = options.find((option) => option.id === selectedId && option.minLevel <= level);
+
+  if (selected) {
+    return selected.id;
+  }
+
+  return getFallbackAvatarOption(category, level)?.id || "";
+}
+
+function normalizeAvatarConfig(config, xp) {
+  const level = getLevelDetails(xp).level;
+  const source = config || DEFAULT_AVATAR;
+
+  return {
+    cabelo: normalizeAvatarSelection("cabelo", source.cabelo, level),
+    roupa: normalizeAvatarSelection("roupa", source.roupa, level),
+    cor: normalizeAvatarSelection("cor", source.cor, level),
+    acessorio: normalizeAvatarSelection("acessorio", source.acessorio, level),
+  };
+}
+
+function createDefaultGamificationState() {
+  return {
+    perfectStreak: 0,
+    dailyLoginStreak: 0,
+    lastDailyLoginDate: null,
+    idealAnswers: 0,
+    lastRewardAt: null,
+  };
+}
+
+function hydrateUser(user) {
+  const xp = Math.max(Number(user?.xp) || 0, 0);
+  const level = calculateLevel(xp);
+  const nome = String(user?.nome || user?.usuario || "Dev").trim();
+
+  return {
+    ...user,
+    nome,
+    email: normalizeEmail(user?.email),
+    usuario: user?.usuario || null,
+    xp,
+    nivel: level,
+    badges: Array.isArray(user?.badges) ? user.badges.filter((badge) => badge?.id) : [],
+    avatarConfig: normalizeAvatarConfig(user?.avatarConfig, xp),
+    gamification: {
+      ...createDefaultGamificationState(),
+      ...(user?.gamification || {}),
+    },
+  };
+}
+
+function deriveQualityTier(score, challengeType = "aberto") {
+  const safeScore = Number(score) || 0;
+
+  if (challengeType === "fechado") {
+    if (safeScore >= 85) {
+      return "ideal";
+    }
+
+    if (safeScore >= 40) {
+      return "medium";
+    }
+
+    return "low";
+  }
+
+  if (safeScore >= OPEN_CHALLENGE_IDEAL_SCORE) {
+    return "ideal";
+  }
+
+  if (safeScore >= OPEN_CHALLENGE_MEDIUM_SCORE) {
+    return "medium";
+  }
+
+  return "low";
+}
+
+function hydrateAttempt(attempt) {
+  const challenge = getChallengeById(attempt?.challengeId);
+  const score = Number(attempt?.score) || 0;
+  const qualityTier =
+    attempt?.qualityTier || deriveQualityTier(score, challenge?.tipo || attempt?.challengeType);
+
+  return {
+    ...attempt,
+    score,
+    xpAwarded: Number(attempt?.xpAwarded) || 0,
+    xpBreakdown: Array.isArray(attempt?.xpBreakdown) ? attempt.xpBreakdown : [],
+    category: attempt?.category || challenge?.categoria || "",
+    qualityTier,
+    wasIdeal:
+      typeof attempt?.wasIdeal === "boolean" ? attempt.wasIdeal : qualityTier === "ideal",
+    unlockedBadges: Array.isArray(attempt?.unlockedBadges) ? attempt.unlockedBadges : [],
+  };
+}
+
 async function readDatabase() {
   ensureDataFile();
 
@@ -664,9 +923,11 @@ async function readDatabase() {
 
     const parsed = JSON.parse(raw);
     return {
-      users: Array.isArray(parsed.users) ? parsed.users : [],
+      users: Array.isArray(parsed.users) ? parsed.users.map(hydrateUser) : [],
       sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
-      challengeAttempts: Array.isArray(parsed.challengeAttempts) ? parsed.challengeAttempts : [],
+      challengeAttempts: Array.isArray(parsed.challengeAttempts)
+        ? parsed.challengeAttempts.map(hydrateAttempt)
+        : [],
     };
   } catch (error) {
     console.error("Erro ao ler banco local:", error);
@@ -682,10 +943,6 @@ async function writeDatabase(data) {
   );
 
   return writeQueue;
-}
-
-function normalizeEmail(email) {
-  return String(email || "").trim().toLowerCase();
 }
 
 function createPasswordHash(password) {
@@ -713,28 +970,121 @@ function createToken() {
   return crypto.randomBytes(32).toString("hex");
 }
 
-function calculateLevel(xp) {
-  return Math.floor(xp / XP_PER_LEVEL) + 1;
+function getUserAttempts(userId, database) {
+  return database.challengeAttempts.filter(
+    (attempt) => attempt.userId === userId && VALID_CHALLENGE_IDS.has(attempt.challengeId)
+  );
+}
+
+function countAttemptsByCategory(attempts, category) {
+  return attempts.filter((attempt) => attempt.category === category).length;
+}
+
+function hasIdealAttempt(attempts, challengeId) {
+  return attempts.some((attempt) => attempt.challengeId === challengeId && attempt.wasIdeal);
 }
 
 function getProgress(xp) {
-  const safeXp = Number(xp) || 0;
-  const currentLevelXp = safeXp % XP_PER_LEVEL;
+  const safeXp = Math.max(Number(xp) || 0, 0);
+  const currentLevel = getLevelDetails(safeXp);
+  const nextLevel = getNextLevel(currentLevel.level);
+
+  if (!nextLevel) {
+    return {
+      xp: safeXp,
+      level: currentLevel.level,
+      levelLabel: currentLevel.title,
+      currentLevelXp: safeXp - currentLevel.minXp,
+      nextLevelXp: safeXp,
+      xpToNextLevel: 0,
+      progressPercent: 100,
+      isMaxLevel: true,
+    };
+  }
+
+  const levelSpan = nextLevel.minXp - currentLevel.minXp;
+  const currentLevelXp = safeXp - currentLevel.minXp;
 
   return {
     xp: safeXp,
-    level: calculateLevel(safeXp),
+    level: currentLevel.level,
+    levelLabel: currentLevel.title,
     currentLevelXp,
-    nextLevelXp: XP_PER_LEVEL,
-    progressPercent: Math.round((currentLevelXp / XP_PER_LEVEL) * 100),
+    nextLevelXp: levelSpan,
+    xpToNextLevel: Math.max(nextLevel.minXp - safeXp, 0),
+    progressPercent: Math.min(100, Math.round((currentLevelXp / levelSpan) * 100)),
+    isMaxLevel: false,
   };
+}
+
+function buildBadgeCatalog(user, database) {
+  const attempts = getUserAttempts(user.id, database);
+  const level = getLevelDetails(user.xp).level;
+  const savedBadges = new Map((user.badges || []).map((badge) => [badge.id, badge]));
+  const context = { attempts, level };
+
+  return BADGE_DEFINITIONS.map((definition) => {
+    const savedBadge = savedBadges.get(definition.id);
+    const unlocked = Boolean(savedBadge) || definition.predicate(context);
+
+    return {
+      id: definition.id,
+      name: definition.name,
+      description: definition.description,
+      theme: definition.theme,
+      unlocked,
+      earnedAt: savedBadge?.earnedAt || null,
+    };
+  });
+}
+
+function syncBadges(user, database) {
+  const attempts = getUserAttempts(user.id, database);
+  const level = getLevelDetails(user.xp).level;
+  const existingIds = new Set((user.badges || []).map((badge) => badge.id));
+  const unlockedNow = [];
+
+  for (const definition of BADGE_DEFINITIONS) {
+    if (definition.predicate({ attempts, level }) && !existingIds.has(definition.id)) {
+      const badge = {
+        id: definition.id,
+        earnedAt: new Date().toISOString(),
+      };
+
+      user.badges.push(badge);
+      existingIds.add(definition.id);
+      unlockedNow.push({
+        id: definition.id,
+        name: definition.name,
+        description: definition.description,
+        theme: definition.theme,
+        unlocked: true,
+        earnedAt: badge.earnedAt,
+      });
+    }
+  }
+
+  return unlockedNow;
+}
+
+function buildCategoryProgress(attempts) {
+  return Array.from(new Set(CHALLENGES.map((challenge) => challenge.categoria))).map((categoria) => {
+    const total = CHALLENGES.filter((challenge) => challenge.categoria === categoria).length;
+    const completed = countAttemptsByCategory(attempts, categoria);
+
+    return {
+      categoria,
+      completed,
+      total,
+    };
+  });
 }
 
 function buildUserResponse(user, database) {
   const progress = getProgress(user.xp);
-  const completedChallenges = database.challengeAttempts.filter(
-    (attempt) => attempt.userId === user.id && VALID_CHALLENGE_IDS.has(attempt.challengeId)
-  ).length;
+  const attempts = getUserAttempts(user.id, database);
+  const badgeCatalog = buildBadgeCatalog(user, database);
+  const unlockedBadges = badgeCatalog.filter((badge) => badge.unlocked);
 
   return {
     id: user.id,
@@ -742,9 +1092,21 @@ function buildUserResponse(user, database) {
     usuario: user.usuario,
     email: user.email,
     ...progress,
-    completedChallenges,
+    completedChallenges: attempts.length,
     totalChallenges: CHALLENGES.length,
-    pendingChallenges: Math.max(CHALLENGES.length - completedChallenges, 0),
+    pendingChallenges: Math.max(CHALLENGES.length - attempts.length, 0),
+    categoryProgress: buildCategoryProgress(attempts),
+    badges: unlockedBadges,
+    badgeCatalog,
+    avatarConfig: normalizeAvatarConfig(user.avatarConfig, user.xp),
+    avatarCatalog: buildAvatarCatalog(progress.level),
+    gamification: {
+      perfectStreak: Number(user.gamification?.perfectStreak) || 0,
+      dailyLoginStreak: Number(user.gamification?.dailyLoginStreak) || 0,
+      idealAnswers: Number(user.gamification?.idealAnswers) || 0,
+      dailyLoginAwardedToday: user.gamification?.lastDailyLoginDate === getTodayKey(),
+      totalBadges: unlockedBadges.length,
+    },
   };
 }
 
@@ -758,6 +1120,11 @@ function buildPublicChallenge(challenge, completedAttempt) {
     descricao: challenge.descricao,
     dica: challenge.dica || null,
     criteriosAvaliacao: challenge.criteriosAvaliacao || [],
+    recompensas: {
+      conclusionXp: CHALLENGE_COMPLETION_XP,
+      idealBonusXp: IDEAL_ANSWER_BONUS_XP,
+      perfectStreakBonusXp: PERFECT_STREAK_BONUS_XP,
+    },
     respostas:
       challenge.tipo === "fechado"
         ? challenge.respostas.map((resposta) => ({
@@ -771,6 +1138,7 @@ function buildPublicChallenge(challenge, completedAttempt) {
           nota: completedAttempt.score,
           feedback: completedAttempt.feedback,
           xpGanho: completedAttempt.xpAwarded,
+          qualityTier: completedAttempt.qualityTier,
           respondidoEm: completedAttempt.createdAt,
         }
       : null,
@@ -823,10 +1191,10 @@ function buildHeuristicFeedback(answer, criteria = []) {
   let feedback =
     "Sua resposta esta no caminho certo, mas ainda pode ganhar mais estrutura e objetividade.";
 
-  if (finalScore >= 85) {
+  if (finalScore >= OPEN_CHALLENGE_IDEAL_SCORE) {
     feedback =
       "Boa resposta. Voce demonstrou maturidade, contexto e um encaminhamento claro para a situacao.";
-  } else if (finalScore >= 65) {
+  } else if (finalScore >= OPEN_CHALLENGE_MEDIUM_SCORE) {
     feedback =
       "A resposta mostra boa intencao e uma linha de raciocinio util, mas ainda pode ficar mais forte.";
   }
@@ -865,9 +1233,10 @@ function extractJsonObject(text) {
 }
 
 async function evaluateOpenChallengeWithAI({ resposta, challenge }) {
-  const criteria = Array.isArray(challenge.criteriosAvaliacao) && challenge.criteriosAvaliacao.length
-    ? challenge.criteriosAvaliacao
-    : ["clareza", "empatia", "adequacao ao cenario"];
+  const criteria =
+    Array.isArray(challenge.criteriosAvaliacao) && challenge.criteriosAvaliacao.length
+      ? challenge.criteriosAvaliacao
+      : ["clareza", "empatia", "adequacao ao cenario"];
 
   if (!process.env.OPENAI_API_KEY) {
     return buildHeuristicFeedback(resposta, criteria);
@@ -925,6 +1294,82 @@ async function evaluateOpenChallengeWithAI({ resposta, challenge }) {
   }
 }
 
+function applyDailyLoginReward(user) {
+  const todayKey = getTodayKey();
+
+  if (user.gamification.lastDailyLoginDate === todayKey) {
+    return null;
+  }
+
+  user.xp += DAILY_LOGIN_XP;
+  user.nivel = calculateLevel(user.xp);
+  user.avatarConfig = normalizeAvatarConfig(user.avatarConfig, user.xp);
+  user.gamification.dailyLoginStreak = isYesterdayKey(user.gamification.lastDailyLoginDate, todayKey)
+    ? (Number(user.gamification.dailyLoginStreak) || 0) + 1
+    : 1;
+  user.gamification.lastDailyLoginDate = todayKey;
+  user.gamification.lastRewardAt = new Date().toISOString();
+
+  return {
+    label: "Login diario",
+    xp: DAILY_LOGIN_XP,
+  };
+}
+
+function buildChallengeConsequence(qualityTier) {
+  if (qualityTier === "ideal") {
+    return "Sua decisao tende a aumentar a confianca, reduzir atrito e melhorar o resultado do cenario.";
+  }
+
+  if (qualityTier === "medium") {
+    return "Sua escolha pode funcionar parcialmente, mas ainda deixa espaco para ruido, retrabalho ou tensao.";
+  }
+
+  return "Sua resposta tende a ampliar o problema ou reduzir a confianca das pessoas envolvidas.";
+}
+
+function buildXpBreakdown(qualityTier, streakBonusXp) {
+  const qualityAdjustmentXp =
+    qualityTier === "ideal" ? IDEAL_ANSWER_BONUS_XP : qualityTier === "low" ? LOW_QUALITY_ADJUSTMENT_XP : 0;
+
+  const breakdown = [
+    { label: "Desafio concluido", xp: CHALLENGE_COMPLETION_XP },
+    { label: "Qualidade da resposta", xp: qualityAdjustmentXp },
+  ];
+
+  if (streakBonusXp > 0) {
+    breakdown.push({
+      label: `Sequencia perfeita x${PERFECT_STREAK_TARGET}`,
+      xp: streakBonusXp,
+    });
+  }
+
+  return breakdown;
+}
+
+function buildChallengeResult({ challenge, score, feedback, previousStreak }) {
+  const qualityTier = deriveQualityTier(score, challenge.tipo);
+  const nextPerfectStreak = qualityTier === "ideal" ? previousStreak + 1 : 0;
+  const streakBonusXp =
+    nextPerfectStreak > 0 && nextPerfectStreak % PERFECT_STREAK_TARGET === 0
+      ? PERFECT_STREAK_BONUS_XP
+      : 0;
+  const xpBreakdown = buildXpBreakdown(qualityTier, streakBonusXp);
+  const xpGanho = xpBreakdown.reduce((total, item) => total + item.xp, 0);
+
+  return {
+    challengeId: challenge.id,
+    qualityTier,
+    wasIdeal: qualityTier === "ideal",
+    feedback,
+    nota: score,
+    consequence: buildChallengeConsequence(qualityTier),
+    xpBreakdown,
+    xpGanho,
+    perfectStreak: nextPerfectStreak,
+  };
+}
+
 async function authenticateRequest(req, res, next) {
   const authorization = String(req.headers.authorization || "");
 
@@ -963,12 +1408,11 @@ app.get("/api/health", (_req, res) => {
 
 app.post("/api/auth/register", async (req, res) => {
   const nome = String(req.body.nome || "").trim();
-  const usuario = String(req.body.usuario || "").trim();
   const email = normalizeEmail(req.body.email);
   const senha = String(req.body.senha || "");
 
-  if (!nome || !usuario || !email || !senha) {
-    return res.status(400).json({ message: "Preencha nome, usuario, email e senha." });
+  if (!nome || !email || !senha) {
+    return res.status(400).json({ message: "Preencha nome, email e senha." });
   }
 
   if (senha.length < 6) {
@@ -977,28 +1421,26 @@ app.post("/api/auth/register", async (req, res) => {
 
   const database = await readDatabase();
   const emailExists = database.users.some((item) => item.email === email);
-  const usernameExists = database.users.some(
-    (item) => item.usuario.toLowerCase() === usuario.toLowerCase()
-  );
 
   if (emailExists) {
     return res.status(409).json({ message: "Ja existe uma conta com este email." });
   }
 
-  if (usernameExists) {
-    return res.status(409).json({ message: "Este nickname ja esta em uso." });
-  }
-
-  const user = {
+  const user = hydrateUser({
     id: crypto.randomUUID(),
     nome,
-    usuario,
     email,
     passwordHash: createPasswordHash(senha),
     xp: 0,
     nivel: 1,
+    badges: [],
+    avatarConfig: DEFAULT_AVATAR,
+    gamification: createDefaultGamificationState(),
     createdAt: new Date().toISOString(),
-  };
+  });
+
+  const dailyLoginReward = applyDailyLoginReward(user);
+  syncBadges(user, database);
 
   const token = createToken();
 
@@ -1014,6 +1456,7 @@ app.post("/api/auth/register", async (req, res) => {
   return res.status(201).json({
     message: "Conta criada com sucesso.",
     token,
+    dailyLoginReward,
     user: buildUserResponse(user, database),
   });
 });
@@ -1035,6 +1478,9 @@ app.post("/api/auth/login", async (req, res) => {
 
   database.sessions = database.sessions.filter((item) => item.userId !== user.id);
 
+  const dailyLoginReward = applyDailyLoginReward(user);
+  syncBadges(user, database);
+
   const token = createToken();
   database.sessions.push({
     token,
@@ -1047,6 +1493,7 @@ app.post("/api/auth/login", async (req, res) => {
   return res.json({
     message: "Login realizado com sucesso.",
     token,
+    dailyLoginReward,
     user: buildUserResponse(user, database),
   });
 });
@@ -1064,10 +1511,18 @@ app.get("/api/me", authenticateRequest, async (req, res) => {
   });
 });
 
+app.patch("/api/me/avatar", authenticateRequest, async (req, res) => {
+  req.user.avatarConfig = normalizeAvatarConfig(req.body.avatarConfig || req.body, req.user.xp);
+  await writeDatabase(req.database);
+
+  res.json({
+    message: "Avatar salvo com sucesso.",
+    user: buildUserResponse(req.user, req.database),
+  });
+});
+
 app.get("/api/challenges", authenticateRequest, async (req, res) => {
-  const userAttempts = req.database.challengeAttempts.filter(
-    (attempt) => attempt.userId === req.user.id && VALID_CHALLENGE_IDS.has(attempt.challengeId)
-  );
+  const userAttempts = getUserAttempts(req.user.id, req.database);
 
   res.json({
     challenges: CHALLENGES.map((challenge) =>
@@ -1096,14 +1551,19 @@ app.post("/api/challenges/:challengeId/submit", authenticateRequest, async (req,
       result: {
         nota: existingAttempt.score,
         feedback: existingAttempt.feedback,
+        consequence: existingAttempt.consequence,
         xpGanho: existingAttempt.xpAwarded,
+        qualityTier: existingAttempt.qualityTier,
+        xpBreakdown: existingAttempt.xpBreakdown,
+        unlockedBadges: existingAttempt.unlockedBadges,
       },
       user: buildUserResponse(req.user, req.database),
     });
   }
 
-  let result;
-  let answer;
+  let answer = "";
+  let score = 0;
+  let feedback = "";
 
   if (challenge.tipo === "fechado") {
     const respostaId = String(req.body.respostaId || "").trim();
@@ -1114,13 +1574,8 @@ app.post("/api/challenges/:challengeId/submit", authenticateRequest, async (req,
     }
 
     answer = resposta.texto;
-    result = {
-      nota: resposta.xp,
-      feedback: challenge.dica
-        ? `${resposta.feedback} Dica: ${challenge.dica}`
-        : resposta.feedback,
-      xpGanho: resposta.xp,
-    };
+    score = resposta.xp;
+    feedback = challenge.dica ? `${resposta.feedback} Dica: ${challenge.dica}` : resposta.feedback;
   } else {
     const texto = String(req.body.texto || "").trim();
 
@@ -1133,38 +1588,65 @@ app.post("/api/challenges/:challengeId/submit", authenticateRequest, async (req,
       resposta: texto,
       challenge,
     });
-    const xpGanho = Math.min(
-      120,
-      Math.max(0, Math.round(evaluation.nota * (challenge.xpMultiplier || 1)))
-    );
 
-    result = {
-      nota: evaluation.nota,
-      feedback: evaluation.feedback,
-      xpGanho,
-    };
+    score = evaluation.nota;
+    feedback = evaluation.feedback;
   }
 
-  req.user.xp = (Number(req.user.xp) || 0) + result.xpGanho;
-  req.user.nivel = calculateLevel(req.user.xp);
+  const result = buildChallengeResult({
+    challenge,
+    score,
+    feedback,
+    previousStreak: Number(req.user.gamification?.perfectStreak) || 0,
+  });
 
-  req.database.challengeAttempts.push({
+  req.user.xp = Math.max(0, Number(req.user.xp) + result.xpGanho);
+  req.user.nivel = calculateLevel(req.user.xp);
+  req.user.avatarConfig = normalizeAvatarConfig(req.user.avatarConfig, req.user.xp);
+  req.user.gamification.perfectStreak = result.perfectStreak;
+
+  if (result.wasIdeal) {
+    req.user.gamification.idealAnswers = (Number(req.user.gamification.idealAnswers) || 0) + 1;
+  }
+
+  const attemptRecord = {
     id: crypto.randomUUID(),
     userId: req.user.id,
     challengeId: challenge.id,
     challengeType: challenge.tipo,
+    category: challenge.categoria,
     answer,
     feedback: result.feedback,
+    consequence: result.consequence,
     score: result.nota,
+    qualityTier: result.qualityTier,
+    wasIdeal: result.wasIdeal,
     xpAwarded: result.xpGanho,
+    xpBreakdown: result.xpBreakdown,
+    unlockedBadges: [],
     createdAt: new Date().toISOString(),
-  });
+  };
+
+  req.database.challengeAttempts.push(attemptRecord);
+
+  const unlockedBadges = syncBadges(req.user, req.database);
+  attemptRecord.unlockedBadges = unlockedBadges;
 
   await writeDatabase(req.database);
 
   return res.json({
     message: "Desafio avaliado com sucesso.",
-    result,
+    result: {
+      nota: result.nota,
+      feedback: result.feedback,
+      consequence: result.consequence,
+      xpGanho: result.xpGanho,
+      qualityTier: result.qualityTier,
+      wasIdeal: result.wasIdeal,
+      perfectStreak: result.perfectStreak,
+      xpBreakdown: result.xpBreakdown,
+      unlockedBadges,
+    },
     user: buildUserResponse(req.user, req.database),
   });
 });

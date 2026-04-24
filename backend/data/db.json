@@ -6,16 +6,43 @@
       "usuario": "mad",
       "email": "mariamariahqfs@gmail.com",
       "passwordHash": "3d45646b9b7cd4439d13263c7e9b8366:50bafbb9f906e9addc2b1dd245c41855b7b20c56d7cd3e61cc9285fb81709edea4ab1f57b4ee8edbbdc9825a0e4976db336dc89506ae4c3ae75947628e52bbd1",
-      "xp": 270,
-      "nivel": 2,
-      "createdAt": "2026-04-23T23:33:48.838Z"
+      "xp": 1540,
+      "nivel": 5,
+      "createdAt": "2026-04-23T23:33:48.838Z",
+      "badges": [
+        {
+          "id": "leader-in-formation",
+          "earnedAt": "2026-04-24T00:58:04.219Z"
+        },
+        {
+          "id": "communicator-beginner",
+          "earnedAt": "2026-04-24T00:58:11.233Z"
+        },
+        {
+          "id": "conflict-mediator",
+          "earnedAt": "2026-04-24T00:58:57.048Z"
+        }
+      ],
+      "avatarConfig": {
+        "cabelo": "short",
+        "roupa": "jacket",
+        "cor": "rose",
+        "acessorio": "glasses"
+      },
+      "gamification": {
+        "perfectStreak": 8,
+        "dailyLoginStreak": 1,
+        "lastDailyLoginDate": "2026-04-24",
+        "idealAnswers": 8,
+        "lastRewardAt": "2026-04-24T00:57:17.217Z"
+      }
     }
   ],
   "sessions": [
     {
-      "token": "1b70151cc3775a1cbd55def3e47b4340e799c8f483c11252367d8a46b667cf5b",
+      "token": "922862be0de646d9644f7d3eefb6f7c933fa70d51a3631fa85961de8db33e7f3",
       "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
-      "createdAt": "2026-04-23T23:46:55.073Z"
+      "createdAt": "2026-04-24T00:57:17.217Z"
     }
   ],
   "challengeAttempts": [
@@ -28,7 +55,12 @@
       "feedback": "Boa resposta. Ela demonstra empatia, calma e senso de responsabilidade.",
       "score": 100,
       "xpAwarded": 100,
-      "createdAt": "2026-04-23T23:34:11.322Z"
+      "createdAt": "2026-04-23T23:34:11.322Z",
+      "xpBreakdown": [],
+      "category": "",
+      "qualityTier": "ideal",
+      "wasIdeal": true,
+      "unlockedBadges": []
     },
     {
       "id": "07d73671-ddf8-4f62-ac65-13d80249e405",
@@ -39,7 +71,12 @@
       "feedback": "A resposta demonstra boa intencao. Para ficar mais forte, deixe o proximo passo mais explicito.",
       "score": 70,
       "xpAwarded": 70,
-      "createdAt": "2026-04-23T23:34:41.286Z"
+      "createdAt": "2026-04-23T23:34:41.286Z",
+      "xpBreakdown": [],
+      "category": "",
+      "qualityTier": "medium",
+      "wasIdeal": false,
+      "unlockedBadges": []
     },
     {
       "id": "bf2de664-fc32-4708-bbc9-333ac5f07a5e",
@@ -50,7 +87,255 @@
       "feedback": "Boa escolha. A resposta equilibra responsabilidade, respeito e colaboracao.",
       "score": 100,
       "xpAwarded": 100,
-      "createdAt": "2026-04-23T23:35:10.653Z"
+      "createdAt": "2026-04-23T23:35:10.653Z",
+      "xpBreakdown": [],
+      "category": "",
+      "qualityTier": "ideal",
+      "wasIdeal": true,
+      "unlockedBadges": []
+    },
+    {
+      "id": "53e9dac2-9db5-4b94-8ad9-e965a10bb2cf",
+      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "challengeId": "communication-closed-1",
+      "challengeType": "fechado",
+      "category": "Comunicacao",
+      "answer": "Entendo sua frustracao. Vamos verificar e te atualizar.",
+      "feedback": "Boa escolha. Voce acolhe a frustracao e informa o proximo passo com clareza. Dica: Priorize cordialidade e transparencia. Comunicacao tecnica sem empatia nao resolve conflito.",
+      "consequence": "Sua decisao tende a aumentar a confianca, reduzir atrito e melhorar o resultado do cenario.",
+      "score": 100,
+      "qualityTier": "ideal",
+      "wasIdeal": true,
+      "xpAwarded": 150,
+      "xpBreakdown": [
+        {
+          "label": "Desafio concluido",
+          "xp": 100
+        },
+        {
+          "label": "Qualidade da resposta",
+          "xp": 50
+        }
+      ],
+      "unlockedBadges": [],
+      "createdAt": "2026-04-24T00:57:49.901Z"
+    },
+    {
+      "id": "13ad0a1d-5298-4074-94c2-faf2811c4fda",
+      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "challengeId": "communication-closed-2",
+      "challengeType": "fechado",
+      "category": "Comunicacao",
+      "answer": "Usar uma analogia simples e explicar o impacto do adiamento.",
+      "feedback": "Boa escolha. Voce traduz o problema sem perder objetividade nem contexto. Dica: Traduzir complexidade tecnica para linguagem simples e uma habilidade essencial para dev senior.",
+      "consequence": "Sua decisao tende a aumentar a confianca, reduzir atrito e melhorar o resultado do cenario.",
+      "score": 100,
+      "qualityTier": "ideal",
+      "wasIdeal": true,
+      "xpAwarded": 150,
+      "xpBreakdown": [
+        {
+          "label": "Desafio concluido",
+          "xp": 100
+        },
+        {
+          "label": "Qualidade da resposta",
+          "xp": 50
+        }
+      ],
+      "unlockedBadges": [
+        {
+          "id": "leader-in-formation",
+          "name": "Lider em Formacao",
+          "description": "Alcance o nivel 3.",
+          "theme": "leadership",
+          "unlocked": true,
+          "earnedAt": "2026-04-24T00:58:04.219Z"
+        }
+      ],
+      "createdAt": "2026-04-24T00:58:04.219Z"
+    },
+    {
+      "id": "aef251b5-adcf-464b-8ca2-861592306536",
+      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "challengeId": "communication-closed-3",
+      "challengeType": "fechado",
+      "category": "Comunicacao",
+      "answer": "Conversar em privado, mostrar exemplos e sugerir melhorias.",
+      "feedback": "Boa escolha. A mensagem fica clara, respeitosa e orientada a melhoria real. Dica: Feedback construtivo combina especificidade com respeito, sem soar rude ou humilhante.",
+      "consequence": "Sua decisao tende a aumentar a confianca, reduzir atrito e melhorar o resultado do cenario.",
+      "score": 100,
+      "qualityTier": "ideal",
+      "wasIdeal": true,
+      "xpAwarded": 180,
+      "xpBreakdown": [
+        {
+          "label": "Desafio concluido",
+          "xp": 100
+        },
+        {
+          "label": "Qualidade da resposta",
+          "xp": 50
+        },
+        {
+          "label": "Sequencia perfeita x3",
+          "xp": 30
+        }
+      ],
+      "unlockedBadges": [
+        {
+          "id": "communicator-beginner",
+          "name": "Comunicador Iniciante",
+          "description": "Complete 3 desafios de Comunicacao.",
+          "theme": "communication",
+          "unlocked": true,
+          "earnedAt": "2026-04-24T00:58:11.233Z"
+        }
+      ],
+      "createdAt": "2026-04-24T00:58:11.233Z"
+    },
+    {
+      "id": "3905da9f-4e3e-4701-a6a8-cc26b0fea2eb",
+      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "challengeId": "teamwork-closed-1",
+      "challengeType": "fechado",
+      "category": "Trabalho em Equipe",
+      "answer": "Reunir o time, priorizar junto e delegar com clareza.",
+      "feedback": "Boa escolha. Essa postura fortalece alinhamento, foco e responsabilidade compartilhada. Dica: Colaboracao melhora a qualidade da decisao e aumenta o comprometimento do time.",
+      "consequence": "Sua decisao tende a aumentar a confianca, reduzir atrito e melhorar o resultado do cenario.",
+      "score": 100,
+      "qualityTier": "ideal",
+      "wasIdeal": true,
+      "xpAwarded": 150,
+      "xpBreakdown": [
+        {
+          "label": "Desafio concluido",
+          "xp": 100
+        },
+        {
+          "label": "Qualidade da resposta",
+          "xp": 50
+        }
+      ],
+      "unlockedBadges": [],
+      "createdAt": "2026-04-24T00:58:44.745Z"
+    },
+    {
+      "id": "e04597a7-cc08-476c-9c6f-f162b36a7715",
+      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "challengeId": "teamwork-closed-2",
+      "challengeType": "fechado",
+      "category": "Trabalho em Equipe",
+      "answer": "Mediar a conversa e buscar criterios tecnicos em comum.",
+      "feedback": "Boa escolha. Voce ajuda o time a sair da disputa e voltar para a analise do problema. Dica: Mediacao vale mais do que polarizacao quando o objetivo e destravar o time.",
+      "consequence": "Sua decisao tende a aumentar a confianca, reduzir atrito e melhorar o resultado do cenario.",
+      "score": 100,
+      "qualityTier": "ideal",
+      "wasIdeal": true,
+      "xpAwarded": 150,
+      "xpBreakdown": [
+        {
+          "label": "Desafio concluido",
+          "xp": 100
+        },
+        {
+          "label": "Qualidade da resposta",
+          "xp": 50
+        }
+      ],
+      "unlockedBadges": [
+        {
+          "id": "conflict-mediator",
+          "name": "Mediador de Conflitos",
+          "description": "Tenha uma resposta ideal no desafio de conflito entre colegas.",
+          "theme": "teamwork",
+          "unlocked": true,
+          "earnedAt": "2026-04-24T00:58:57.048Z"
+        }
+      ],
+      "createdAt": "2026-04-24T00:58:57.048Z"
+    },
+    {
+      "id": "8735279d-04a1-488a-a0b7-c82f879dc3c9",
+      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "challengeId": "teamwork-closed-3",
+      "challengeType": "fechado",
+      "category": "Trabalho em Equipe",
+      "answer": "Analisar pros e contras juntos antes de decidir.",
+      "feedback": "Boa escolha. O time decide com base em contexto, trade-offs e entendimento comum. Dica: Decisao tecnica precisa de criterio. Pressa sozinha nao substitui analise.",
+      "consequence": "Sua decisao tende a aumentar a confianca, reduzir atrito e melhorar o resultado do cenario.",
+      "score": 100,
+      "qualityTier": "ideal",
+      "wasIdeal": true,
+      "xpAwarded": 180,
+      "xpBreakdown": [
+        {
+          "label": "Desafio concluido",
+          "xp": 100
+        },
+        {
+          "label": "Qualidade da resposta",
+          "xp": 50
+        },
+        {
+          "label": "Sequencia perfeita x3",
+          "xp": 30
+        }
+      ],
+      "unlockedBadges": [],
+      "createdAt": "2026-04-24T00:59:11.805Z"
+    },
+    {
+      "id": "d1834da6-13d1-4a35-997b-a2e4ab91757b",
+      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "challengeId": "problem-solving-closed-1",
+      "challengeType": "fechado",
+      "category": "Resolucao de Problemas",
+      "answer": "Diagnosticar, isolar o problema e agir com base no que foi observado.",
+      "feedback": "Boa escolha. Essa abordagem reduz risco e aumenta a chance de resolver com assertividade. Dica: Em incidentes, metodologia vem antes do impulso. Diagnosticar bem reduz erro na correcao.",
+      "consequence": "Sua decisao tende a aumentar a confianca, reduzir atrito e melhorar o resultado do cenario.",
+      "score": 100,
+      "qualityTier": "ideal",
+      "wasIdeal": true,
+      "xpAwarded": 150,
+      "xpBreakdown": [
+        {
+          "label": "Desafio concluido",
+          "xp": 100
+        },
+        {
+          "label": "Qualidade da resposta",
+          "xp": 50
+        }
+      ],
+      "unlockedBadges": [],
+      "createdAt": "2026-04-24T01:01:24.239Z"
+    },
+    {
+      "id": "ca668084-9fd0-43e9-993f-2246d3cc94ac",
+      "userId": "5d72e22b-25b2-4ead-a178-4f2b136223e3",
+      "challengeId": "problem-solving-closed-2",
+      "challengeType": "fechado",
+      "category": "Resolucao de Problemas",
+      "answer": "Atacar primeiro o bug critico.",
+      "feedback": "Boa escolha. Voce protege a base do produto antes de investir em expansao. Dica: Estabilidade vem antes de novidade quando existe impacto real no uso do sistema.",
+      "consequence": "Sua decisao tende a aumentar a confianca, reduzir atrito e melhorar o resultado do cenario.",
+      "score": 100,
+      "qualityTier": "ideal",
+      "wasIdeal": true,
+      "xpAwarded": 150,
+      "xpBreakdown": [
+        {
+          "label": "Desafio concluido",
+          "xp": 100
+        },
+        {
+          "label": "Qualidade da resposta",
+          "xp": 50
+        }
+      ],
+      "unlockedBadges": [],
+      "createdAt": "2026-04-24T01:01:33.433Z"
     }
   ]
 }

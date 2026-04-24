@@ -118,5 +118,12 @@
         auth: true,
       });
     },
+    updateAvatar(avatarConfig) {
+      return request("/api/me/avatar", {
+        method: "PATCH",
+        body: { avatarConfig },
+        auth: true,
+      });
+    },
   };
 })();
