@@ -99,10 +99,22 @@
         body: credentials,
       });
     },
+    forgotPassword(payload) {
+      return request("/api/auth/forgot-password", {
+        method: "POST",
+        body: payload,
+      });
+    },
     logout() {
       return request("/api/auth/logout", {
         method: "POST",
         auth: true,
+      });
+    },
+    resetPassword(payload) {
+      return request("/api/auth/reset-password", {
+        method: "POST",
+        body: payload,
       });
     },
     register(payload) {
@@ -110,6 +122,10 @@
         method: "POST",
         body: payload,
       });
+    },
+    validateResetToken(token) {
+      const query = new URLSearchParams({ token });
+      return request(`/api/auth/reset-password/validate?${query.toString()}`);
     },
     submitChallenge(challengeId, payload) {
       return request(`/api/challenges/${challengeId}/submit`, {

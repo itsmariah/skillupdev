@@ -34,6 +34,70 @@
     window.localStorage.setItem("skillup_user", JSON.stringify(user));
   }
 
+  function setElementText(elementId, message) {
+    const element = document.getElementById(elementId);
+    if (!element) {
+      return;
+    }
+
+    element.textContent = message;
+  }
+
+  function getQueryParam(name) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name) || "";
+  }
+
+  function formatDateTime(dateValue) {
+    const parsedDate = new Date(dateValue);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return "";
+    }
+
+    return parsedDate.toLocaleString("pt-BR");
+  }
+
+  function setFormAvailability(formId, enabled) {
+    const form = document.getElementById(formId);
+    if (!form) {
+      return;
+    }
+
+    Array.from(form.elements || []).forEach((field) => {
+      field.disabled = !enabled;
+    });
+  }
+
+  function hideForgotPasswordPreview() {
+    const preview = document.getElementById("forgotPasswordPreview");
+    if (!preview) {
+      return;
+    }
+
+    preview.classList.add("d-none");
+    setElementText("forgotPasswordPreviewLink", "");
+    setElementText("forgotPasswordPreviewExpiry", "");
+  }
+
+  function renderForgotPasswordPreview(payload) {
+    const preview = document.getElementById("forgotPasswordPreview");
+    const previewLink = document.getElementById("forgotPasswordPreviewLink");
+    const previewExpiry = document.getElementById("forgotPasswordPreviewExpiry");
+
+    if (!preview || !previewLink || !payload?.previewResetUrl) {
+      hideForgotPasswordPreview();
+      return;
+    }
+
+    previewLink.href = payload.previewResetUrl;
+    previewLink.textContent = "Abrir tela de redefinicao";
+    previewExpiry.textContent = payload.previewExpiresAt
+      ? `Link de teste valido ate ${formatDateTime(payload.previewExpiresAt)}.`
+      : "";
+    preview.classList.remove("d-none");
+  }
+
   function togglePassword(inputId, iconId) {
     const input = document.getElementById(inputId);
     const icon = document.getElementById(iconId);
@@ -144,6 +208,99 @@
     } catch (error) {
       setFeedback("registerFeedback", error.message, "danger");
       setButtonState(button, false, "Criando conta...", "Criar conta");
+    }
+  }
+
+  async function handleForgotPasswordSubmit(event) {
+    event.preventDefault();
+
+    const button = document.getElementById("forgotPasswordBtn");
+    const email = document.getElementById("forgotPasswordEmail")?.value.trim() || "";
+
+    clearFeedback("forgotPasswordFeedback");
+    hideForgotPasswordPreview();
+    setButtonState(button, true, "Enviando...", "Enviar link de recuperacao");
+
+    try {
+      const payload = await window.skillUpApi.forgotPassword({ email });
+      setFeedback("forgotPasswordFeedback", payload.message, "success");
+      renderForgotPasswordPreview(payload);
+    } catch (error) {
+      setFeedback("forgotPasswordFeedback", error.message, "danger");
+    } finally {
+      setButtonState(button, false, "Enviando...", "Enviar link de recuperacao");
+    }
+  }
+
+  async function loadResetPasswordPage() {
+    if (document.body.dataset.page !== "reset-password") {
+      return;
+    }
+
+    const token = getQueryParam("token");
+
+    if (!token) {
+      setFormAvailability("resetPasswordForm", false);
+      setFeedback("resetPasswordFeedback", "Link de recuperacao invalido ou incompleto.", "danger");
+      setElementText("resetPasswordStatus", "Solicite um novo link para redefinir sua senha.");
+      return;
+    }
+
+    setElementText("resetPasswordStatus", "Validando link de recuperacao...");
+
+    try {
+      const payload = await window.skillUpApi.validateResetToken(token);
+      const expirationLabel = payload.expiresAt
+        ? ` O link expira em ${formatDateTime(payload.expiresAt)}.`
+        : "";
+
+      setElementText(
+        "resetPasswordStatus",
+        `Link valido para ${payload.emailHint || "sua conta"}.${expirationLabel}`
+      );
+      setFormAvailability("resetPasswordForm", true);
+    } catch (error) {
+      setFormAvailability("resetPasswordForm", false);
+      setFeedback("resetPasswordFeedback", error.message, "danger");
+      setElementText("resetPasswordStatus", "Solicite um novo link para tentar novamente.");
+    }
+  }
+
+  async function handleResetPasswordSubmit(event) {
+    event.preventDefault();
+
+    const token = getQueryParam("token");
+    const senha = document.getElementById("novaSenha")?.value || "";
+    const confirmarSenha = document.getElementById("confirmarNovaSenha")?.value || "";
+    const button = document.getElementById("resetPasswordBtn");
+
+    clearFeedback("resetPasswordFeedback");
+
+    if (!token) {
+      setFeedback("resetPasswordFeedback", "Link de recuperacao invalido ou incompleto.", "danger");
+      return;
+    }
+
+    if (senha !== confirmarSenha) {
+      setFeedback("resetPasswordFeedback", "As senhas nao coincidem.", "danger");
+      return;
+    }
+
+    setButtonState(button, true, "Salvando...", "Salvar nova senha");
+
+    try {
+      const payload = await window.skillUpApi.resetPassword({ token, senha });
+      setFeedback("resetPasswordFeedback", payload.message, "success");
+      setElementText("resetPasswordStatus", "Senha atualizada. Redirecionando para o login...");
+      event.currentTarget.reset();
+      setFormAvailability("resetPasswordForm", false);
+      window.setTimeout(() => {
+        window.location.href = "login.html";
+      }, 1500);
+    } catch (error) {
+      setFeedback("resetPasswordFeedback", error.message, "danger");
+    } finally {
+      setButtonState(button, false, "Salvando...", "Salvar nova senha");
     }
   }
 
@@ -462,6 +619,8 @@
   document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
     const registerForm = document.getElementById("registerForm");
+    const forgotPasswordForm = document.getElementById("forgotPasswordForm");
+    const resetPasswordForm = document.getElementById("resetPasswordForm");
 
     if (loginForm) {
       loginForm.addEventListener("submit", handleLoginSubmit);
@@ -471,7 +630,17 @@
       registerForm.addEventListener("submit", handleRegisterSubmit);
     }
 
+    if (forgotPasswordForm) {
+      forgotPasswordForm.addEventListener("submit", handleForgotPasswordSubmit);
+    }
+
+    if (resetPasswordForm) {
+      setFormAvailability("resetPasswordForm", false);
+      resetPasswordForm.addEventListener("submit", handleResetPasswordSubmit);
+    }
+
     loadDashboard();
+    loadResetPasswordPage();
   });
 
   window.toggleSenha = function toggleSenha() {
@@ -480,6 +649,14 @@
 
   window.toggleConfirmarSenha = function toggleConfirmarSenha() {
     togglePassword("confirmarSenha", "toggleConfirmarSenhaIcon");
+  };
+
+  window.toggleNovaSenha = function toggleNovaSenha() {
+    togglePassword("novaSenha", "toggleNovaSenhaIcon");
+  };
+
+  window.toggleConfirmarNovaSenha = function toggleConfirmarNovaSenha() {
+    togglePassword("confirmarNovaSenha", "toggleConfirmarNovaSenhaIcon");
   };
 
   window.logout = logout;

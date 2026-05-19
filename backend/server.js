@@ -10,10 +10,14 @@ require("dotenv").config({ path: path.join(__dirname, ".env") });
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 const FRONTEND_DIR = path.join(__dirname, "..", "frontend");
-const DATA_DIR = path.join(__dirname, "data");
-const DATA_FILE = path.join(DATA_DIR, "db.json");
+const DEFAULT_DATA_FILE = path.join(__dirname, "data", "db.json");
+const DATA_FILE = process.env.DATA_FILE ? path.resolve(process.env.DATA_FILE) : DEFAULT_DATA_FILE;
+const DATA_DIR = path.dirname(DATA_FILE);
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const OPEN_CHALLENGE_XP_MULTIPLIER = 1.2;
+const PASSWORD_RESET_TTL_MINUTES = 30;
+const PASSWORD_RESET_TTL_MS = PASSWORD_RESET_TTL_MINUTES * 60 * 1000;
+const RESEND_API_URL = process.env.RESEND_API_URL || "https://api.resend.com/emails";
 
 function normalizeTextValue(value) {
   return String(value || "")
@@ -753,6 +757,7 @@ function createEmptyDatabase() {
     users: [],
     sessions: [],
     challengeAttempts: [],
+    passwordResetTokens: [],
   };
 }
 
@@ -912,6 +917,33 @@ function hydrateAttempt(attempt) {
   };
 }
 
+function hydratePasswordResetToken(resetToken) {
+  return {
+    id: String(resetToken?.id || crypto.randomUUID()),
+    userId: String(resetToken?.userId || ""),
+    tokenHash: String(resetToken?.tokenHash || ""),
+    createdAt: String(resetToken?.createdAt || new Date().toISOString()),
+    expiresAt: String(resetToken?.expiresAt || new Date(Date.now() + PASSWORD_RESET_TTL_MS).toISOString()),
+  };
+}
+
+function isPasswordResetTokenExpired(resetToken, now = Date.now()) {
+  const expiresAt = Date.parse(resetToken?.expiresAt || "");
+  return Number.isNaN(expiresAt) || expiresAt <= now;
+}
+
+function purgeExpiredPasswordResetTokens(database) {
+  const previousLength = Array.isArray(database.passwordResetTokens)
+    ? database.passwordResetTokens.length
+    : 0;
+
+  database.passwordResetTokens = (database.passwordResetTokens || []).filter(
+    (resetToken) => !isPasswordResetTokenExpired(resetToken)
+  );
+
+  return database.passwordResetTokens.length !== previousLength;
+}
+
 async function readDatabase() {
   ensureDataFile();
 
@@ -927,6 +959,9 @@ async function readDatabase() {
       sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
       challengeAttempts: Array.isArray(parsed.challengeAttempts)
         ? parsed.challengeAttempts.map(hydrateAttempt)
+        : [],
+      passwordResetTokens: Array.isArray(parsed.passwordResetTokens)
+        ? parsed.passwordResetTokens.map(hydratePasswordResetToken)
         : [],
     };
   } catch (error) {
@@ -968,6 +1003,222 @@ function verifyPassword(password, storedHash) {
 
 function createToken() {
   return crypto.randomBytes(32).toString("hex");
+}
+
+function hashToken(token) {
+  return crypto.createHash("sha256").update(String(token || "")).digest("hex");
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function createPasswordResetToken(userId) {
+  const rawToken = createToken();
+  const createdAt = new Date();
+
+  return {
+    rawToken,
+    record: {
+      id: crypto.randomUUID(),
+      userId,
+      tokenHash: hashToken(rawToken),
+      createdAt: createdAt.toISOString(),
+      expiresAt: new Date(createdAt.getTime() + PASSWORD_RESET_TTL_MS).toISOString(),
+    },
+  };
+}
+
+function findPasswordResetToken(database, rawToken) {
+  const tokenHash = hashToken(rawToken);
+
+  return (database.passwordResetTokens || []).find((resetToken) => {
+    if (!resetToken?.tokenHash || resetToken.tokenHash.length !== tokenHash.length) {
+      return false;
+    }
+
+    return crypto.timingSafeEqual(
+      Buffer.from(resetToken.tokenHash, "hex"),
+      Buffer.from(tokenHash, "hex")
+    );
+  });
+}
+
+function shouldExposeResetPreview(req) {
+  const hostname = String(req.hostname || "").toLowerCase();
+  return hostname === "localhost" || hostname === "127.0.0.1";
+}
+
+function getAppBaseUrl(req) {
+  const fallbackUrl = `${req.protocol}://${req.get("host")}`;
+  return String(process.env.APP_BASE_URL || fallbackUrl)
+    .trim()
+    .replace(/\/+$/, "");
+}
+
+function buildPasswordResetUrl(req, rawToken) {
+  return `${getAppBaseUrl(req)}/pages/reset_password.html?token=${encodeURIComponent(
+    rawToken
+  )}`;
+}
+
+function maskEmail(email) {
+  const normalizedEmail = normalizeEmail(email);
+  const [localPart, domain] = normalizedEmail.split("@");
+
+  if (!localPart || !domain) {
+    return normalizedEmail;
+  }
+
+  const visibleLocal = localPart.slice(0, Math.min(2, localPart.length));
+  return `${visibleLocal}${"*".repeat(Math.max(localPart.length - visibleLocal.length, 1))}@${domain}`;
+}
+
+function getEmailProvider() {
+  const provider = normalizeTextValue(process.env.EMAIL_PROVIDER);
+
+  if (provider) {
+    return provider;
+  }
+
+  if (String(process.env.RESEND_API_KEY || "").trim()) {
+    return "resend";
+  }
+
+  return "";
+}
+
+function getEmailFrom() {
+  return String(process.env.EMAIL_FROM || "").trim();
+}
+
+function getEmailReplyTo() {
+  return String(process.env.EMAIL_REPLY_TO || "").trim();
+}
+
+function isRealEmailConfigured() {
+  return getEmailProvider() === "resend" && Boolean(process.env.RESEND_API_KEY && getEmailFrom());
+}
+
+function buildPasswordResetEmail({ user, req, rawToken, expiresAt }) {
+  const resetUrl = buildPasswordResetUrl(req, rawToken);
+  const safeName = escapeHtml(user.nome || "Dev");
+  const expirationLabel = formatDisplayDate(expiresAt);
+  const supportEmail = escapeHtml(getEmailReplyTo() || getEmailFrom());
+  const safeResetUrl = escapeHtml(resetUrl);
+
+  return {
+    resetUrl,
+    subject: "Redefina sua senha na SkillUp Dev",
+    text: [
+      `Ola, ${user.nome || "Dev"}!`,
+      "",
+      "Recebemos um pedido para redefinir sua senha na SkillUp Dev.",
+      `Use este link: ${resetUrl}`,
+      `Validade: ${expirationLabel}`,
+      "",
+      "Se você não solicitou a redefinicao, ignore este email.",
+    ].join("\n"),
+    html: `
+      <div style="font-family:Arial,sans-serif;background:#f5f7ff;padding:32px;color:#2c2457;">
+        <div style="max-width:620px;margin:0 auto;background:#ffffff;border-radius:20px;padding:32px;box-shadow:0 16px 40px rgba(44,36,87,0.12);">
+          <p style="font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:#5b6cff;font-weight:700;margin:0 0 12px;">
+            Recuperacao de senha
+          </p>
+          <h1 style="margin:0 0 16px;font-size:28px;line-height:1.2;">Oi, ${safeName}</h1>
+          <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#4b4f70;">
+            Recebemos um pedido para redefinir sua senha na SkillUp Dev.
+          </p>
+          <p style="margin:0 0 24px;font-size:16px;line-height:1.6;color:#4b4f70;">
+            Clique no botao abaixo para criar uma nova senha. Esse link expira em <strong>${escapeHtml(
+              expirationLabel
+            )}</strong>.
+          </p>
+          <p style="margin:0 0 28px;">
+            <a href="${safeResetUrl}" style="display:inline-block;background:linear-gradient(135deg,#5b6cff,#7a88ff);color:#ffffff;text-decoration:none;padding:14px 24px;border-radius:12px;font-weight:700;">
+              Redefinir senha
+            </a>
+          </p>
+          <p style="margin:0 0 12px;font-size:14px;line-height:1.6;color:#6b6f8c;">
+            Se o botao nao abrir, copie e cole este link no navegador:
+          </p>
+          <p style="margin:0 0 24px;font-size:14px;line-height:1.6;word-break:break-word;">
+            <a href="${safeResetUrl}" style="color:#5b6cff;">${safeResetUrl}</a>
+          </p>
+          <p style="margin:0;font-size:13px;line-height:1.6;color:#7b809d;">
+            Se você não solicitou essa troca, ignore este email. Em caso de duvida, fale com ${supportEmail}.
+          </p>
+        </div>
+      </div>
+    `,
+  };
+}
+
+function formatDisplayDate(dateValue) {
+  const parsedDate = new Date(dateValue);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return "alguns minutos";
+  }
+
+  return parsedDate.toLocaleString("pt-BR", {
+    dateStyle: "short",
+    timeStyle: "short",
+  });
+}
+
+async function sendEmailWithResend({ to, subject, html, text }) {
+  const payload = {
+    from: getEmailFrom(),
+    to: [to],
+    subject,
+    html,
+    text,
+  };
+
+  const replyTo = getEmailReplyTo();
+  if (replyTo) {
+    payload.reply_to = replyTo;
+  }
+
+  const response = await fetch(RESEND_API_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const reason = data?.message || data?.error || `status ${response.status}`;
+    throw new Error(`Resend nao aceitou o envio (${reason}).`);
+  }
+
+  return data;
+}
+
+async function sendPasswordResetEmail({ user, req, rawToken, expiresAt }) {
+  const provider = getEmailProvider();
+  const emailContent = buildPasswordResetEmail({ user, req, rawToken, expiresAt });
+
+  if (provider === "resend") {
+    return sendEmailWithResend({
+      to: user.email,
+      subject: emailContent.subject,
+      html: emailContent.html,
+      text: emailContent.text,
+    });
+  }
+
+  throw new Error("Provedor de email nao suportado para envio real.");
 }
 
 function getUserAttempts(userId, database) {
@@ -1495,6 +1746,146 @@ app.post("/api/auth/login", async (req, res) => {
     token,
     dailyLoginReward,
     user: buildUserResponse(user, database),
+  });
+});
+
+app.post("/api/auth/forgot-password", async (req, res) => {
+  const email = normalizeEmail(req.body.email);
+
+  if (!email) {
+    return res.status(400).json({ message: "Informe um email valido." });
+  }
+
+  const database = await readDatabase();
+  const removedExpiredTokens = purgeExpiredPasswordResetTokens(database);
+  const user = database.users.find((item) => item.email === email);
+  const response = {
+    message: "Se existir uma conta com este email, enviaremos as instrucoes de recuperacao.",
+  };
+
+  if (user) {
+    database.passwordResetTokens = (database.passwordResetTokens || []).filter(
+      (resetToken) => resetToken.userId !== user.id
+    );
+
+    const { rawToken, record } = createPasswordResetToken(user.id);
+    database.passwordResetTokens.push(record);
+    await writeDatabase(database);
+
+    if (isRealEmailConfigured()) {
+      try {
+        await sendPasswordResetEmail({
+          user,
+          req,
+          rawToken,
+          expiresAt: record.expiresAt,
+        });
+      } catch (error) {
+        console.error("Falha ao enviar email de recuperacao:", error);
+        return res.status(502).json({
+          message:
+            "Nao foi possivel enviar o email de recuperacao agora. Confira a configuracao de email e tente novamente.",
+        });
+      }
+
+      response.message =
+        "Se existir uma conta com este email, enviamos um link de recuperacao. Verifique sua caixa de entrada e a pasta de spam.";
+      return res.json(response);
+    }
+
+    if (shouldExposeResetPreview(req)) {
+      response.message =
+        "Email real nao configurado neste ambiente. Use o link de teste abaixo para validar o fluxo.";
+      response.previewResetUrl = buildPasswordResetUrl(req, rawToken);
+      response.previewExpiresAt = record.expiresAt;
+      return res.json(response);
+    }
+
+    return res.status(503).json({
+      message:
+        "Envio de email nao configurado no servidor. Defina as variaveis EMAIL_PROVIDER, EMAIL_FROM e RESEND_API_KEY.",
+    });
+  }
+
+  if (removedExpiredTokens) {
+    await writeDatabase(database);
+  }
+
+  return res.json(response);
+});
+
+app.get("/api/auth/reset-password/validate", async (req, res) => {
+  const token = String(req.query.token || "").trim();
+
+  if (!token) {
+    return res.status(400).json({ message: "Token de recuperacao nao informado." });
+  }
+
+  const database = await readDatabase();
+  const removedExpiredTokens = purgeExpiredPasswordResetTokens(database);
+  const resetToken = findPasswordResetToken(database, token);
+
+  if (removedExpiredTokens) {
+    await writeDatabase(database);
+  }
+
+  if (!resetToken) {
+    return res.status(400).json({ message: "Link de recuperacao invalido ou expirado." });
+  }
+
+  const user = database.users.find((item) => item.id === resetToken.userId);
+
+  if (!user) {
+    return res.status(400).json({ message: "Link de recuperacao invalido ou expirado." });
+  }
+
+  return res.json({
+    message: "Link de recuperacao valido.",
+    emailHint: maskEmail(user.email),
+    expiresAt: resetToken.expiresAt,
+  });
+});
+
+app.post("/api/auth/reset-password", async (req, res) => {
+  const token = String(req.body.token || "").trim();
+  const senha = String(req.body.senha || "");
+
+  if (!token) {
+    return res.status(400).json({ message: "Token de recuperacao nao informado." });
+  }
+
+  if (senha.length < 6) {
+    return res.status(400).json({ message: "A senha precisa ter pelo menos 6 caracteres." });
+  }
+
+  const database = await readDatabase();
+  const removedExpiredTokens = purgeExpiredPasswordResetTokens(database);
+
+  const resetToken = findPasswordResetToken(database, token);
+
+  if (!resetToken) {
+    if (removedExpiredTokens) {
+      await writeDatabase(database);
+    }
+    return res.status(400).json({ message: "Link de recuperacao invalido ou expirado." });
+  }
+
+  const user = database.users.find((item) => item.id === resetToken.userId);
+
+  if (!user) {
+    return res.status(400).json({ message: "Link de recuperacao invalido ou expirado." });
+  }
+
+  user.passwordHash = createPasswordHash(senha);
+  database.sessions = database.sessions.filter((session) => session.userId !== user.id);
+  database.passwordResetTokens = database.passwordResetTokens.filter(
+    (item) => item.userId !== user.id
+  );
+
+  await writeDatabase(database);
+
+  return res.json({
+    message: "Senha redefinida com sucesso. Faca login com a nova senha.",
   });
 });
 

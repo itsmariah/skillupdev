@@ -490,6 +490,21 @@
       input:valid:not(:placeholder-shown) {
          border-color: #28a745;
       }
+
+      .password-reset-preview {
+         margin-top: 20px;
+         padding: 18px;
+         border-radius: 18px;
+         background: rgba(91,108,255,0.08);
+         border: 1px solid rgba(91,108,255,0.22);
+         color: #2c2457;
+         text-align: left;
+      }
+
+      .password-reset-status {
+         color: #5d647d;
+         min-height: 24px;
+      }
 /* FIM LOGIN PAGE */
 
 /* REGRISTRATION PAGE CSS */
