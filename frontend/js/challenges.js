@@ -27,7 +27,7 @@ async function loadChallenges() {
 
     renderCurrentChallenge();
   } catch (error) {
-    renderError(`Nao foi possivel carregar os desafios. ${error.message}`);
+    renderError(`Não foi possível carregar os desafios. ${error.message}`);
   }
 }
 
@@ -52,7 +52,7 @@ function renderCurrentChallenge() {
   answersContainer.innerHTML = "";
   feedbackElement.innerHTML = "";
   nextButton.classList.add("d-none");
-  nextButton.textContent = "Proximo desafio";
+  nextButton.textContent = "Próximo desafio";
 
   if (challenge.tipo === "fechado") {
     renderClosedChallenge(challenge, answersContainer);
@@ -196,7 +196,7 @@ function renderResult(result) {
         ${getQualityLabel(result.qualityTier)} | Nota: ${result.nota} | XP ganho: ${result.xpGanho}
       </p>
       <p>${result.feedback}</p>
-      <p class="feedback-consequence"><strong>Consequencia:</strong> ${result.consequence}</p>
+      <p class="feedback-consequence"><strong>Consequência:</strong> ${result.consequence}</p>
       ${breakdownMarkup ? `<ul class="result-breakdown">${breakdownMarkup}</ul>` : ""}
       ${badgesMarkup}
     </div>
@@ -227,7 +227,7 @@ function buildChallengeDescription(challenge) {
   }
 
   parts.push(
-    "Recompensas: +100 XP por concluir, +50 XP em resposta ideal e bonus de +30 XP a cada 3 respostas ideais seguidas."
+    "Recompensas: +100 XP por concluir, +50 XP em resposta ideal e bônus de +30 XP a cada 3 respostas ideais seguidas."
   );
 
   if (challenge.tipo === "aberto" && Array.isArray(challenge.criteriosAvaliacao)) {
@@ -268,16 +268,16 @@ function renderFinishedState() {
     return;
   }
 
-  categoryElement.textContent = "Missao concluida";
-  questionElement.textContent = "Voce finalizou todos os desafios disponiveis.";
+  categoryElement.textContent = "Missão concluída";
+  questionElement.textContent = "Você finalizou todos os desafios disponíveis.";
   descriptionElement.textContent =
-    "Volte ao dashboard para acompanhar niveis, badges, avatar e a sua evolucao por categoria.";
+    "Volte ao dashboard para acompanhar níveis, badges, avatar e a sua evolução por categoria.";
   answersContainer.innerHTML = "";
 
   if (feedbackElement) {
     feedbackElement.innerHTML = `
       <div class="feedback-box">
-        <p>Agora e um bom momento para revisar badges desbloqueadas e personalizar o avatar.</p>
+        <p>Agora é um bom momento para revisar badges desbloqueadas e personalizar o avatar.</p>
       </div>
     `;
   }

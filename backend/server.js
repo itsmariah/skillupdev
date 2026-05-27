@@ -57,7 +57,7 @@ function createOpenChallenge({
   titulo,
   pergunta,
   descricao,
-  criteriosAvaliacao,
+  critériosAvaliacao,
   dica,
 }) {
   return {
@@ -67,7 +67,7 @@ function createOpenChallenge({
     titulo,
     pergunta,
     descricao,
-    criteriosAvaliacao,
+    critériosAvaliacao,
     dica,
     xpMultiplier: OPEN_CHALLENGE_XP_MULTIPLIER,
   };
@@ -76,26 +76,26 @@ function createOpenChallenge({
 const CHALLENGES = [
   createClosedChallenge({
     id: "communication-closed-1",
-    categoria: "Comunicacao",
-    titulo: "Cliente Dificil",
+    categoria: "Comunicação",
+    titulo: "Cliente Difícil",
     pergunta:
-      "Um cliente envia uma mensagem irritado dizendo que o sistema caiu e esta inutil. Como voce responde?",
-    descricao: "Escolha a alternativa que melhor se adequa a situacao.",
+      "Um cliente envia uma mensagem irritado dizendo que o sistema caiu e está inútil. Como você responde?",
+    descricao: "Escolha a alternativa que melhor se adequa à situação.",
     dica:
-      "Priorize cordialidade e transparencia. Comunicacao tecnica sem empatia nao resolve conflito.",
+      "Priorize cordialidade e transparência. Comunicação técnica sem empatia não resolve conflito.",
     respostas: [
       {
-        texto: "Nao e problema nosso, deve ser sua rede.",
+        texto: "Não é problema nosso, deve ser sua rede.",
         xp: 5,
         feedback: "Essa resposta tende a piorar o conflito e passa pouca responsabilidade.",
       },
       {
-        texto: "Entendo sua frustracao. Vamos verificar e te atualizar.",
+        texto: "Entendo sua frustração. Vamos verificar e te atualizar.",
         xp: 100,
-        feedback: "Boa escolha. Voce acolhe a frustracao e informa o proximo passo com clareza.",
+        feedback: "Boa escolha. Você acolhe a frustração e informa o próximo passo com clareza.",
       },
       {
-        texto: "Responder com termos tecnicos e complexos sobre servidor.",
+        texto: "Responder com termos técnicos e complexos sobre servidor.",
         xp: 40,
         feedback: "Existe tentativa de explicar, mas faltam simplicidade e empatia para o momento.",
       },
@@ -103,44 +103,44 @@ const CHALLENGES = [
   }),
   createClosedChallenge({
     id: "communication-closed-2",
-    categoria: "Comunicacao",
-    titulo: "Explicando Problema Tecnico",
+    categoria: "Comunicação",
+    titulo: "Explicando Problema Técnico",
     pergunta:
-      "Voce precisa explicar para um gestor nao tecnico por que o deploy foi adiado. Como faz isso?",
-    descricao: "Escolha a opcao que torna a mensagem mais clara para quem nao e tecnico.",
+      "Você precisa explicar para um gestor não técnico por que o deploy foi adiado. Como faz isso?",
+    descricao: "Escolha a opção que torna a mensagem mais clara para quem não é técnico.",
     dica:
-      "Traduzir complexidade tecnica para linguagem simples e uma habilidade essencial para dev senior.",
+      "Traduzir complexidade técnica para linguagem simples é uma habilidade essencial para dev sênior.",
     respostas: [
       {
-        texto: "Usar jargoes tecnicos e detalhar a stack inteira.",
+        texto: "Usar jargões técnicos e detalhar a stack inteira.",
         xp: 40,
         feedback: "A resposta pode ser correta tecnicamente, mas dificulta o entendimento do gestor.",
       },
       {
         texto: "Usar uma analogia simples e explicar o impacto do adiamento.",
         xp: 100,
-        feedback: "Boa escolha. Voce traduz o problema sem perder objetividade nem contexto.",
+        feedback: "Boa escolha. Você traduz o problema sem perder objetividade nem contexto.",
       },
       {
-        texto: 'Dizer apenas "Nao deu".',
+        texto: 'Dizer apenas "Não deu".',
         xp: 5,
-        feedback: "Essa resposta nao gera contexto nem confianca para a tomada de decisao.",
+        feedback: "Essa resposta não gera contexto nem confiança para a tomada de decisão.",
       },
     ],
   }),
   createClosedChallenge({
     id: "communication-closed-3",
-    categoria: "Comunicacao",
+    categoria: "Comunicação",
     titulo: "Feedback Construtivo",
-    pergunta: "Um colega entregou um codigo ruim. Como voce reage?",
+    pergunta: "Um colega entregou um código ruim. Como você reage?",
     descricao: "Escolha a postura com mais respeito e efetividade.",
     dica:
       "Feedback construtivo combina especificidade com respeito, sem soar rude ou humilhante.",
     respostas: [
       {
-        texto: "Criticar o codigo no grupo para todo mundo ver.",
+        texto: "Criticar o código no grupo para todo mundo ver.",
         xp: 5,
-        feedback: "Isso expoe a pessoa e tende a gerar defensividade em vez de aprendizado.",
+        feedback: "Isso expõe a pessoa e tende a gerar defensividade em vez de aprendizado.",
       },
       {
         texto: "Conversar em privado, mostrar exemplos e sugerir melhorias.",
@@ -159,13 +159,13 @@ const CHALLENGES = [
     categoria: "Trabalho em Equipe",
     titulo: "Priorizar Tarefas com a Equipe",
     pergunta: "Sua equipe tem 6 tarefas e um prazo curto. Como organizar isso?",
-    descricao: "Escolha a alternativa com mais colaboracao e visao coletiva.",
-    dica: "Colaboracao melhora a qualidade da decisao e aumenta o comprometimento do time.",
+    descricao: "Escolha a alternativa com mais colaboração e visão coletiva.",
+    dica: "Colaboração melhora a qualidade da decisão e aumenta o comprometimento do time.",
     respostas: [
       {
         texto: "Escolher sozinho o que cada pessoa vai fazer.",
         xp: 40,
-        feedback: "Pode parecer agil, mas reduz alinhamento e o senso de participacao do time.",
+        feedback: "Pode parecer ágil, mas reduz alinhamento e o senso de participação do time.",
       },
       {
         texto: "Reunir o time, priorizar junto e delegar com clareza.",
@@ -173,9 +173,9 @@ const CHALLENGES = [
         feedback: "Boa escolha. Essa postura fortalece alinhamento, foco e responsabilidade compartilhada.",
       },
       {
-        texto: "Fazer primeiro as tarefas mais faceis.",
+        texto: "Fazer primeiro as tarefas mais fáceis.",
         xp: 5,
-        feedback: "Facilidade nao significa prioridade. O time pode deixar o que importa de lado.",
+        feedback: "Facilidade não significa prioridade. O time pode deixar o que importa de lado.",
       },
     ],
   }),
@@ -183,9 +183,9 @@ const CHALLENGES = [
     id: "teamwork-closed-2",
     categoria: "Trabalho em Equipe",
     titulo: "Conflito entre Colegas",
-    pergunta: "Dois devs discordam fortemente sobre uma decisao tecnica. O que voce faz?",
-    descricao: "Escolha a resposta com mais neutralidade e capacidade de mediacao.",
-    dica: "Mediacao vale mais do que polarizacao quando o objetivo e destravar o time.",
+    pergunta: "Dois devs discordam fortemente sobre uma decisão técnica. O que você faz?",
+    descricao: "Escolha a resposta com mais neutralidade e capacidade de mediação.",
+    dica: "Mediação vale mais do que polarização quando o objetivo é destravar o time.",
     respostas: [
       {
         texto: "Ignorar o conflito e deixar que eles se resolvam.",
@@ -193,37 +193,37 @@ const CHALLENGES = [
         feedback: "Evita desgaste imediato, mas o impasse pode crescer e contaminar o trabalho.",
       },
       {
-        texto: "Mediar a conversa e buscar criterios tecnicos em comum.",
+        texto: "Mediar a conversa e buscar critérios técnicos em comum.",
         xp: 100,
-        feedback: "Boa escolha. Voce ajuda o time a sair da disputa e voltar para a analise do problema.",
+        feedback: "Boa escolha. Você ajuda o time a sair da disputa e voltar para a análise do problema.",
       },
       {
-        texto: "Tomar o lado de quem voce acha melhor.",
+        texto: "Tomar o lado de quem você acha melhor.",
         xp: 5,
-        feedback: "Escolher um lado cedo demais alimenta a polarizacao e enfraquece a colaboracao.",
+        feedback: "Escolher um lado cedo demais alimenta a polarização e enfraquece a colaboração.",
       },
     ],
   }),
   createClosedChallenge({
     id: "teamwork-closed-3",
     categoria: "Trabalho em Equipe",
-    titulo: "Decisao Coletiva",
-    pergunta: "O time precisa escolher entre duas arquiteturas possiveis. Como conduzir a decisao?",
-    descricao: "Escolha a opcao com mais criterio tecnico e colaboracao.",
-    dica: "Decisao tecnica precisa de criterio. Pressa sozinha nao substitui analise.",
+    titulo: "Decisão Coletiva",
+    pergunta: "O time precisa escolher entre duas arquiteturas possíveis. Como conduzir a decisão?",
+    descricao: "Escolha a opção com mais critério técnico e colaboração.",
+    dica: "Decisão técnica precisa de critério. Pressa sozinha não substitui análise.",
     respostas: [
       {
-        texto: "Votar rapido para decidir logo.",
+        texto: "Votar rápido para decidir logo.",
         xp: 40,
-        feedback: "Pode acelerar, mas corre o risco de simplificar uma decisao que merece analise.",
+        feedback: "Pode acelerar, mas corre o risco de simplificar uma decisão que merece análise.",
       },
       {
-        texto: "Analisar pros e contras juntos antes de decidir.",
+        texto: "Analisar prós e contras juntos antes de decidir.",
         xp: 100,
         feedback: "Boa escolha. O time decide com base em contexto, trade-offs e entendimento comum.",
       },
       {
-        texto: "Deixar para depois sem nenhum criterio definido.",
+        texto: "Deixar para depois sem nenhum critério definido.",
         xp: 5,
         feedback: "Postergar sem estrutura aumenta incerteza e dificulta o andamento do projeto.",
       },
@@ -231,16 +231,16 @@ const CHALLENGES = [
   }),
   createClosedChallenge({
     id: "problem-solving-closed-1",
-    categoria: "Resolucao de Problemas",
-    titulo: "Producao Caiu",
-    pergunta: "O sistema caiu em producao. Qual e sua primeira postura?",
-    descricao: "Escolha a alternativa com mais metodo e controle da situacao.",
-    dica: "Em incidentes, metodologia vem antes do impulso. Diagnosticar bem reduz erro na correcao.",
+    categoria: "Resolução de Problemas",
+    titulo: "Produção Caiu",
+    pergunta: "O sistema caiu em produção. Qual é sua primeira postura?",
+    descricao: "Escolha a alternativa com mais método e controle da situação.",
+    dica: "Em incidentes, metodologia vem antes do impulso. Diagnosticar bem reduz erro na correção.",
     respostas: [
       {
-        texto: "Corrigir direto o que parecer mais provavel.",
+        texto: "Corrigir direto o que parecer mais provável.",
         xp: 40,
-        feedback: "Agilidade e importante, mas agir sem diagnostico pode piorar o incidente.",
+        feedback: "Agilidade é importante, mas agir sem diagnóstico pode piorar o incidente.",
       },
       {
         texto: "Diagnosticar, isolar o problema e agir com base no que foi observado.",
@@ -250,93 +250,93 @@ const CHALLENGES = [
       {
         texto: "Esperar para ver se o sistema volta sozinho.",
         xp: 5,
-        feedback: "Essa postura abandona a responsabilidade num momento critico para produto e usuarios.",
+        feedback: "Essa postura abandona a responsabilidade num momento crítico para produto e usuários.",
       },
     ],
   }),
   createClosedChallenge({
     id: "problem-solving-closed-2",
-    categoria: "Resolucao de Problemas",
+    categoria: "Resolução de Problemas",
     titulo: "Bug Urgente vs Feature Nova",
-    pergunta: "Um bug critico e uma feature nova disputam seu tempo. O que voce prioriza?",
-    descricao: "Escolha o que faz mais sentido para o produto e para os usuarios.",
+    pergunta: "Um bug crítico e uma feature nova disputam seu tempo. O que você prioriza?",
+    descricao: "Escolha o que faz mais sentido para o produto e para os usuários.",
     dica: "Estabilidade vem antes de novidade quando existe impacto real no uso do sistema.",
     respostas: [
       {
         texto: "Entregar a feature nova primeiro.",
         xp: 5,
-        feedback: "Novidade sem estabilidade tende a piorar a experiencia e a confianca do usuario.",
+        feedback: "Novidade sem estabilidade tende a piorar a experiência e a confiança do usuário.",
       },
       {
-        texto: "Atacar primeiro o bug critico.",
+        texto: "Atacar primeiro o bug crítico.",
         xp: 100,
-        feedback: "Boa escolha. Voce protege a base do produto antes de investir em expansao.",
+        feedback: "Boa escolha. Você protege a base do produto antes de investir em expansão.",
       },
       {
         texto: "Dividir o tempo em metade para cada um.",
         xp: 40,
-        feedback: "Parece equilibrado, mas pode atrasar a resolucao do problema mais sensivel.",
+        feedback: "Parece equilibrado, mas pode atrasar a resolução do problema mais sensível.",
       },
     ],
   }),
   createClosedChallenge({
     id: "problem-solving-closed-3",
-    categoria: "Resolucao de Problemas",
-    titulo: "Estrategia de Solucao",
-    pergunta: "Voce esta lidando com um erro intermitente dificil. Como aborda a solucao?",
-    descricao: "Escolha a estrategia mais estruturada de investigacao.",
-    dica: "Investigacao estruturada costuma vencer tentativa e erro no longo prazo.",
+    categoria: "Resolução de Problemas",
+    titulo: "Estratégia de Solução",
+    pergunta: "Você está lidando com um erro intermitente difícil. Como aborda a solução?",
+    descricao: "Escolha a estratégia mais estruturada de investigação.",
+    dica: "Investigação estruturada costuma vencer tentativa e erro no longo prazo.",
     respostas: [
       {
-        texto: "Tentar varias mudancas na sorte ate algo funcionar.",
+        texto: "Tentar várias mudanças na sorte até algo funcionar.",
         xp: 40,
-        feedback: "Pode gerar pistas, mas sem estrutura fica dificil aprender e repetir a solucao.",
+        feedback: "Pode gerar pistas, mas sem estrutura fica difícil aprender e repetir a solução.",
       },
       {
-        texto: "Usar logs, metricas e formular hipoteses antes de agir.",
+        texto: "Usar logs, métricas e formular hipóteses antes de agir.",
         xp: 100,
-        feedback: "Boa escolha. Voce transforma um problema difuso em uma investigacao orientada por evidencias.",
+        feedback: "Boa escolha. Você transforma um problema difuso em uma investigação orientada por evidências.",
       },
       {
         texto: "Reiniciar o servidor sempre que o erro aparecer.",
         xp: 5,
-        feedback: "Isso mascara o problema e nao cria entendimento sobre a causa real.",
+        feedback: "Isso mascara o problema e não cria entendimento sobre a causa real.",
       },
     ],
   }),
   createClosedChallenge({
     id: "time-management-closed-1",
-    categoria: "Gestao de Tempo",
+    categoria: "Gestão de Tempo",
     titulo: "Sprint Conflitante",
-    pergunta: "Voce recebeu 3 tasks urgentes ao mesmo tempo. Como decide o que fazer primeiro?",
-    descricao: "Escolha a alternativa com melhor priorizacao.",
-    dica: "Impacto e prazo sao um bom ponto de partida para ordenar trabalho sob pressao.",
+    pergunta: "Você recebeu 3 tasks urgentes ao mesmo tempo. Como decide o que fazer primeiro?",
+    descricao: "Escolha a alternativa com melhor priorização.",
+    dica: "Impacto e prazo são um bom ponto de partida para ordenar trabalho sob pressão.",
     respostas: [
       {
-        texto: "Escolher uma aleatoriamente e comecar.",
+        texto: "Escolher uma aleatoriamente e começar.",
         xp: 5,
-        feedback: "Sem criterio, a chance de dedicar energia ao item errado cresce bastante.",
+        feedback: "Sem critério, a chance de dedicar energia ao item errado cresce bastante.",
       },
       {
         texto: "Priorizar pelo impacto e pelo prazo de cada entrega.",
         xp: 100,
-        feedback: "Boa escolha. Voce cria ordem com base em valor e urgencia reais.",
+        feedback: "Boa escolha. Você cria ordem com base em valor e urgência reais.",
       },
       {
-        texto: "Fazer primeiro as tarefas mais rapidas.",
+        texto: "Fazer primeiro as tarefas mais rápidas.",
         xp: 40,
-        feedback: "Isso pode dar sensacao de progresso, mas nao garante que o principal foi tratado.",
+        feedback: "Isso pode dar sensação de progresso, mas não garante que o principal foi tratado.",
       },
     ],
   }),
   createClosedChallenge({
     id: "time-management-closed-2",
-    categoria: "Gestao de Tempo",
+    categoria: "Gestão de Tempo",
     titulo: "Prioridades",
-    pergunta: "Existem muitas demandas simultaneas. Como voce organiza as prioridades?",
-    descricao: "Escolha a resposta com mais criterio e capacidade de organizacao.",
+    pergunta: "Existem muitas demandas simultâneas. Como você organiza as prioridades?",
+    descricao: "Escolha a resposta com mais critério e capacidade de organização.",
     dica:
-      "Comparar urgencia com impacto ajuda a fugir do caos quando tudo parece importante.",
+      "Comparar urgência com impacto ajuda a fugir do caos quando tudo parece importante.",
     respostas: [
       {
         texto: "Tentar fazer tudo ao mesmo tempo.",
@@ -344,59 +344,59 @@ const CHALLENGES = [
         feedback: "Isso aumenta troca de contexto e tende a reduzir qualidade e previsibilidade.",
       },
       {
-        texto: "Usar uma matriz de urgencia x impacto.",
+        texto: "Usar uma matriz de urgência x impacto.",
         xp: 100,
-        feedback: "Boa escolha. Voce transforma pressao difusa em uma fila mais racional de execucao.",
+        feedback: "Boa escolha. Você transforma pressão difusa em uma fila mais racional de execução.",
       },
       {
         texto: "Seguir apenas a ordem de chegada das demandas.",
         xp: 40,
-        feedback: "A ordem de chegada ajuda um pouco, mas nao substitui criterio de negocio e risco.",
+        feedback: "A ordem de chegada ajuda um pouco, mas não substitui critério de negócio e risco.",
       },
     ],
   }),
   createClosedChallenge({
     id: "time-management-closed-3",
-    categoria: "Gestao de Tempo",
-    titulo: "Estimar Esforco",
-    pergunta: "Uma nova feature e desconhecida para o time. Como voce estima o esforco?",
+    categoria: "Gestão de Tempo",
+    titulo: "Estimar Esforço",
+    pergunta: "Uma nova feature é desconhecida para o time. Como você estima o esforço?",
     descricao: "Escolha a forma mais segura de chegar a uma estimativa.",
     dica: "Quebrar o problema em partes reduz incerteza e melhora a qualidade da estimativa.",
     respostas: [
       {
-        texto: "Chutar um numero com base na intuicao.",
+        texto: "Chutar um número com base na intuição.",
         xp: 5,
-        feedback: "Sem decomposicao ou referencia, a estimativa fica fragil e dificil de defender.",
+        feedback: "Sem decomposição ou referência, a estimativa fica frágil e difícil de defender.",
       },
       {
         texto: "Quebrar em subtarefas e estimar cada parte.",
         xp: 100,
-        feedback: "Boa escolha. Voce reduz incerteza e cria visibilidade sobre o trabalho real.",
+        feedback: "Boa escolha. Você reduz incerteza e cria visibilidade sobre o trabalho real.",
       },
       {
         texto: "Copiar uma estimativa antiga de outra demanda.",
         xp: 40,
-        feedback: "Pode servir como referencia, mas sozinho isso ignora as particularidades da feature atual.",
+        feedback: "Pode servir como referência, mas sozinho isso ignora as particularidades da feature atual.",
       },
     ],
   }),
   createClosedChallenge({
     id: "emotional-intelligence-closed-1",
-    categoria: "Inteligencia Emocional",
-    titulo: "Receber Critica",
-    pergunta: "Voce recebeu um code review duro. Como reage?",
+    categoria: "Inteligência Emocional",
+    titulo: "Receber Crítica",
+    pergunta: "Você recebeu um code review duro. Como reage?",
     descricao: "Escolha a postura com mais maturidade emocional e foco em aprendizado.",
-    dica: "Feedback dificil ainda pode virar crescimento quando voce escuta com maturidade.",
+    dica: "Feedback difícil ainda pode virar crescimento quando você escuta com maturidade.",
     respostas: [
       {
         texto: "Entrar na defensiva para proteger o ego.",
         xp: 40,
-        feedback: "A reacao e humana, mas dificulta entendimento e colaboracao no review.",
+        feedback: "A reação é humana, mas dificulta entendimento e colaboração no review.",
       },
       {
         texto: "Ouvir, fazer perguntas e extrair pontos de melhoria.",
         xp: 100,
-        feedback: "Boa escolha. Voce transforma tensao em aprendizado pratico e evolucao tecnica.",
+        feedback: "Boa escolha. Você transforma tensão em aprendizado prático e evolução técnica.",
       },
       {
         texto: "Ignorar o feedback e seguir em frente.",
@@ -407,189 +407,189 @@ const CHALLENGES = [
   }),
   createClosedChallenge({
     id: "emotional-intelligence-closed-2",
-    categoria: "Inteligencia Emocional",
-    titulo: "Pressao",
-    pergunta: "Voce recebeu um prazo praticamente impossivel. Como reage?",
+    categoria: "Inteligência Emocional",
+    titulo: "Pressão",
+    pergunta: "Você recebeu um prazo praticamente impossível. Como reage?",
     descricao: "Escolha a resposta com mais controle emocional e responsabilidade.",
     dica:
-      "Negociar escopo ou prazo costuma ser melhor do que prometer o impossivel e comprometer a entrega.",
+      "Negociar escopo ou prazo costuma ser melhor do que prometer o impossível e comprometer a entrega.",
     respostas: [
       {
-        texto: "Entrar em panico e tentar resolver depois.",
+        texto: "Entrar em pânico e tentar resolver depois.",
         xp: 40,
-        feedback: "A pressao e real, mas essa reacao reduz a clareza para negociar ou planejar.",
+        feedback: "A pressão é real, mas essa reação reduz a clareza para negociar ou planejar.",
       },
       {
-        texto: "Negociar escopo, prazo e riscos com transparencia.",
+        texto: "Negociar escopo, prazo e riscos com transparência.",
         xp: 100,
-        feedback: "Boa escolha. Voce equilibra responsabilidade, realismo e compromisso com o resultado.",
+        feedback: "Boa escolha. Você equilibra responsabilidade, realismo e compromisso com o resultado.",
       },
       {
-        texto: "Prometer que vai entregar mesmo sabendo que nao da.",
+        texto: "Prometer que vai entregar mesmo sabendo que não dá.",
         xp: 5,
-        feedback: "Isso protege o momento, mas cria um problema maior la na frente.",
+        feedback: "Isso protege o momento, mas cria um problema maior lá na frente.",
       },
     ],
   }),
   createClosedChallenge({
     id: "emotional-intelligence-closed-3",
-    categoria: "Inteligencia Emocional",
-    titulo: "Frustracao de Projeto Falho",
+    categoria: "Inteligência Emocional",
+    titulo: "Frustração de Projeto Falho",
     pergunta: "Uma entrega foi cancelada e o projeto falhou. Como lidar com isso?",
-    descricao: "Escolha a atitude com mais resiliencia e aprendizado.",
+    descricao: "Escolha a atitude com mais resiliência e aprendizado.",
     dica:
-      "Mesmo quando o projeto falha, ainda existe aprendizado sobre tecnica, organizacao, prioridade e prazos.",
+      "Mesmo quando o projeto falha, ainda existe aprendizado sobre técnica, organização, prioridade e prazos.",
     respostas: [
       {
         texto: "Se culpar ou culpar terceiros imediatamente.",
         xp: 5,
-        feedback: "Buscar culpados cedo demais fecha espaco para aprender com o que aconteceu.",
+        feedback: "Buscar culpados cedo demais fecha espaço para aprender com o que aconteceu.",
       },
       {
         texto: "Fazer um post-mortem e transformar a falha em aprendizado.",
         xp: 100,
-        feedback: "Boa escolha. Voce reconhece o impacto da falha sem desperdicar o aprendizado.",
+        feedback: "Boa escolha. Você reconhece o impacto da falha sem desperdiçar o aprendizado.",
       },
       {
         texto: "Fingir que nada aconteceu e seguir como se estivesse tudo certo.",
         xp: 40,
-        feedback: "Evita o desconforto imediato, mas impede a equipe de amadurecer com a experiencia.",
+        feedback: "Evita o desconforto imediato, mas impede a equipe de amadurecer com a experiência.",
       },
     ],
   }),
   createOpenChallenge({
     id: "communication-open-1",
-    categoria: "Comunicacao",
-    titulo: "Cliente Dificil",
+    categoria: "Comunicação",
+    titulo: "Cliente Difícil",
     pergunta:
-      "Um cliente esta irritado dizendo que o sistema esta inutil e exige resposta imediata. Como voce responderia?",
+      "Um cliente está irritado dizendo que o sistema está inútil e exige resposta imediata. Como você responderia?",
     descricao: "Responda com suas palavras, como se estivesse falando com o cliente.",
-    criteriosAvaliacao: ["empatia", "clareza", "postura emocional"],
+    critériosAvaliacao: ["empatia", "clareza", "postura emocional"],
   }),
   createOpenChallenge({
     id: "communication-open-2",
-    categoria: "Comunicacao",
-    titulo: "Explicacao Tecnica",
+    categoria: "Comunicação",
+    titulo: "Explicação Técnica",
     pergunta:
-      "Voce precisa explicar para um gestor nao tecnico por que o deploy foi adiado. Como explicaria?",
-    descricao: "Escreva uma resposta simples, objetiva e facil de entender.",
-    criteriosAvaliacao: ["simplificacao", "didatica", "ausencia de jargao"],
+      "Você precisa explicar para um gestor não técnico por que o deploy foi adiado. Como explicaria?",
+    descricao: "Escreva uma resposta simples, objetiva e fácil de entender.",
+    critériosAvaliacao: ["simplificação", "didática", "ausência de jargão"],
   }),
   createOpenChallenge({
     id: "communication-open-3",
-    categoria: "Comunicacao",
+    categoria: "Comunicação",
     titulo: "Feedback Construtivo",
     pergunta:
-      "Um colega entregou um codigo com varios problemas. Como voce daria esse feedback?",
-    descricao: "Escreva como voce abordaria a conversa com respeito e clareza.",
-    criteriosAvaliacao: ["respeito", "clareza", "assertividade"],
+      "Um colega entregou um código com vários problemas. Como você daria esse feedback?",
+    descricao: "Escreva como você abordaria a conversa com respeito e clareza.",
+    critériosAvaliacao: ["respeito", "clareza", "assertividade"],
   }),
   createOpenChallenge({
     id: "teamwork-open-1",
     categoria: "Trabalho em Equipe",
-    titulo: "Priorizacao em Equipe",
+    titulo: "Priorização em Equipe",
     pergunta:
-      "Sua equipe tem varias tarefas e pouco tempo. Como voce organizaria isso junto ao time?",
-    descricao: "Descreva como voce conduziria a organizacao do trabalho com o grupo.",
-    criteriosAvaliacao: ["colaboracao", "lideranca", "organizacao"],
+      "Sua equipe tem várias tarefas e pouco tempo. Como você organizaria isso junto ao time?",
+    descricao: "Descreva como você conduziria a organização do trabalho com o grupo.",
+    critériosAvaliacao: ["colaboração", "liderança", "organização"],
   }),
   createOpenChallenge({
     id: "teamwork-open-2",
     categoria: "Trabalho em Equipe",
     titulo: "Conflito entre Colegas",
     pergunta:
-      "Dois desenvolvedores estao em conflito sobre uma decisao tecnica. Como voce lidaria com essa situacao?",
-    descricao: "Explique como mediaria a situacao sem reforcar a polarizacao.",
-    criteriosAvaliacao: ["mediacao", "neutralidade", "comunicacao"],
+      "Dois desenvolvedores estão em conflito sobre uma decisão técnica. Como você lidaria com essa situação?",
+    descricao: "Explique como mediaria a situação sem reforçar a polarização.",
+    critériosAvaliacao: ["mediação", "neutralidade", "comunicação"],
   }),
   createOpenChallenge({
     id: "teamwork-open-3",
     categoria: "Trabalho em Equipe",
-    titulo: "Decisao Coletiva",
+    titulo: "Decisão Coletiva",
     pergunta:
-      "Existem duas possiveis solucoes tecnicas para um problema. Como voce conduziria a decisao em equipe?",
-    descricao: "Mostre como equilibraria analise tecnica e colaboracao.",
-    criteriosAvaliacao: ["pensamento critico", "colaboracao", "analise"],
+      "Existem duas possíveis soluções técnicas para um problema. Como você conduziria a decisão em equipe?",
+    descricao: "Mostre como equilibraria análise técnica e colaboração.",
+    critériosAvaliacao: ["pensamento crítico", "colaboração", "análise"],
   }),
   createOpenChallenge({
     id: "problem-solving-open-1",
-    categoria: "Resolucao de Problemas",
+    categoria: "Resolução de Problemas",
     titulo: "Sistema Fora do Ar",
-    pergunta: "O sistema caiu em producao. Quais seriam seus primeiros passos?",
-    descricao: "Escreva como voce reagiria nos primeiros minutos do incidente.",
-    criteriosAvaliacao: ["organizacao", "metodo", "priorizacao"],
+    pergunta: "O sistema caiu em produção. Quais seriam seus primeiros passos?",
+    descricao: "Escreva como você reagiria nos primeiros minutos do incidente.",
+    critériosAvaliacao: ["organização", "método", "priorização"],
   }),
   createOpenChallenge({
     id: "problem-solving-open-2",
-    categoria: "Resolucao de Problemas",
+    categoria: "Resolução de Problemas",
     titulo: "Bug vs Feature",
     pergunta:
-      "Voce tem um bug critico e uma nova feature para entregar. Como decide o que fazer primeiro?",
-    descricao: "Explique qual criterio usaria para decidir.",
-    criteriosAvaliacao: ["priorizacao", "visao de produto", "responsabilidade"],
+      "Você tem um bug crítico e uma nova feature para entregar. Como decide o que fazer primeiro?",
+    descricao: "Explique qual critério usaria para decidir.",
+    critériosAvaliacao: ["priorização", "visão de produto", "responsabilidade"],
   }),
   createOpenChallenge({
     id: "problem-solving-open-3",
-    categoria: "Resolucao de Problemas",
-    titulo: "Erro Dificil",
+    categoria: "Resolução de Problemas",
+    titulo: "Erro Difícil",
     pergunta:
-      "Voce esta lidando com um erro intermitente dificil de reproduzir. Como abordaria a solucao?",
-    descricao: "Descreva sua estrategia de investigacao.",
-    criteriosAvaliacao: ["investigacao", "uso de dados", "raciocinio logico"],
+      "Você está lidando com um erro intermitente difícil de reproduzir. Como abordaria a solução?",
+    descricao: "Descreva sua estratégia de investigação.",
+    critériosAvaliacao: ["investigação", "uso de dados", "raciocínio lógico"],
   }),
   createOpenChallenge({
     id: "time-management-open-1",
-    categoria: "Gestao de Tempo",
+    categoria: "Gestão de Tempo",
     titulo: "Muitas Tarefas",
     pergunta:
-      "Voce recebeu varias tarefas urgentes ao mesmo tempo. Como organiza seu trabalho?",
+      "Você recebeu várias tarefas urgentes ao mesmo tempo. Como organiza seu trabalho?",
     descricao: "Explique como decide a ordem e protege seu foco.",
-    criteriosAvaliacao: ["planejamento", "priorizacao", "gestao de tempo"],
+    critériosAvaliacao: ["planejamento", "priorização", "gestão de tempo"],
   }),
   createOpenChallenge({
     id: "time-management-open-2",
-    categoria: "Gestao de Tempo",
+    categoria: "Gestão de Tempo",
     titulo: "Prioridades",
     pergunta:
-      "Como voce decide o que e mais importante quando tudo parece urgente?",
-    descricao: "Descreva seu criterio de comparacao entre as demandas.",
-    criteriosAvaliacao: ["analise de impacto", "criterio", "organizacao"],
+      "Como você decide o que é mais importante quando tudo parece urgente?",
+    descricao: "Descreva seu critério de comparação entre as demandas.",
+    critériosAvaliacao: ["análise de impacto", "critério", "organização"],
   }),
   createOpenChallenge({
     id: "time-management-open-3",
-    categoria: "Gestao de Tempo",
+    categoria: "Gestão de Tempo",
     titulo: "Estimativa",
     pergunta:
-      "Voce precisa estimar o tempo de uma tarefa desconhecida. Como faz isso?",
-    descricao: "Escreva como voce reduziria incerteza antes de estimar.",
-    criteriosAvaliacao: ["planejamento", "decomposicao", "analise"],
+      "Você precisa estimar o tempo de uma tarefa desconhecida. Como faz isso?",
+    descricao: "Escreva como você reduziria incerteza antes de estimar.",
+    critériosAvaliacao: ["planejamento", "decomposição", "análise"],
   }),
   createOpenChallenge({
     id: "emotional-intelligence-open-1",
-    categoria: "Inteligencia Emocional",
-    titulo: "Receber Critica",
+    categoria: "Inteligência Emocional",
+    titulo: "Receber Crítica",
     pergunta:
-      "Voce recebeu um feedback negativo em um code review. Como reage?",
-    descricao: "Mostre como lidaria com a situacao sem perder maturidade.",
-    criteriosAvaliacao: ["maturidade", "aprendizado", "controle emocional"],
+      "Você recebeu um feedback negativo em um code review. Como reage?",
+    descricao: "Mostre como lidaria com a situação sem perder maturidade.",
+    critériosAvaliacao: ["maturidade", "aprendizado", "controle emocional"],
   }),
   createOpenChallenge({
     id: "emotional-intelligence-open-2",
-    categoria: "Inteligencia Emocional",
-    titulo: "Pressao",
+    categoria: "Inteligência Emocional",
+    titulo: "Pressão",
     pergunta:
-      "Voce recebeu um prazo praticamente impossivel. Como reage?",
-    descricao: "Explique como manteria responsabilidade sem prometer o impossivel.",
-    criteriosAvaliacao: ["controle emocional", "negociacao", "responsabilidade"],
+      "Você recebeu um prazo praticamente impossível. Como reage?",
+    descricao: "Explique como manteria responsabilidade sem prometer o impossível.",
+    critériosAvaliacao: ["controle emocional", "negociação", "responsabilidade"],
   }),
   createOpenChallenge({
     id: "emotional-intelligence-open-3",
-    categoria: "Inteligencia Emocional",
+    categoria: "Inteligência Emocional",
     titulo: "Projeto Falhou",
     pergunta:
-      "Um projeto em que voce trabalhou falhou. Como voce lida com isso?",
-    descricao: "Descreva como transformaria a experiencia em aprendizado.",
-    criteriosAvaliacao: ["aprendizado", "resiliencia", "reflexao"],
+      "Um projeto em que você trabalhou falhou. Como você lida com isso?",
+    descricao: "Descreva como transformaria a experiência em aprendizado.",
+    critériosAvaliacao: ["aprendizado", "resiliência", "reflexão"],
   }),
 ];
 
@@ -641,7 +641,7 @@ const AVATAR_CATALOG = {
   ],
   acessorio: [
     { id: "none", label: "Nenhum", minLevel: 1 },
-    { id: "glasses", label: "Oculos", minLevel: 1 },
+    { id: "glasses", label: "Óculos", minLevel: 1 },
     { id: "headset", label: "Headset", minLevel: 2 },
     { id: "badge", label: "Broche", minLevel: 3 },
     { id: "crown", label: "Coroa", minLevel: 5 },
@@ -652,10 +652,10 @@ const BADGE_DEFINITIONS = [
   {
     id: "communicator-beginner",
     name: "Comunicador Iniciante",
-    description: "Complete 3 desafios de Comunicacao.",
+    description: "Complete 3 desafios de Comunicação.",
     theme: "communication",
     predicate(context) {
-      return countAttemptsByCategory(context.attempts, "Comunicacao") >= 3;
+      return countAttemptsByCategory(context.attempts, "Comunicação") >= 3;
     },
   },
   {
@@ -673,10 +673,10 @@ const BADGE_DEFINITIONS = [
   {
     id: "sprint-master",
     name: "Mestre da Sprint",
-    description: "Complete todos os desafios de Gestao de Tempo.",
+    description: "Complete todos os desafios de Gestão de Tempo.",
     theme: "time",
     predicate(context) {
-      return countAttemptsByCategory(context.attempts, "Gestao de Tempo") >= 6;
+      return countAttemptsByCategory(context.attempts, "Gestão de Tempo") >= 6;
     },
   },
   {
@@ -690,8 +690,8 @@ const BADGE_DEFINITIONS = [
   },
   {
     id: "leader-in-formation",
-    name: "Lider em Formacao",
-    description: "Alcance o nivel 3.",
+    name: "Líder em Formação",
+    description: "Alcance o nível 3.",
     theme: "leadership",
     predicate(context) {
       return context.level >= 3;
@@ -712,13 +712,13 @@ const CRITERIA_KEYWORDS = {
   lideranca: ["organizar", "delegar", "priorizar", "direcionar", "coordenar"],
   organizacao: ["plano", "ordem", "etapas", "mapear", "organizar"],
   mediacao: ["ouvir", "mediar", "consenso", "facilitar", "conciliar"],
-  neutralidade: ["ambos", "criterios", "sem lado", "equilibrio", "imparcial"],
+  neutralidade: ["ambos", "critérios", "sem lado", "equilibrio", "imparcial"],
   comunicacao: ["alinhar", "conversar", "explicar", "escutar", "mensagem"],
-  "pensamento critico": ["trade-off", "impacto", "criterio", "risco", "beneficio"],
-  analise: ["pros", "contras", "avaliar", "comparar", "criterio"],
+  "pensamento critico": ["trade-off", "impacto", "critério", "risco", "beneficio"],
+  analise: ["pros", "contras", "avaliar", "comparar", "critério"],
   metodo: ["diagnosticar", "isolar", "confirmar", "validar", "hipotese"],
-  priorizacao: ["priorizar", "impacto", "urgencia", "ordem", "primeiro"],
-  "visao de produto": ["usuario", "produto", "negocio", "impacto", "valor"],
+  priorizacao: ["priorizar", "impacto", "urgência", "ordem", "primeiro"],
+  "visao de produto": ["usuário", "produto", "negócio", "impacto", "valor"],
   responsabilidade: ["assumir", "comunicar", "resolver", "acompanhar", "compromisso"],
   investigacao: ["log", "hipotese", "causa", "evidencia", "investigar"],
   "uso de dados": ["metrica", "log", "dado", "observacao", "monitoramento"],
@@ -726,7 +726,7 @@ const CRITERIA_KEYWORDS = {
   planejamento: ["planejar", "mapear", "etapa", "estimar", "organizar"],
   "gestao de tempo": ["agenda", "bloco", "priorizar", "prazo", "foco"],
   "analise de impacto": ["impacto", "risco", "valor", "dependencia", "resultado"],
-  criterio: ["criterio", "avaliar", "comparar", "decidir", "peso"],
+  criterio: ["critério", "avaliar", "comparar", "decidir", "peso"],
   decomposicao: ["quebrar", "subtarefa", "etapa", "dividir", "bloco"],
   maturidade: ["ouvir", "aprender", "refletir", "melhorar", "aceitar"],
   aprendizado: ["aprender", "ajustar", "evoluir", "melhorar", "licao"],
@@ -854,13 +854,13 @@ function createDefaultGamificationState() {
 function hydrateUser(user) {
   const xp = Math.max(Number(user?.xp) || 0, 0);
   const level = calculateLevel(xp);
-  const nome = String(user?.nome || user?.usuario || "Dev").trim();
+  const nome = String(user?.nome || user?.usuário || "Dev").trim();
 
   return {
     ...user,
     nome,
     email: normalizeEmail(user?.email),
-    usuario: user?.usuario || null,
+    usuário: user?.usuário || null,
     xp,
     nivel: level,
     badges: Array.isArray(user?.badges) ? user.badges.filter((badge) => badge?.id) : [],
@@ -1116,26 +1116,26 @@ function buildPasswordResetEmail({ user, req, rawToken, expiresAt }) {
     resetUrl,
     subject: "Redefina sua senha na SkillUp Dev",
     text: [
-      `Ola, ${user.nome || "Dev"}!`,
+      `Olá, ${user.nome || "Dev"}!`,
       "",
       "Recebemos um pedido para redefinir sua senha na SkillUp Dev.",
       `Use este link: ${resetUrl}`,
       `Validade: ${expirationLabel}`,
       "",
-      "Se você não solicitou a redefinicao, ignore este email.",
+      "Se você não solicitou a redefinição, ignore este email.",
     ].join("\n"),
     html: `
       <div style="font-family:Arial,sans-serif;background:#f5f7ff;padding:32px;color:#2c2457;">
         <div style="max-width:620px;margin:0 auto;background:#ffffff;border-radius:20px;padding:32px;box-shadow:0 16px 40px rgba(44,36,87,0.12);">
           <p style="font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:#5b6cff;font-weight:700;margin:0 0 12px;">
-            Recuperacao de senha
+            Recuperação de senha
           </p>
           <h1 style="margin:0 0 16px;font-size:28px;line-height:1.2;">Oi, ${safeName}</h1>
           <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#4b4f70;">
             Recebemos um pedido para redefinir sua senha na SkillUp Dev.
           </p>
           <p style="margin:0 0 24px;font-size:16px;line-height:1.6;color:#4b4f70;">
-            Clique no botao abaixo para criar uma nova senha. Esse link expira em <strong>${escapeHtml(
+            Clique no botão abaixo para criar uma nova senha. Esse link expira em <strong>${escapeHtml(
               expirationLabel
             )}</strong>.
           </p>
@@ -1145,13 +1145,13 @@ function buildPasswordResetEmail({ user, req, rawToken, expiresAt }) {
             </a>
           </p>
           <p style="margin:0 0 12px;font-size:14px;line-height:1.6;color:#6b6f8c;">
-            Se o botao nao abrir, copie e cole este link no navegador:
+            Se o botão não abrir, copie e cole este link no navegador:
           </p>
           <p style="margin:0 0 24px;font-size:14px;line-height:1.6;word-break:break-word;">
             <a href="${safeResetUrl}" style="color:#5b6cff;">${safeResetUrl}</a>
           </p>
           <p style="margin:0;font-size:13px;line-height:1.6;color:#7b809d;">
-            Se você não solicitou essa troca, ignore este email. Em caso de duvida, fale com ${supportEmail}.
+            Se você não solicitou essa troca, ignore este email. Em caso de dúvida, fale com ${supportEmail}.
           </p>
         </div>
       </div>
@@ -1199,7 +1199,7 @@ async function sendEmailWithResend({ to, subject, html, text }) {
 
   if (!response.ok) {
     const reason = data?.message || data?.error || `status ${response.status}`;
-    throw new Error(`Resend nao aceitou o envio (${reason}).`);
+    throw new Error(`Resend não aceitou o envio (${reason}).`);
   }
 
   return data;
@@ -1218,7 +1218,7 @@ async function sendPasswordResetEmail({ user, req, rawToken, expiresAt }) {
     });
   }
 
-  throw new Error("Provedor de email nao suportado para envio real.");
+  throw new Error("Provedor de email não suportado para envio real.");
 }
 
 function getUserAttempts(userId, database) {
@@ -1340,7 +1340,7 @@ function buildUserResponse(user, database) {
   return {
     id: user.id,
     nome: user.nome,
-    usuario: user.usuario,
+    usuário: user.usuário,
     email: user.email,
     ...progress,
     completedChallenges: attempts.length,
@@ -1370,7 +1370,7 @@ function buildPublicChallenge(challenge, completedAttempt) {
     pergunta: challenge.pergunta,
     descricao: challenge.descricao,
     dica: challenge.dica || null,
-    criteriosAvaliacao: challenge.criteriosAvaliacao || [],
+    critériosAvaliacao: challenge.critériosAvaliacao || [],
     recompensas: {
       conclusionXp: CHALLENGE_COMPLETION_XP,
       idealBonusXp: IDEAL_ANSWER_BONUS_XP,
@@ -1404,8 +1404,8 @@ function getCriteriaMatches(answer, criteria) {
   const normalizedAnswer = normalizeTextValue(answer);
   const uniqueCriteria = Array.from(new Set((criteria || []).map(normalizeTextValue)));
 
-  return uniqueCriteria.filter((criterion) => {
-    const keywords = CRITERIA_KEYWORDS[criterion] || [];
+  return uniqueCriteria.filter((critérion) => {
+    const keywords = CRITERIA_KEYWORDS[critérion] || [];
     return keywords.some((keyword) => normalizedAnswer.includes(normalizeTextValue(keyword)));
   });
 }
@@ -1426,7 +1426,7 @@ function buildHeuristicFeedback(answer, criteria = []) {
   ];
   const matchedCriteria = getCriteriaMatches(cleanAnswer, criteria);
   const missingCriteria = (criteria || []).filter(
-    (criterion) => !matchedCriteria.includes(normalizeTextValue(criterion))
+    (critérion) => !matchedCriteria.includes(normalizeTextValue(critérion))
   );
 
   let score = 35;
@@ -1440,14 +1440,14 @@ function buildHeuristicFeedback(answer, criteria = []) {
   const finalScore = Math.max(35, Math.min(score, 100));
 
   let feedback =
-    "Sua resposta esta no caminho certo, mas ainda pode ganhar mais estrutura e objetividade.";
+    "Sua resposta está no caminho certo, mas ainda pode ganhar mais estrutura e objetividade.";
 
   if (finalScore >= OPEN_CHALLENGE_IDEAL_SCORE) {
     feedback =
-      "Boa resposta. Voce demonstrou maturidade, contexto e um encaminhamento claro para a situacao.";
+      "Boa resposta. Você demonstrou maturidade, contexto e um encaminhamento claro para a situação.";
   } else if (finalScore >= OPEN_CHALLENGE_MEDIUM_SCORE) {
     feedback =
-      "A resposta mostra boa intencao e uma linha de raciocinio util, mas ainda pode ficar mais forte.";
+      "A resposta mostra boa intenção e uma linha de raciocínio útil, mas ainda pode ficar mais forte.";
   }
 
   if (missingCriteria.length > 0) {
@@ -1485,26 +1485,26 @@ function extractJsonObject(text) {
 
 async function evaluateOpenChallengeWithAI({ resposta, challenge }) {
   const criteria =
-    Array.isArray(challenge.criteriosAvaliacao) && challenge.criteriosAvaliacao.length
-      ? challenge.criteriosAvaliacao
-      : ["clareza", "empatia", "adequacao ao cenario"];
+    Array.isArray(challenge.critériosAvaliacao) && challenge.critériosAvaliacao.length
+      ? challenge.critériosAvaliacao
+      : ["clareza", "empatia", "adequacao ao cenário"];
 
   if (!process.env.OPENAI_API_KEY) {
     return buildHeuristicFeedback(resposta, criteria);
   }
 
   const prompt = [
-    "Avalie a resposta de um usuario em um desafio de soft skills.",
+    "Avalie a resposta de um usuário em um desafio de soft skills.",
     `Categoria: ${challenge.categoria}`,
     `Titulo do desafio: ${challenge.titulo}`,
     `Pergunta: ${challenge.pergunta}`,
-    `Resposta do usuario: ${resposta}`,
+    `Resposta do usuário: ${resposta}`,
     "",
-    "Considere especialmente estes criterios:",
-    ...criteria.map((criterion) => `- ${criterion}`),
+    "Considere especialmente estes critérios:",
+    ...criteria.map((critérion) => `- ${critérion}`),
     "",
-    "O feedback deve ser funcional, especifico, educativo e curto.",
-    'Retorne apenas JSON valido no formato {"nota": 0-100, "feedback": "texto curto"}',
+    "O feedback deve ser funcional, específico, educativo e curto.",
+    'Retorne apenas JSON válido no formato {"nota": 0-100, "feedback": "texto curto"}',
   ].join("\n");
 
   try {
@@ -1530,7 +1530,7 @@ async function evaluateOpenChallengeWithAI({ resposta, challenge }) {
     const parsed = extractJsonObject(content);
 
     if (!parsed) {
-      throw new Error("Nao foi possivel interpretar o JSON da avaliacao.");
+      throw new Error("Não foi possível interpretar o JSON da avaliação.");
     }
 
     return {
@@ -1562,21 +1562,21 @@ function applyDailyLoginReward(user) {
   user.gamification.lastRewardAt = new Date().toISOString();
 
   return {
-    label: "Login diario",
+    label: "Login diário",
     xp: DAILY_LOGIN_XP,
   };
 }
 
 function buildChallengeConsequence(qualityTier) {
   if (qualityTier === "ideal") {
-    return "Sua decisao tende a aumentar a confianca, reduzir atrito e melhorar o resultado do cenario.";
+    return "Sua decisão tende a aumentar a confiança, reduzir atrito e melhorar o resultado do cenário.";
   }
 
   if (qualityTier === "medium") {
-    return "Sua escolha pode funcionar parcialmente, mas ainda deixa espaco para ruido, retrabalho ou tensao.";
+    return "Sua escolha pode funcionar parcialmente, mas ainda deixa espaço para ruído, retrabalho ou tensão.";
   }
 
-  return "Sua resposta tende a ampliar o problema ou reduzir a confianca das pessoas envolvidas.";
+  return "Sua resposta tende a ampliar o problema ou reduzir a confiança das pessoas envolvidas.";
 }
 
 function buildXpBreakdown(qualityTier, streakBonusXp) {
@@ -1584,13 +1584,13 @@ function buildXpBreakdown(qualityTier, streakBonusXp) {
     qualityTier === "ideal" ? IDEAL_ANSWER_BONUS_XP : qualityTier === "low" ? LOW_QUALITY_ADJUSTMENT_XP : 0;
 
   const breakdown = [
-    { label: "Desafio concluido", xp: CHALLENGE_COMPLETION_XP },
+    { label: "Desafio concluído", xp: CHALLENGE_COMPLETION_XP },
     { label: "Qualidade da resposta", xp: qualityAdjustmentXp },
   ];
 
   if (streakBonusXp > 0) {
     breakdown.push({
-      label: `Sequencia perfeita x${PERFECT_STREAK_TARGET}`,
+      label: `Sequência perfeita x${PERFECT_STREAK_TARGET}`,
       xp: streakBonusXp,
     });
   }
@@ -1625,7 +1625,7 @@ async function authenticateRequest(req, res, next) {
   const authorization = String(req.headers.authorization || "");
 
   if (!authorization.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Token de acesso nao informado." });
+    return res.status(401).json({ message: "Token de acesso não informado." });
   }
 
   const token = authorization.slice("Bearer ".length).trim();
@@ -1633,13 +1633,13 @@ async function authenticateRequest(req, res, next) {
   const session = database.sessions.find((item) => item.token === token);
 
   if (!session) {
-    return res.status(401).json({ message: "Sessao invalida ou expirada." });
+    return res.status(401).json({ message: "Sessão inválida ou expirada." });
   }
 
   const user = database.users.find((item) => item.id === session.userId);
 
   if (!user) {
-    return res.status(401).json({ message: "Usuario da sessao nao encontrado." });
+    return res.status(401).json({ message: "Usuário da sessão não encontrado." });
   }
 
   req.database = database;
@@ -1674,7 +1674,7 @@ app.post("/api/auth/register", async (req, res) => {
   const emailExists = database.users.some((item) => item.email === email);
 
   if (emailExists) {
-    return res.status(409).json({ message: "Ja existe uma conta com este email." });
+    return res.status(409).json({ message: "Já existe uma conta com este email." });
   }
 
   const user = hydrateUser({
@@ -1724,7 +1724,7 @@ app.post("/api/auth/login", async (req, res) => {
   const user = database.users.find((item) => item.email === email);
 
   if (!user || !verifyPassword(senha, user.passwordHash)) {
-    return res.status(401).json({ message: "Email ou senha invalidos." });
+    return res.status(401).json({ message: "Email ou senha inválidos." });
   }
 
   database.sessions = database.sessions.filter((item) => item.userId !== user.id);
@@ -1753,14 +1753,14 @@ app.post("/api/auth/forgot-password", async (req, res) => {
   const email = normalizeEmail(req.body.email);
 
   if (!email) {
-    return res.status(400).json({ message: "Informe um email valido." });
+    return res.status(400).json({ message: "Informe um e-mail válido." });
   }
 
   const database = await readDatabase();
   const removedExpiredTokens = purgeExpiredPasswordResetTokens(database);
   const user = database.users.find((item) => item.email === email);
   const response = {
-    message: "Se existir uma conta com este email, enviaremos as instrucoes de recuperacao.",
+    message: "Se existir uma conta com este email, enviaremos as instruções de recuperação.",
   };
 
   if (user) {
@@ -1781,21 +1781,21 @@ app.post("/api/auth/forgot-password", async (req, res) => {
           expiresAt: record.expiresAt,
         });
       } catch (error) {
-        console.error("Falha ao enviar email de recuperacao:", error);
+        console.error("Falha ao enviar email de recuperação:", error);
         return res.status(502).json({
           message:
-            "Nao foi possivel enviar o email de recuperacao agora. Confira a configuracao de email e tente novamente.",
+            "Não foi possível enviar o email de recuperação agora. Confira a configuração de email e tente novamente.",
         });
       }
 
       response.message =
-        "Se existir uma conta com este email, enviamos um link de recuperacao. Verifique sua caixa de entrada e a pasta de spam.";
+        "Se existir uma conta com este email, enviamos um link de recuperação. Verifique sua caixa de entrada e a pasta de spam.";
       return res.json(response);
     }
 
     if (shouldExposeResetPreview(req)) {
       response.message =
-        "Email real nao configurado neste ambiente. Use o link de teste abaixo para validar o fluxo.";
+        "Email real não configurado neste ambiente. Use o link de teste abaixo para validar o fluxo.";
       response.previewResetUrl = buildPasswordResetUrl(req, rawToken);
       response.previewExpiresAt = record.expiresAt;
       return res.json(response);
@@ -1803,7 +1803,7 @@ app.post("/api/auth/forgot-password", async (req, res) => {
 
     return res.status(503).json({
       message:
-        "Envio de email nao configurado no servidor. Defina as variaveis EMAIL_PROVIDER, EMAIL_FROM e RESEND_API_KEY.",
+        "Envio de e-mail não configurado no servidor. Defina as variáveis EMAIL_PROVIDER, EMAIL_FROM e RESEND_API_KEY.",
     });
   }
 
@@ -1818,7 +1818,7 @@ app.get("/api/auth/reset-password/validate", async (req, res) => {
   const token = String(req.query.token || "").trim();
 
   if (!token) {
-    return res.status(400).json({ message: "Token de recuperacao nao informado." });
+    return res.status(400).json({ message: "Token de recuperação não informado." });
   }
 
   const database = await readDatabase();
@@ -1830,17 +1830,17 @@ app.get("/api/auth/reset-password/validate", async (req, res) => {
   }
 
   if (!resetToken) {
-    return res.status(400).json({ message: "Link de recuperacao invalido ou expirado." });
+    return res.status(400).json({ message: "Link de recuperação inválido ou expirado." });
   }
 
   const user = database.users.find((item) => item.id === resetToken.userId);
 
   if (!user) {
-    return res.status(400).json({ message: "Link de recuperacao invalido ou expirado." });
+    return res.status(400).json({ message: "Link de recuperação inválido ou expirado." });
   }
 
   return res.json({
-    message: "Link de recuperacao valido.",
+    message: "Link de recuperação válido.",
     emailHint: maskEmail(user.email),
     expiresAt: resetToken.expiresAt,
   });
@@ -1851,7 +1851,7 @@ app.post("/api/auth/reset-password", async (req, res) => {
   const senha = String(req.body.senha || "");
 
   if (!token) {
-    return res.status(400).json({ message: "Token de recuperacao nao informado." });
+    return res.status(400).json({ message: "Token de recuperação não informado." });
   }
 
   if (senha.length < 6) {
@@ -1867,13 +1867,13 @@ app.post("/api/auth/reset-password", async (req, res) => {
     if (removedExpiredTokens) {
       await writeDatabase(database);
     }
-    return res.status(400).json({ message: "Link de recuperacao invalido ou expirado." });
+    return res.status(400).json({ message: "Link de recuperação inválido ou expirado." });
   }
 
   const user = database.users.find((item) => item.id === resetToken.userId);
 
   if (!user) {
-    return res.status(400).json({ message: "Link de recuperacao invalido ou expirado." });
+    return res.status(400).json({ message: "Link de recuperação inválido ou expirado." });
   }
 
   user.passwordHash = createPasswordHash(senha);
@@ -1885,7 +1885,7 @@ app.post("/api/auth/reset-password", async (req, res) => {
   await writeDatabase(database);
 
   return res.json({
-    message: "Senha redefinida com sucesso. Faca login com a nova senha.",
+    message: "Senha redefinida com sucesso. Faça login com a nova senha.",
   });
 });
 
@@ -1893,7 +1893,7 @@ app.post("/api/auth/logout", authenticateRequest, async (req, res) => {
   req.database.sessions = req.database.sessions.filter((session) => session.token !== req.token);
   await writeDatabase(req.database);
 
-  res.json({ message: "Sessao encerrada com sucesso." });
+  res.json({ message: "Sessão encerrada com sucesso." });
 });
 
 app.get("/api/me", authenticateRequest, async (req, res) => {
@@ -1929,7 +1929,7 @@ app.post("/api/challenges/:challengeId/submit", authenticateRequest, async (req,
   const challenge = getChallengeById(req.params.challengeId);
 
   if (!challenge) {
-    return res.status(404).json({ message: "Desafio nao encontrado." });
+    return res.status(404).json({ message: "Desafio não encontrado." });
   }
 
   const existingAttempt = req.database.challengeAttempts.find(
@@ -1938,7 +1938,7 @@ app.post("/api/challenges/:challengeId/submit", authenticateRequest, async (req,
 
   if (existingAttempt) {
     return res.status(409).json({
-      message: "Este desafio ja foi concluido.",
+      message: "Este desafio já foi concluído.",
       result: {
         nota: existingAttempt.score,
         feedback: existingAttempt.feedback,
@@ -1961,7 +1961,7 @@ app.post("/api/challenges/:challengeId/submit", authenticateRequest, async (req,
     const resposta = challenge.respostas.find((item) => item.id === respostaId);
 
     if (!resposta) {
-      return res.status(400).json({ message: "Opcao de resposta invalida." });
+      return res.status(400).json({ message: "Opção de resposta inválida." });
     }
 
     answer = resposta.texto;
