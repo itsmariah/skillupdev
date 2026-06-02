@@ -509,6 +509,37 @@
     preview.style.setProperty("--avatar-secondary", colorMeta.secondary || "#8994ff");
   }
 
+  function renderColorSwatches(colors, selectedId) {
+    const container = document.getElementById("avatarColorSwatches");
+    const select = document.getElementById("avatarColor");
+    if (!container || !select) return;
+
+    container.innerHTML = colors
+      .map((color) => {
+        const isSelected = color.id === selectedId ? "selected" : "";
+        const disabledAttr = color.unlocked ? "" : "disabled";
+        const title = color.unlocked ? color.label : `${color.label} (Nível ${color.minLevel})`;
+        return `<button
+          type="button"
+          class="avatar-swatch ${isSelected}"
+          data-color-id="${color.id}"
+          style="--swatch-color: ${color.value};"
+          title="${title}"
+          ${disabledAttr}
+        ></button>`;
+      })
+      .join("");
+
+    container.querySelectorAll(".avatar-swatch:not([disabled])").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        select.value = btn.dataset.colorId;
+        select.dispatchEvent(new Event("change"));
+        container.querySelectorAll(".avatar-swatch").forEach((s) => s.classList.remove("selected"));
+        btn.classList.add("selected");
+      });
+    });
+  }
+
   function renderAvatarBuilder(user) {
     const avatarConfig = user.avatarConfig || {
       cabelo: "short",
@@ -520,6 +551,7 @@
     populateAvatarSelect("avatarHair", getAvatarOptions("cabelo"), avatarConfig.cabelo);
     populateAvatarSelect("avatarOutfit", getAvatarOptions("roupa"), avatarConfig.roupa);
     populateAvatarSelect("avatarColor", getAvatarOptions("cor"), avatarConfig.cor);
+    renderColorSwatches(getAvatarOptions("cor"), avatarConfig.cor);
     populateAvatarSelect("avatarAccessory", getAvatarOptions("acessorio"), avatarConfig.acessorio);
     renderAvatarPreview(avatarConfig);
   }

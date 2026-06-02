@@ -140,8 +140,8 @@
             <div class="avatar-builder">
               <div id="avatarPreview" class="avatar-preview hair-short outfit-hoodie accessory-none">
                 <div class="avatar-orbit"></div>
+                <div class="avatar-shadow"></div>
                 <div class="avatar-character">
-                  <div class="avatar-shadow"></div>
                   <div class="avatar-torso"></div>
                   <div class="avatar-neck"></div>
                   <div class="avatar-head"></div>
@@ -167,8 +167,9 @@
                   </div>
 
                   <div class="col-sm-6">
-                    <label for="avatarColor" class="form-label">Cor</label>
-                    <select id="avatarColor" class="form-select"></select>
+                    <label class="form-label">Cor</label>
+                    <select id="avatarColor" class="d-none" aria-hidden="true"></select>
+                    <div id="avatarColorSwatches" class="avatar-color-swatches"></div>
                   </div>
 
                   <div class="col-sm-6">

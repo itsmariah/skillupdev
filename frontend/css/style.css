@@ -1027,20 +1027,43 @@
          height: 220px;
          margin: 0 auto;
          border-radius: 28px;
-         background: radial-gradient(circle at top, rgba(137,148,255,0.28), rgba(91,108,255,0.12));
+         background: radial-gradient(ellipse at 40% 30%, rgba(137,148,255,0.4), rgba(91,108,255,0.06) 70%);
          overflow: hidden;
+         border: 1.5px solid rgba(137,148,255,0.35);
+         box-shadow:
+            0 0 0 1px rgba(91,108,255,0.08),
+            0 16px 56px rgba(91,108,255,0.25),
+            inset 0 1px 0 rgba(255,255,255,0.08);
+      }
+
+      .avatar-preview::before {
+         content: '';
+         position: absolute;
+         bottom: 18px;
+         left: 50%;
+         transform: translateX(-50%);
+         width: 100px;
+         height: 40px;
+         border-radius: 50%;
+         background: var(--avatar-primary);
+         filter: blur(22px);
+         opacity: 0.3;
+         z-index: 0;
+         pointer-events: none;
       }
 
       .avatar-orbit {
          position: absolute;
          inset: 18px;
          border-radius: 50%;
-         border: 1px dashed rgba(91,108,255,0.25);
+         border: 1px dashed rgba(137,148,255,0.4);
+         animation: orbit-spin 18s linear infinite;
       }
 
       .avatar-character {
          position: absolute;
          inset: 0;
+         animation: avatar-float 3.5s ease-in-out infinite;
       }
 
       .avatar-shadow {
@@ -1051,6 +1074,8 @@
          bottom: 34px;
          border-radius: 50%;
          background: rgba(27,31,58,0.16);
+         animation: shadow-breathe 3.5s ease-in-out infinite;
+         transform-origin: center;
       }
 
       .avatar-head {
@@ -1062,6 +1087,18 @@
          border-radius: 44px 44px 38px 38px;
          background: #f2c7a5;
          z-index: 3;
+      }
+
+      .avatar-head::after {
+         content: '';
+         position: absolute;
+         width: 24px;
+         height: 14px;
+         top: 12px;
+         left: 12px;
+         border-radius: 50%;
+         background: rgba(255, 255, 255, 0.22);
+         transform: rotate(-20deg);
       }
 
       .avatar-neck {
@@ -1094,6 +1131,17 @@
          border-radius: 50%;
          background: #1f2442;
          z-index: 5;
+      }
+
+      .avatar-eye::after {
+         content: '';
+         position: absolute;
+         width: 3px;
+         height: 3px;
+         top: 1px;
+         right: 1px;
+         border-radius: 50%;
+         background: rgba(255, 255, 255, 0.85);
       }
 
       .avatar-eye-left {
@@ -1129,7 +1177,7 @@
          width: 108px;
          height: 70px;
          background: #2d2842;
-         z-index: 4;
+         z-index: 2;
       }
 
       .avatar-fringe {
@@ -1170,11 +1218,14 @@
       }
 
       .hair-long .avatar-hair {
-         height: 100px;
+         height: 160px;
+         width: 116px;
+         left: 52px;
          border-radius: 42px 42px 18px 18px;
       }
 
       .hair-long .avatar-fringe {
+         height: 30px;
          border-radius: 18px;
       }
 
@@ -1291,6 +1342,57 @@
          top: 58px;
          background: #d4a017;
          border-radius: 999px;
+      }
+
+      @keyframes avatar-float {
+         0%, 100% { transform: translateY(0); }
+         50%       { transform: translateY(-7px); }
+      }
+
+      @keyframes orbit-spin {
+         from { transform: rotate(0deg); }
+         to   { transform: rotate(360deg); }
+      }
+
+      @keyframes shadow-breathe {
+         0%, 100% { transform: scaleX(1);    opacity: 0.16; }
+         50%       { transform: scaleX(0.72); opacity: 0.07; }
+      }
+
+      .avatar-color-swatches {
+         display: flex;
+         flex-wrap: wrap;
+         gap: 8px;
+         padding: 4px 0 2px;
+      }
+
+      .avatar-swatch {
+         width: 28px;
+         height: 28px;
+         border-radius: 50%;
+         border: 3px solid transparent;
+         background: var(--swatch-color, #5b6cff);
+         cursor: pointer;
+         transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+         outline: none;
+         padding: 0;
+         flex-shrink: 0;
+      }
+
+      .avatar-swatch:hover:not([disabled]) {
+         transform: scale(1.2);
+      }
+
+      .avatar-swatch.selected {
+         border-color: #fff;
+         box-shadow: 0 0 0 3px var(--swatch-color, #5b6cff);
+         transform: scale(1.12);
+      }
+
+      .avatar-swatch[disabled] {
+         opacity: 0.35;
+         cursor: not-allowed;
+         filter: grayscale(0.6);
       }
 
       .avatar-form .form-label {
