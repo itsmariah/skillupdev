@@ -978,6 +978,21 @@
          margin-bottom: 6px;
       }
 
+      .badge-body {
+         display: flex;
+         flex-direction: column;
+         min-width: 0;
+      }
+
+      .badge-footer {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         gap: 8px;
+         flex-wrap: wrap;
+         margin-top: 2px;
+      }
+
       .badge-status {
          display: inline-flex;
          align-items: center;
@@ -987,6 +1002,31 @@
          color: #5b6cff;
          font-size: 12px;
          font-weight: 700;
+      }
+
+      .badge-rarity {
+         display: inline-flex;
+         align-items: center;
+         padding: 3px 10px;
+         border-radius: 999px;
+         font-size: 11px;
+         font-weight: 700;
+         text-transform: uppercase;
+         letter-spacing: 0.05em;
+      }
+
+      .badge-rarity.rarity-comum   { background: rgba(107,114,128,0.12); color: #6b7280; }
+      .badge-rarity.rarity-raro    { background: rgba(59,130,246,0.12);  color: #3b82f6; }
+      .badge-rarity.rarity-epico   { background: rgba(139,92,246,0.12);  color: #8b5cf6; }
+      .badge-rarity.rarity-lendario{ background: rgba(217,119,6,0.12);   color: #d97706; }
+
+      /* bordas sutis por raridade */
+      .badge-card.unlocked.rarity-raro    { box-shadow: 0 12px 24px rgba(59,130,246,0.10); }
+      .badge-card.unlocked.rarity-epico   { box-shadow: 0 12px 28px rgba(139,92,246,0.14); border: 1px solid rgba(139,92,246,0.2); }
+      .badge-card.unlocked.rarity-lendario{
+         box-shadow: 0 14px 32px rgba(217,119,6,0.16);
+         border: 1px solid rgba(217,119,6,0.25);
+         background: linear-gradient(135deg, #fffbeb, #ffffff);
       }
 
       .dashboard-empty {

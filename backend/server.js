@@ -594,21 +594,30 @@ const CHALLENGES = [
 ];
 
 const VALID_CHALLENGE_IDS = new Set(CHALLENGES.map((challenge) => challenge.id));
-const CHALLENGE_COMPLETION_XP = 100;
-const IDEAL_ANSWER_BONUS_XP = 50;
-const LOW_QUALITY_ADJUSTMENT_XP = -40;
-const DAILY_LOGIN_XP = 10;
-const PERFECT_STREAK_TARGET = 3;
-const PERFECT_STREAK_BONUS_XP = 30;
+// XP por conclusão de desafio (base, antes de qualidade e multiplicador)
+const CHALLENGE_COMPLETION_XP = 40;
+// Bônus por resposta ideal; penalidade por baixa qualidade
+const IDEAL_ANSWER_BONUS_XP = 60;   // ideal total: 100 XP (× multiplicador)
+const LOW_QUALITY_ADJUSTMENT_XP = -10; // baixa total:  30 XP (× multiplicador)
+// Login diário — incentiva engajamento consistente
+const DAILY_LOGIN_XP = 20;
+// Sequência perfeita — 5 ideais consecutivos para acionar bônus
+const PERFECT_STREAK_TARGET = 5;
+const PERFECT_STREAK_BONUS_XP = 80;
 const OPEN_CHALLENGE_IDEAL_SCORE = 85;
 const OPEN_CHALLENGE_MEDIUM_SCORE = 60;
 
+// Tabela de níveis — crescimento progressivo
+// Nível 2: ~4–5 desafios ideais (gancho de engajamento inicial)
+// Nível 3: ~11–12 desafios (1–2 semanas de uso regular)
+// Nível 4: ~25–28 desafios + logins (3–5 semanas)
+// Nível 5: todos os 30 desafios + ~80–130 dias de login diário
 const LEVELS = [
-  { level: 1, title: "Trainee Soft Skills", minXp: 0 },
-  { level: 2, title: "Colaborador", minXp: 250 },
-  { level: 3, title: "Profissional Colaborativo", minXp: 550 },
-  { level: 4, title: "Dev Influente", minXp: 950 },
-  { level: 5, title: "Soft Skill Master", minXp: 1400 },
+  { level: 1, title: "Trainee Soft Skills",       minXp: 0     },
+  { level: 2, title: "Colaborador",                minXp: 400   },
+  { level: 3, title: "Profissional Colaborativo",  minXp: 1100  },
+  { level: 4, title: "Dev Influente",              minXp: 2600  },
+  { level: 5, title: "Soft Skill Master",          minXp: 5200  },
 ];
 
 const DEFAULT_AVATAR = {
@@ -677,43 +686,90 @@ const AVATAR_CATALOG = {
 };
 
 const BADGE_DEFINITIONS = [
+  // ── Comum ─────────────────────────────────────────────────────────────────
+  {
+    id: "first-mission",
+    name: "Primeira Missão",
+    description: "Conclua seu primeiro desafio na plataforma.",
+    theme: "beginner",
+    rarity: "comum",
+    predicate(context) {
+      return context.attempts.length >= 1;
+    },
+  },
   {
     id: "communicator-beginner",
     name: "Comunicador Iniciante",
     description: "Complete 3 desafios de Comunicação.",
     theme: "communication",
+    rarity: "comum",
     predicate(context) {
       return countAttemptsByCategory(context.attempts, "Comunicação") >= 3;
     },
   },
   {
-    id: "conflict-mediator",
-    name: "Mediador de Conflitos",
-    description: "Tenha uma resposta ideal no desafio de conflito entre colegas.",
-    theme: "teamwork",
+    id: "explorer",
+    name: "Explorador",
+    description: "Complete ao menos 1 desafio em 3 categorias diferentes.",
+    theme: "exploration",
+    rarity: "comum",
     predicate(context) {
-      return (
-        hasIdealAttempt(context.attempts, "teamwork-closed-2") ||
-        hasIdealAttempt(context.attempts, "teamwork-open-2")
-      );
+      return countCategoriesWithAttempts(context.attempts) >= 3;
+    },
+  },
+  // ── Raro ──────────────────────────────────────────────────────────────────
+  {
+    id: "collaborative-dev",
+    name: "Dev Colaborativo",
+    description: "Complete todos os 6 desafios de Trabalho em Equipe.",
+    theme: "teamwork",
+    rarity: "raro",
+    predicate(context) {
+      return countAttemptsByCategory(context.attempts, "Trabalho em Equipe") >= 6;
     },
   },
   {
-    id: "sprint-master",
-    name: "Mestre da Sprint",
-    description: "Complete todos os desafios de Gestão de Tempo.",
+    id: "time-master",
+    name: "Mestre do Tempo",
+    description: "Complete todos os 6 desafios de Gestão de Tempo.",
     theme: "time",
+    rarity: "raro",
     predicate(context) {
       return countAttemptsByCategory(context.attempts, "Gestão de Tempo") >= 6;
     },
   },
   {
-    id: "collaborative-dev",
-    name: "Dev Colaborativo",
-    description: "Complete ao menos 4 desafios de Trabalho em Equipe.",
+    id: "conflict-mediator",
+    name: "Mediador de Conflitos",
+    description: "Obtenha resposta ideal nos dois desafios de conflito entre colegas.",
     theme: "teamwork",
+    rarity: "raro",
     predicate(context) {
-      return countAttemptsByCategory(context.attempts, "Trabalho em Equipe") >= 4;
+      return (
+        hasIdealAttempt(context.attempts, "teamwork-closed-2") &&
+        hasIdealAttempt(context.attempts, "teamwork-open-2")
+      );
+    },
+  },
+  // ── Épico ─────────────────────────────────────────────────────────────────
+  {
+    id: "specialist",
+    name: "Especialista",
+    description: "Complete todos os desafios de 4 categorias diferentes.",
+    theme: "mastery",
+    rarity: "epico",
+    predicate(context) {
+      return countCompletedCategories(context.attempts) >= 4;
+    },
+  },
+  {
+    id: "perfectionist",
+    name: "Perfeccionista",
+    description: "Acumule 15 respostas ideais no total.",
+    theme: "quality",
+    rarity: "epico",
+    predicate(context) {
+      return countIdealAttempts(context.attempts) >= 15;
     },
   },
   {
@@ -721,8 +777,40 @@ const BADGE_DEFINITIONS = [
     name: "Líder em Formação",
     description: "Alcance o nível 3.",
     theme: "leadership",
+    rarity: "epico",
     predicate(context) {
       return context.level >= 3;
+    },
+  },
+  // ── Lendário ──────────────────────────────────────────────────────────────
+  {
+    id: "legendary-streak",
+    name: "Sequência Lendária",
+    description: `Alcance ${PERFECT_STREAK_TARGET} respostas ideais consecutivas.`,
+    theme: "streak",
+    rarity: "lendario",
+    predicate(context) {
+      return (context.gamification.perfectStreak || 0) >= PERFECT_STREAK_TARGET;
+    },
+  },
+  {
+    id: "full-dev",
+    name: "360° Dev",
+    description: "Complete todos os 30 desafios da plataforma.",
+    theme: "master",
+    rarity: "lendario",
+    predicate(context) {
+      return context.attempts.length >= 30;
+    },
+  },
+  {
+    id: "soft-skill-master",
+    name: "Soft Skill Master",
+    description: "Alcance o nível máximo da plataforma.",
+    theme: "legendary",
+    rarity: "lendario",
+    predicate(context) {
+      return context.level >= 5;
     },
   },
 ];
@@ -1266,6 +1354,26 @@ function hasIdealAttempt(attempts, challengeId) {
   return attempts.some((attempt) => attempt.challengeId === challengeId && attempt.wasIdeal);
 }
 
+function countIdealAttempts(attempts) {
+  return attempts.filter((attempt) => attempt.wasIdeal).length;
+}
+
+const ALL_CATEGORIES = [
+  "Comunicação",
+  "Trabalho em Equipe",
+  "Resolução de Problemas",
+  "Gestão de Tempo",
+  "Inteligência Emocional",
+];
+
+function countCategoriesWithAttempts(attempts) {
+  return ALL_CATEGORIES.filter((cat) => countAttemptsByCategory(attempts, cat) >= 1).length;
+}
+
+function countCompletedCategories(attempts) {
+  return ALL_CATEGORIES.filter((cat) => countAttemptsByCategory(attempts, cat) >= 6).length;
+}
+
 function getProgress(xp) {
   const safeXp = Math.max(Number(xp) || 0, 0);
   const currentLevel = getLevelDetails(safeXp);
@@ -1303,7 +1411,7 @@ function buildBadgeCatalog(user, database) {
   const attempts = getUserAttempts(user.id, database);
   const level = getLevelDetails(user.xp).level;
   const savedBadges = new Map((user.badges || []).map((badge) => [badge.id, badge]));
-  const context = { attempts, level };
+  const context = { attempts, level, gamification: user.gamification || {} };
 
   return BADGE_DEFINITIONS.map((definition) => {
     const savedBadge = savedBadges.get(definition.id);
@@ -1314,6 +1422,7 @@ function buildBadgeCatalog(user, database) {
       name: definition.name,
       description: definition.description,
       theme: definition.theme,
+      rarity: definition.rarity || "comum",
       unlocked,
       earnedAt: savedBadge?.earnedAt || null,
     };
@@ -1325,9 +1434,10 @@ function syncBadges(user, database) {
   const level = getLevelDetails(user.xp).level;
   const existingIds = new Set((user.badges || []).map((badge) => badge.id));
   const unlockedNow = [];
+  const context = { attempts, level, gamification: user.gamification || {} };
 
   for (const definition of BADGE_DEFINITIONS) {
-    if (definition.predicate({ attempts, level }) && !existingIds.has(definition.id)) {
+    if (definition.predicate(context) && !existingIds.has(definition.id)) {
       const badge = {
         id: definition.id,
         earnedAt: new Date().toISOString(),
@@ -1340,6 +1450,7 @@ function syncBadges(user, database) {
         name: definition.name,
         description: definition.description,
         theme: definition.theme,
+        rarity: definition.rarity || "comum",
         unlocked: true,
         earnedAt: badge.earnedAt,
       });
@@ -1610,13 +1721,16 @@ function buildChallengeConsequence(qualityTier) {
   return "Sua resposta tende a ampliar o problema ou reduzir a confiança das pessoas envolvidas.";
 }
 
-function buildXpBreakdown(qualityTier, streakBonusXp) {
+function buildXpBreakdown(qualityTier, streakBonusXp, xpMultiplier = 1) {
   const qualityAdjustmentXp =
     qualityTier === "ideal" ? IDEAL_ANSWER_BONUS_XP : qualityTier === "low" ? LOW_QUALITY_ADJUSTMENT_XP : 0;
 
+  const completionXp = Math.round(CHALLENGE_COMPLETION_XP * xpMultiplier);
+  const qualityXp    = Math.round(qualityAdjustmentXp    * xpMultiplier);
+
   const breakdown = [
-    { label: "Desafio concluído", xp: CHALLENGE_COMPLETION_XP },
-    { label: "Qualidade da resposta", xp: qualityAdjustmentXp },
+    { label: "Desafio concluído",    xp: completionXp },
+    { label: "Qualidade da resposta", xp: qualityXp   },
   ];
 
   if (streakBonusXp > 0) {
@@ -1636,7 +1750,8 @@ function buildChallengeResult({ challenge, score, feedback, previousStreak }) {
     nextPerfectStreak > 0 && nextPerfectStreak % PERFECT_STREAK_TARGET === 0
       ? PERFECT_STREAK_BONUS_XP
       : 0;
-  const xpBreakdown = buildXpBreakdown(qualityTier, streakBonusXp);
+  const xpMultiplier = Number(challenge.xpMultiplier) || 1;
+  const xpBreakdown = buildXpBreakdown(qualityTier, streakBonusXp, xpMultiplier);
   const xpGanho = xpBreakdown.reduce((total, item) => total + item.xp, 0);
 
   return {

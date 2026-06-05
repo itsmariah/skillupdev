@@ -325,6 +325,13 @@
     }
   }
 
+  const RARITY_LABEL = {
+    comum:    "Comum",
+    raro:     "Raro",
+    epico:    "Épico",
+    lendario: "Lendário",
+  };
+
   function renderBadgeCatalog(user) {
     const badgeGrid = document.getElementById("badgeGrid");
     if (!badgeGrid) {
@@ -338,16 +345,26 @@
       return;
     }
 
-    badgeGrid.innerHTML = badgeCatalog
+    const rarityOrder = { comum: 0, raro: 1, epico: 2, lendario: 3 };
+    const sorted = [...badgeCatalog].sort(
+      (a, b) => (rarityOrder[a.rarity] ?? 0) - (rarityOrder[b.rarity] ?? 0)
+    );
+
+    badgeGrid.innerHTML = sorted
       .map((badge) => {
+        const rarity = badge.rarity || "comum";
         const statusLabel = badge.unlocked ? "Desbloqueada" : "Bloqueada";
+        const rarityLabel = RARITY_LABEL[rarity] || rarity;
         return `
-          <article class="badge-card ${badge.unlocked ? "unlocked" : "locked"}">
+          <article class="badge-card ${badge.unlocked ? "unlocked" : "locked"} rarity-${rarity}">
             <div class="badge-mark">${badge.name.charAt(0)}</div>
-            <div>
+            <div class="badge-body">
               <h4>${badge.name}</h4>
               <p>${badge.description}</p>
-              <span class="badge-status">${statusLabel}</span>
+              <div class="badge-footer">
+                <span class="badge-rarity rarity-${rarity}">${rarityLabel}</span>
+                <span class="badge-status">${statusLabel}</span>
+              </div>
             </div>
           </article>
         `;
