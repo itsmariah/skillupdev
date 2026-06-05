@@ -14,12 +14,35 @@
     };
   }
 
+  function getSkinMeta(skinId) {
+    return getAvatarOptions("tom").find((t) => t.id === skinId) || {
+      skin: "#f2c7a5",
+      neck: "#e6b792",
+    };
+  }
+
+  function getHairColorMeta(hairColorId) {
+    return getAvatarOptions("cabelo_cor").find((c) => c.id === hairColorId) || {
+      value: "#2d2842",
+    };
+  }
+
+  function hexToRgba(hex, alpha) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
   function readAvatarFormConfig() {
     return {
       cabelo: document.getElementById("avatarHair")?.value || "short",
       roupa: document.getElementById("avatarOutfit")?.value || "hoodie",
       cor: document.getElementById("avatarColor")?.value || "indigo",
       acessorio: document.getElementById("avatarAccessory")?.value || "none",
+      tom: document.getElementById("avatarSkin")?.value || "warm",
+      cabelo_cor: document.getElementById("avatarHairColor")?.value || "dark",
+      expressao: document.getElementById("avatarMood")?.value || "happy",
     };
   }
 
@@ -30,9 +53,26 @@
     }
 
     const colorMeta = getColorMeta(config.cor);
-    preview.className = `avatar-preview hair-${config.cabelo} outfit-${config.roupa} accessory-${config.acessorio}`;
-    preview.style.setProperty("--avatar-primary", colorMeta.value || "#5b6cff");
+    const skinMeta = getSkinMeta(config.tom || "warm");
+    const hairColorMeta = getHairColorMeta(config.cabelo_cor || "dark");
+    const primary = colorMeta.value || "#5b6cff";
+
+    preview.className = [
+      "avatar-preview",
+      `hair-${config.cabelo}`,
+      `outfit-${config.roupa}`,
+      `accessory-${config.acessorio}`,
+      `mood-${config.expressao || "happy"}`,
+    ].join(" ");
+
+    preview.style.setProperty("--avatar-primary", primary);
     preview.style.setProperty("--avatar-secondary", colorMeta.secondary || "#8994ff");
+    preview.style.setProperty("--avatar-skin", skinMeta.skin || "#f2c7a5");
+    preview.style.setProperty("--avatar-skin-neck", skinMeta.neck || "#e6b792");
+    preview.style.setProperty("--avatar-hair", hairColorMeta.value || "#2d2842");
+    preview.style.setProperty("--avatar-bg-start", hexToRgba(primary, 0.35));
+    preview.style.setProperty("--avatar-bg-end", hexToRgba(primary, 0.05));
+    preview.style.setProperty("--avatar-glow", hexToRgba(primary, 0.25));
   }
 
   // --- Avatar: renderização dos controles ---
@@ -86,12 +126,81 @@
     });
   }
 
+  function renderSkinSwatches(tones, selectedId) {
+    const container = document.getElementById("avatarSkinSwatches");
+    const select = document.getElementById("avatarSkin");
+    if (!container || !select) {
+      return;
+    }
+
+    container.innerHTML = tones
+      .map((tone) => {
+        const isSelected = tone.id === selectedId ? "selected" : "";
+        const disabledAttr = tone.unlocked ? "" : "disabled";
+        const title = tone.unlocked ? tone.label : `${tone.label} (Nível ${tone.minLevel})`;
+        return `<button
+          type="button"
+          class="avatar-swatch ${isSelected}"
+          data-skin-id="${tone.id}"
+          style="--swatch-color: ${tone.skin};"
+          title="${title}"
+          ${disabledAttr}
+        ></button>`;
+      })
+      .join("");
+
+    container.querySelectorAll(".avatar-swatch:not([disabled])").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        select.value = btn.dataset.skinId;
+        select.dispatchEvent(new Event("change"));
+        container.querySelectorAll(".avatar-swatch").forEach((s) => s.classList.remove("selected"));
+        btn.classList.add("selected");
+      });
+    });
+  }
+
+  function renderHairColorSwatches(colors, selectedId) {
+    const container = document.getElementById("avatarHairColorSwatches");
+    const select = document.getElementById("avatarHairColor");
+    if (!container || !select) {
+      return;
+    }
+
+    container.innerHTML = colors
+      .map((color) => {
+        const isSelected = color.id === selectedId ? "selected" : "";
+        const disabledAttr = color.unlocked ? "" : "disabled";
+        const title = color.unlocked ? color.label : `${color.label} (Nível ${color.minLevel})`;
+        return `<button
+          type="button"
+          class="avatar-swatch ${isSelected}"
+          data-hair-color-id="${color.id}"
+          style="--swatch-color: ${color.value};"
+          title="${title}"
+          ${disabledAttr}
+        ></button>`;
+      })
+      .join("");
+
+    container.querySelectorAll(".avatar-swatch:not([disabled])").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        select.value = btn.dataset.hairColorId;
+        select.dispatchEvent(new Event("change"));
+        container.querySelectorAll(".avatar-swatch").forEach((s) => s.classList.remove("selected"));
+        btn.classList.add("selected");
+      });
+    });
+  }
+
   function renderAvatarBuilder(user) {
     const avatarConfig = user.avatarConfig || {
       cabelo: "short",
       roupa: "hoodie",
       cor: "indigo",
       acessorio: "none",
+      tom: "warm",
+      cabelo_cor: "dark",
+      expressao: "happy",
     };
 
     populateAvatarSelect("avatarHair", getAvatarOptions("cabelo"), avatarConfig.cabelo);
@@ -99,6 +208,11 @@
     populateAvatarSelect("avatarColor", getAvatarOptions("cor"), avatarConfig.cor);
     renderColorSwatches(getAvatarOptions("cor"), avatarConfig.cor);
     populateAvatarSelect("avatarAccessory", getAvatarOptions("acessorio"), avatarConfig.acessorio);
+    populateAvatarSelect("avatarMood", getAvatarOptions("expressao"), avatarConfig.expressao);
+    populateAvatarSelect("avatarSkin", getAvatarOptions("tom"), avatarConfig.tom);
+    renderSkinSwatches(getAvatarOptions("tom"), avatarConfig.tom);
+    populateAvatarSelect("avatarHairColor", getAvatarOptions("cabelo_cor"), avatarConfig.cabelo_cor);
+    renderHairColorSwatches(getAvatarOptions("cabelo_cor"), avatarConfig.cabelo_cor);
     renderAvatarPreview(avatarConfig);
   }
 
@@ -111,7 +225,7 @@
     form.dataset.bound = "true";
     form.addEventListener("submit", handleAvatarSubmit);
 
-    ["avatarHair", "avatarOutfit", "avatarColor", "avatarAccessory"].forEach((fieldId) => {
+    ["avatarHair", "avatarOutfit", "avatarColor", "avatarAccessory", "avatarSkin", "avatarHairColor", "avatarMood"].forEach((fieldId) => {
       const field = document.getElementById(fieldId);
       if (!field) {
         return;

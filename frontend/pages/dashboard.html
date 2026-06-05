@@ -139,10 +139,16 @@
             </div>
 
             <div class="avatar-builder">
-              <div id="avatarPreview" class="avatar-preview hair-short outfit-hoodie accessory-none">
-                <div class="avatar-orbit"></div>
+              <div id="avatarPreview" class="avatar-preview hair-short outfit-hoodie accessory-none mood-happy">
+                <div class="avatar-orbit">
+                  <div class="avatar-particle avatar-particle-1"></div>
+                  <div class="avatar-particle avatar-particle-2"></div>
+                  <div class="avatar-particle avatar-particle-3"></div>
+                </div>
                 <div class="avatar-shadow"></div>
                 <div class="avatar-character">
+                  <div class="avatar-arm avatar-arm-left"></div>
+                  <div class="avatar-arm avatar-arm-right"></div>
                   <div class="avatar-torso"></div>
                   <div class="avatar-neck"></div>
                   <div class="avatar-head"></div>
@@ -176,6 +182,23 @@
                   <div class="col-sm-6">
                     <label for="avatarAccessory" class="form-label">Acessório</label>
                     <select id="avatarAccessory" class="form-select"></select>
+                  </div>
+
+                  <div class="col-sm-6">
+                    <label class="form-label">Tom de Pele</label>
+                    <select id="avatarSkin" class="d-none" aria-hidden="true"></select>
+                    <div id="avatarSkinSwatches" class="avatar-color-swatches"></div>
+                  </div>
+
+                  <div class="col-sm-6">
+                    <label class="form-label">Cor do Cabelo</label>
+                    <select id="avatarHairColor" class="d-none" aria-hidden="true"></select>
+                    <div id="avatarHairColorSwatches" class="avatar-color-swatches"></div>
+                  </div>
+
+                  <div class="col-sm-6">
+                    <label for="avatarMood" class="form-label">Expressão</label>
+                    <select id="avatarMood" class="form-select"></select>
                   </div>
                 </div>
 

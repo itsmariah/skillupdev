@@ -616,15 +616,22 @@ const DEFAULT_AVATAR = {
   roupa: "hoodie",
   cor: "indigo",
   acessorio: "none",
+  tom: "warm",
+  cabelo_cor: "dark",
+  expressao: "happy",
 };
 
 const AVATAR_CATALOG = {
   cabelo: [
-    { id: "short", label: "Curto", minLevel: 1 },
-    { id: "curly", label: "Cacheado", minLevel: 1 },
-    { id: "spiky", label: "Pontudo", minLevel: 2 },
-    { id: "long", label: "Longo", minLevel: 3 },
-    { id: "braids", label: "Trancas", minLevel: 4 },
+    { id: "short",    label: "Curto",          minLevel: 1 },
+    { id: "curly",    label: "Cacheado",        minLevel: 1 },
+    { id: "long",     label: "Longo",           minLevel: 1 },
+    { id: "wavy",     label: "Ondulado",        minLevel: 2 },
+    { id: "braids",   label: "Tranças",         minLevel: 2 },
+    { id: "ponytail", label: "Rabo de cavalo",  minLevel: 3 },
+    { id: "bun",      label: "Coque",           minLevel: 3 },
+    { id: "spiky",    label: "Pontudo",         minLevel: 4 },
+    { id: "mohawk",   label: "Moicano",         minLevel: 5 },
   ],
   roupa: [
     { id: "hoodie", label: "Moletom", minLevel: 1 },
@@ -645,6 +652,27 @@ const AVATAR_CATALOG = {
     { id: "headset", label: "Headset", minLevel: 2 },
     { id: "badge", label: "Broche", minLevel: 3 },
     { id: "crown", label: "Coroa", minLevel: 5 },
+  ],
+  tom: [
+    { id: "warm",   label: "Quente",    skin: "#f2c7a5", neck: "#e6b792", minLevel: 1 },
+    { id: "light",  label: "Clara",     skin: "#f9e0c6", neck: "#f0c8a8", minLevel: 1 },
+    { id: "medium", label: "Média",     skin: "#d4a574", neck: "#bf9060", minLevel: 1 },
+    { id: "tan",    label: "Bronzeada", skin: "#b07850", neck: "#976640", minLevel: 1 },
+    { id: "dark",   label: "Escura",    skin: "#8d5524", neck: "#7a4a1e", minLevel: 1 },
+  ],
+  cabelo_cor: [
+    { id: "dark",   label: "Preto",    value: "#2d2842", minLevel: 1 },
+    { id: "brown",  label: "Castanho", value: "#6b4226", minLevel: 1 },
+    { id: "blonde", label: "Loiro",    value: "#d4a017", minLevel: 1 },
+    { id: "red",    label: "Ruivo",    value: "#b83221", minLevel: 2 },
+    { id: "blue",   label: "Azul",     value: "#5b6cff", minLevel: 3 },
+    { id: "pink",   label: "Rosa",     value: "#e11d48", minLevel: 4 },
+  ],
+  expressao: [
+    { id: "happy",     label: "Alegre",   minLevel: 1 },
+    { id: "cool",      label: "Cool",     minLevel: 1 },
+    { id: "focused",   label: "Focado",   minLevel: 2 },
+    { id: "surprised", label: "Surpreso", minLevel: 3 },
   ],
 };
 
@@ -838,6 +866,9 @@ function normalizeAvatarConfig(config, xp) {
     roupa: normalizeAvatarSelection("roupa", source.roupa, level),
     cor: normalizeAvatarSelection("cor", source.cor, level),
     acessorio: normalizeAvatarSelection("acessorio", source.acessorio, level),
+    tom: normalizeAvatarSelection("tom", source.tom || "warm", level),
+    cabelo_cor: normalizeAvatarSelection("cabelo_cor", source.cabelo_cor || "dark", level),
+    expressao: normalizeAvatarSelection("expressao", source.expressao || "happy", level),
   };
 }
 
