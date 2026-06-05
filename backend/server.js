@@ -18,6 +18,9 @@ const OPEN_CHALLENGE_XP_MULTIPLIER = 1.2;
 const PASSWORD_RESET_TTL_MINUTES = 30;
 const PASSWORD_RESET_TTL_MS = PASSWORD_RESET_TTL_MINUTES * 60 * 1000;
 const RESEND_API_URL = process.env.RESEND_API_URL || "https://api.resend.com/emails";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@skillupdev.com";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin@123";
+const STUDY_MIN_CHALLENGES = 5;
 
 function normalizeTextValue(value) {
   return String(value || "")
@@ -1500,6 +1503,9 @@ function buildUserResponse(user, database) {
       dailyLoginAwardedToday: user.gamification?.lastDailyLoginDate === getTodayKey(),
       totalBadges: unlockedBadges.length,
     },
+    isAdmin: Boolean(user.isAdmin),
+    studyPreDone: Boolean(user.studyPreDone),
+    studyPostDone: Boolean(user.studyPostDone),
   };
 }
 
@@ -1792,6 +1798,13 @@ async function authenticateRequest(req, res, next) {
   req.user = user;
   req.token = token;
 
+  next();
+}
+
+function requireAdmin(req, res, next) {
+  if (!req.user.isAdmin) {
+    return res.status(403).json({ message: "Acesso restrito ao administrador." });
+  }
   next();
 }
 
@@ -2188,6 +2201,224 @@ app.post("/api/challenges/:challengeId/submit", authenticateRequest, async (req,
   });
 });
 
-app.listen(PORT, () => {
+app.post("/api/study/questionnaire", authenticateRequest, async (req, res) => {
+  const type = String(req.body.type || "");
+  const data = req.body.data;
+
+  if (!["pre", "post"].includes(type)) {
+    return res.status(400).json({ message: "Tipo de questionário inválido. Use 'pre' ou 'post'." });
+  }
+
+  if (!data || typeof data !== "object") {
+    return res.status(400).json({ message: "Dados do questionário não informados." });
+  }
+
+  if (!req.database.study_responses) {
+    req.database.study_responses = [];
+  }
+
+  const alreadySubmitted = req.database.study_responses.some(
+    (r) => r.userId === req.user.id && r.type === type
+  );
+
+  if (alreadySubmitted) {
+    return res.status(409).json({ message: "Questionário já respondido." });
+  }
+
+  const record = {
+    id: crypto.randomUUID(),
+    userId: req.user.id,
+    userName: req.user.nome,
+    userEmail: req.user.email,
+    type,
+    submittedAt: new Date().toISOString(),
+    data,
+  };
+
+  req.database.study_responses.push(record);
+
+  if (type === "pre") {
+    req.user.studyPreDone = true;
+  } else {
+    req.user.studyPostDone = true;
+  }
+
+  await writeDatabase(req.database);
+
+  return res.json({
+    message: "Questionário salvo com sucesso.",
+    user: buildUserResponse(req.user, req.database),
+  });
+});
+
+function calcSusScore(sus) {
+  const odd = [1, 3, 5, 7, 9];
+  const even = [2, 4, 6, 8, 10];
+  let total = 0;
+  for (const i of odd) total += (Number(sus[`s${i}`]) || 1) - 1;
+  for (const i of even) total += 5 - (Number(sus[`s${i}`]) || 3);
+  return Math.round(total * 2.5);
+}
+
+function susClassification(score) {
+  if (score >= 85) return "Excelente";
+  if (score >= 71) return "Bom";
+  if (score >= 51) return "Razoável";
+  return "Ruim";
+}
+
+app.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (req, res) => {
+  const responses = req.database.study_responses || [];
+  const users = req.database.users || [];
+
+  const preResponses = responses.filter((r) => r.type === "pre");
+  const postResponses = responses.filter((r) => r.type === "post");
+
+  const susScores = postResponses
+    .filter((r) => r.data?.sus)
+    .map((r) => calcSusScore(r.data.sus));
+
+  const avgSus = susScores.length
+    ? Math.round(susScores.reduce((a, b) => a + b, 0) / susScores.length)
+    : null;
+
+  const likertKeys = [
+    "desafiosInteressantes",
+    "feedbackUtil",
+    "reflexaoSoftSkills",
+    "usariaNovamente",
+    "feedbackCoerente",
+    "feedbackVsGenerico",
+  ];
+
+  const likertAverages = {};
+  for (const key of likertKeys) {
+    const vals = postResponses
+      .map((r) => Number(r.data?.likert?.[key]))
+      .filter((v) => v >= 1 && v <= 5);
+    likertAverages[key] = vals.length
+      ? Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / 10
+      : null;
+  }
+
+  const participantCount = new Set([
+    ...preResponses.map((r) => r.userId),
+    ...postResponses.map((r) => r.userId),
+  ]).size;
+
+  const participants = users
+    .filter((u) => !u.isAdmin && (u.studyPreDone || u.studyPostDone))
+    .map((u) => {
+      const pre = preResponses.find((r) => r.userId === u.id);
+      const post = postResponses.find((r) => r.userId === u.id);
+      const attempts = req.database.challengeAttempts.filter((a) => a.userId === u.id);
+      return {
+        id: u.id,
+        nome: u.nome,
+        email: u.email,
+        studyPreDone: Boolean(u.studyPreDone),
+        studyPostDone: Boolean(u.studyPostDone),
+        challengesCompleted: attempts.length,
+        preSubmittedAt: pre?.submittedAt || null,
+        postSubmittedAt: post?.submittedAt || null,
+        preData: pre?.data || null,
+        postData: post?.data || null,
+        susScore: post?.data?.sus ? calcSusScore(post.data.sus) : null,
+      };
+    });
+
+  return res.json({
+    summary: {
+      participantCount,
+      preCompletedCount: preResponses.length,
+      postCompletedCount: postResponses.length,
+      avgSusScore: avgSus,
+      susClassification: avgSus !== null ? susClassification(avgSus) : null,
+      likertAverages,
+    },
+    openAnswers: postResponses.map((r) => ({
+      userName: r.userName,
+      submittedAt: r.submittedAt,
+      gostou: r.data?.abertas?.gostou || "",
+      melhorar: r.data?.abertas?.melhorar || "",
+      feedbackCoerente: r.data?.abertas?.feedbackCoerente || "",
+    })),
+    participants,
+  });
+});
+
+app.get("/api/admin/study-data/export", authenticateRequest, requireAdmin, async (req, res) => {
+  const responses = req.database.study_responses || [];
+  const postResponses = responses.filter((r) => r.type === "post");
+
+  const header = [
+    "Nome", "Email", "SubmitData",
+    "SUS_S1","SUS_S2","SUS_S3","SUS_S4","SUS_S5",
+    "SUS_S6","SUS_S7","SUS_S8","SUS_S9","SUS_S10","SUS_Score",
+    "Likert_Desafios","Likert_Feedback","Likert_Reflexao",
+    "Likert_Usaria","Likert_Coerencia","Likert_FeedbackVsGenerico",
+    "Aberta_Gostou","Aberta_Melhorar","Aberta_FeedbackCoerente",
+    "TempoEstudo_min","DesafiosConcluidos",
+  ];
+
+  const rows = postResponses.map((r) => {
+    const sus = r.data?.sus || {};
+    const lik = r.data?.likert || {};
+    const ab = r.data?.abertas || {};
+    const stats = r.data?.sessionStats || {};
+    const susScore = sus.s1 ? calcSusScore(sus) : "";
+    return [
+      r.userName, r.userEmail, r.submittedAt,
+      sus.s1||"", sus.s2||"", sus.s3||"", sus.s4||"", sus.s5||"",
+      sus.s6||"", sus.s7||"", sus.s8||"", sus.s9||"", sus.s10||"", susScore,
+      lik.desafiosInteressantes||"", lik.feedbackUtil||"", lik.reflexaoSoftSkills||"",
+      lik.usariaNovamente||"", lik.feedbackCoerente||"", lik.feedbackVsGenerico||"",
+      `"${String(ab.gostou||"").replace(/"/g,'""')}"`,
+      `"${String(ab.melhorar||"").replace(/"/g,'""')}"`,
+      `"${String(ab.feedbackCoerente||"").replace(/"/g,'""')}"`,
+      stats.timeSpentMinutes||"", stats.challengesCompleted||"",
+    ];
+  });
+
+  const csv = [header, ...rows].map((row) => row.join(",")).join("\n");
+
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
+  res.setHeader("Content-Disposition", "attachment; filename=estudo_piloto.csv");
+  return res.send("﻿" + csv);
+});
+
+async function ensureAdminExists() {
+  const database = await readDatabase();
+  if (!database.study_responses) database.study_responses = [];
+
+  const adminExists = database.users.some((u) => u.isAdmin);
+  if (adminExists) {
+    await writeDatabase(database);
+    return;
+  }
+
+  const admin = {
+    id: crypto.randomUUID(),
+    nome: "Administrador",
+    email: normalizeEmail(ADMIN_EMAIL),
+    passwordHash: createPasswordHash(ADMIN_PASSWORD),
+    isAdmin: true,
+    xp: 0,
+    nivel: 1,
+    badges: [],
+    avatarConfig: DEFAULT_AVATAR,
+    gamification: createDefaultGamificationState(),
+    studyPreDone: true,
+    studyPostDone: true,
+    createdAt: new Date().toISOString(),
+  };
+
+  database.users.push(admin);
+  await writeDatabase(database);
+  console.log(`[Admin] Usuário administrador criado: ${ADMIN_EMAIL}`);
+}
+
+app.listen(PORT, async () => {
+  await ensureAdminExists();
   console.log(`SkillUp Dev backend online em http://localhost:${PORT}`);
 });

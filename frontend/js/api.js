@@ -141,5 +141,18 @@
         auth: true,
       });
     },
+    submitQuestionnaire(type, data) {
+      return request("/api/study/questionnaire", {
+        method: "POST",
+        body: { type, data },
+        auth: true,
+      });
+    },
+    getAdminStudyData() {
+      return request("/api/admin/study-data", { auth: true });
+    },
+    getAdminStudyDataExportUrl() {
+      return `${getApiOrigin()}/api/admin/study-data/export`;
+    },
   };
 })();

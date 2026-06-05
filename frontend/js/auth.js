@@ -94,6 +94,12 @@
     return true;
   }
 
+  function resolvePostLoginRedirect(user) {
+    if (user.isAdmin) return "admin.html";
+    if (!user.studyPreDone) return "questionnaire-pre.html";
+    return "dashboard.html";
+  }
+
   function updateStoredUser(user) {
     if (!user) {
       return;
@@ -195,7 +201,7 @@
       updateStoredUser(payload.user);
       storeDailyReward(payload.dailyLoginReward);
       form.reset();
-      window.location.href = "dashboard.html";
+      window.location.href = resolvePostLoginRedirect(payload.user);
     } catch (error) {
       setFeedback("loginFeedback", error.message, "danger");
       setButtonState(button, false, "Entrando...", "Entrar");
@@ -228,7 +234,7 @@
       window.skillUpApi.setSession(payload);
       updateStoredUser(payload.user);
       storeDailyReward(payload.dailyLoginReward);
-      window.location.href = "dashboard.html";
+      window.location.href = resolvePostLoginRedirect(payload.user);
     } catch (error) {
       setFeedback("registerFeedback", error.message, "danger");
       setButtonState(button, false, "Criando conta...", "Criar conta");
