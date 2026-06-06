@@ -877,6 +877,7 @@ function createEmptyDatabase() {
     sessions: [],
     challengeAttempts: [],
     passwordResetTokens: [],
+    study_responses: [],
   };
 }
 
@@ -1085,6 +1086,7 @@ async function readDatabase() {
       passwordResetTokens: Array.isArray(parsed.passwordResetTokens)
         ? parsed.passwordResetTokens.map(hydratePasswordResetToken)
         : [],
+      study_responses: Array.isArray(parsed.study_responses) ? parsed.study_responses : [],
     };
   } catch (error) {
     console.error("Erro ao ler banco local:", error);
@@ -2389,13 +2391,9 @@ app.get("/api/admin/study-data/export", authenticateRequest, requireAdmin, async
 
 async function ensureAdminExists() {
   const database = await readDatabase();
-  if (!database.study_responses) database.study_responses = [];
 
   const adminExists = database.users.some((u) => u.isAdmin);
-  if (adminExists) {
-    await writeDatabase(database);
-    return;
-  }
+  if (adminExists) return;
 
   const admin = {
     id: crypto.randomUUID(),
