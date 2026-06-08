@@ -635,8 +635,9 @@ const DEFAULT_AVATAR = {
 
 const AVATAR_CATALOG = {
   cabelo: [
-    { id: "short",    label: "Curto",          minLevel: 1 },
-    { id: "curly",    label: "Cacheado",        minLevel: 1 },
+    { id: "short",       label: "Curto",          minLevel: 1 },
+    { id: "curly",       label: "Cacheado",       minLevel: 1 },
+    { id: "shortcurly",  label: "Curto Cacheado", minLevel: 1 },
     { id: "long",     label: "Longo",           minLevel: 1 },
     { id: "wavy",     label: "Ondulado",        minLevel: 2 },
     { id: "braids",   label: "Tranças",         minLevel: 2 },

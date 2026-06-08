@@ -1227,12 +1227,13 @@
       }
 
       .avatar-fringe {
-         left: 76px;
-         top: 58px;
-         width: 70px;
-         height: 26px;
+         left: 66px;
+         top: 60px;
+         width: 88px;
+         height: 20px;
          background: var(--avatar-hair);
          z-index: 4;
+         border-radius: 0 0 16px 16px;
       }
 
       /* base para pseudo-elementos de cabelo */
@@ -1254,11 +1255,11 @@
       }
 
       .hair-short .avatar-fringe {
-         left: 78px;
-         top: 67px;
-         width: 64px;
-         height: 15px;
-         border-radius: 8px 8px 14px 14px;
+         left: 66px;
+         top: 52px;
+         width: 88px;
+         height: 24px;
+         border-radius: 0 0 18px 18px;
       }
 
       /* ── Longo ─────────────────────────────────────── */
@@ -1287,11 +1288,11 @@
       }
 
       .hair-long .avatar-fringe {
-         left: 74px;
-         top: 66px;
-         width: 72px;
-         height: 20px;
-         border-radius: 6px 6px 18px 18px;
+         left: 66px;
+         top: 52px;
+         width: 88px;
+         height: 26px;
+         border-radius: 0 0 20px 20px;
       }
 
       /* ── Cacheado ───────────────────────────────────── */
@@ -1310,11 +1311,39 @@
       }
 
       .hair-curly .avatar-fringe {
-         left: 76px;
-         top: 68px;
-         width: 68px;
-         height: 14px;
-         border-radius: 20px;
+         left: 68px;
+         top: 52px;
+         width: 84px;
+         height: 18px;
+         border-radius: 0 0 24px 24px;
+      }
+
+      /* ── Curto Cacheado ─────────────────────────────── */
+      .hair-shortcurly .avatar-hair {
+         left: 52px;
+         top: 22px;
+         width: 116px;
+         height: 56px;
+         border-radius: 50%;
+         box-shadow:
+           /* volume lateral compacto */
+           -16px 10px 0  0px var(--avatar-hair),
+            16px 10px 0  0px var(--avatar-hair),
+           /* cachos superiores */
+            -8px -8px 0  5px var(--avatar-hair),
+             8px -8px 0  5px var(--avatar-hair),
+              0  -10px 0  3px var(--avatar-hair),
+           /* cachos nas bordas — menores via spread negativo */
+           -22px  2px 0 -4px var(--avatar-hair),
+            22px  2px 0 -4px var(--avatar-hair);
+      }
+
+      .hair-shortcurly .avatar-fringe {
+         left: 68px;
+         top: 52px;
+         width: 84px;
+         height: 18px;
+         border-radius: 0 0 26px 26px;
       }
 
       /* ── Ondulado ───────────────────────────────────── */
@@ -1343,11 +1372,11 @@
       }
 
       .hair-wavy .avatar-fringe {
-         left: 72px;
-         top: 66px;
-         width: 76px;
-         height: 22px;
-         border-radius: 8px 8px 22px 22px;
+         left: 66px;
+         top: 52px;
+         width: 88px;
+         height: 26px;
+         border-radius: 0 0 22px 22px;
       }
 
       /* ── Tranças ────────────────────────────────────── */
@@ -1388,11 +1417,11 @@
       }
 
       .hair-braids .avatar-fringe {
-         left: 79px;
-         top: 67px;
-         width: 62px;
-         height: 13px;
-         border-radius: 6px 6px 10px 10px;
+         left: 66px;
+         top: 52px;
+         width: 88px;
+         height: 16px;
+         border-radius: 0 0 12px 12px;
       }
 
       /* ── Rabo de cavalo ─────────────────────────────── */
@@ -1424,11 +1453,11 @@
       }
 
       .hair-ponytail .avatar-fringe {
-         left: 76px;
-         top: 66px;
-         width: 68px;
-         height: 16px;
-         border-radius: 6px 6px 14px 14px;
+         left: 66px;
+         top: 52px;
+         width: 88px;
+         height: 14px;
+         border-radius: 0 0 14px 14px;
       }
 
       /* ── Coque ──────────────────────────────────────── */
@@ -1459,11 +1488,11 @@
       }
 
       .hair-bun .avatar-fringe {
-         left: 76px;
-         top: 68px;
-         width: 68px;
-         height: 14px;
-         border-radius: 6px 6px 12px 12px;
+         left: 66px;
+         top: 52px;
+         width: 88px;
+         height: 12px;
+         border-radius: 0 0 12px 12px;
       }
 
       /* ── Pontudo ────────────────────────────────────── */
@@ -1484,7 +1513,12 @@
       }
 
       .hair-spiky .avatar-fringe {
-         display: none;
+         /* linha do cabelo na testa — sem franja, só a base dos espinhos */
+         left: 62px;
+         top: 52px;
+         width: 96px;
+         height: 22px;
+         border-radius: 2px 2px 10px 10px;
       }
 
       /* ── Moicano ────────────────────────────────────── */
@@ -1515,7 +1549,12 @@
       }
 
       .hair-mohawk .avatar-fringe {
-         display: none;
+         /* faixa estreita do moicano na linha da testa */
+         left: 94px;
+         top: 52px;
+         width: 32px;
+         height: 16px;
+         border-radius: 2px 2px 8px 8px;
       }
 
       .outfit-jacket .avatar-torso {
@@ -1524,9 +1563,19 @@
       }
 
       .outfit-blazer .avatar-torso {
-         background:
-           linear-gradient(180deg, #f8f9ff 0 35%, var(--avatar-primary) 35% 100%);
-         border-top: 10px solid #1f2442;
+         background: #1f2442;
+      }
+
+      /* camisa visível pelo decote do blazer */
+      .outfit-blazer .avatar-torso::before {
+         content: '';
+         position: absolute;
+         width: 40px;
+         height: 52px;
+         left: 44px;
+         top: 0;
+         background: linear-gradient(180deg, #f4f5ff, #dde0f5);
+         clip-path: polygon(15% 0%, 85% 0%, 100% 35%, 50% 70%, 0% 35%);
       }
 
       .outfit-cape .avatar-torso {
@@ -1570,23 +1619,26 @@
       }
 
       .accessory-headset .avatar-accessory::before {
-         width: 116px;
-         height: 82px;
-         left: 52px;
-         top: 46px;
+         /* arco da tiara sobre a cabeça */
+         width: 96px;
+         height: 52px;
+         left: 62px;
+         top: 36px;
          border: 6px solid #1f2442;
          border-bottom: none;
-         border-radius: 58px 58px 0 0;
+         border-radius: 48px 48px 0 0;
          background: transparent;
       }
 
       .accessory-headset .avatar-accessory::after {
-         width: 74px;
-         height: 10px;
-         left: 74px;
-         top: 112px;
-         border-radius: 999px;
+         /* orelheira esquerda; direita via box-shadow */
+         width: 20px;
+         height: 30px;
+         left: 52px;
+         top: 85px;
+         border-radius: 8px;
          background: #1f2442;
+         box-shadow: 96px 0 0 0 #1f2442;
       }
 
       .accessory-badge .avatar-accessory::before {
@@ -1625,10 +1677,10 @@
 
       .avatar-arm {
          position: absolute;
-         width: 22px;
-         height: 62px;
-         top: 148px;
-         border-radius: 12px;
+         width: 36px;
+         height: 64px;
+         top: 146px;
+         border-radius: 16px 16px 12px 12px;
          background: linear-gradient(180deg, var(--avatar-secondary), var(--avatar-primary));
          z-index: 1;
       }
@@ -1636,24 +1688,24 @@
       .avatar-arm::after {
          content: '';
          position: absolute;
-         width: 18px;
-         height: 18px;
-         bottom: -6px;
+         width: 24px;
+         height: 20px;
+         bottom: -5px;
          left: 50%;
          transform: translateX(-50%);
-         border-radius: 50%;
+         border-radius: 40% 40% 50% 50%;
          background: var(--avatar-skin);
       }
 
       .avatar-arm-left {
-         left: 28px;
-         transform: rotate(-5deg);
+         left: 18px;
+         transform: rotate(-6deg);
          transform-origin: top center;
       }
 
       .avatar-arm-right {
-         left: 170px;
-         transform: rotate(5deg);
+         left: 166px;
+         transform: rotate(6deg);
          transform-origin: top center;
       }
 
@@ -1662,7 +1714,7 @@
       }
 
       .outfit-blazer .avatar-arm {
-         background: linear-gradient(180deg, #1f2442 0 30%, var(--avatar-primary) 30% 100%);
+         background: #1f2442;
       }
 
       .outfit-cape .avatar-arm {
@@ -1910,15 +1962,15 @@
          }
 
          .avatar-arm-left {
-            left: 18px;
-            top: 132px;
-            height: 54px;
+            left: 15px;
+            top: 130px;
+            height: 56px;
          }
 
          .avatar-arm-right {
-            left: 150px;
-            top: 132px;
-            height: 54px;
+            left: 139px;
+            top: 130px;
+            height: 56px;
          }
       }
 
