@@ -60,7 +60,7 @@ function createOpenChallenge({
   titulo,
   pergunta,
   descricao,
-  critériosAvaliacao,
+  criteriosAvaliacao,
   dica,
 }) {
   return {
@@ -70,7 +70,7 @@ function createOpenChallenge({
     titulo,
     pergunta,
     descricao,
-    critériosAvaliacao,
+    criteriosAvaliacao,
     dica,
     xpMultiplier: OPEN_CHALLENGE_XP_MULTIPLIER,
   };
@@ -335,26 +335,26 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "time-management-closed-2",
     categoria: "Gestão de Tempo",
-    titulo: "Prioridades",
-    pergunta: "Existem muitas demandas simultâneas. Como você organiza as prioridades?",
-    descricao: "Escolha a resposta com mais critério e capacidade de organização.",
-    dica:
-      "Comparar urgência com impacto ajuda a fugir do caos quando tudo parece importante.",
+    titulo: "Interrupções",
+    pergunta:
+      "Você está focado em uma tarefa crítica quando chegam mensagens urgentes de diferentes colegas. O que você faz?",
+    descricao: "Escolha a resposta com mais equilíbrio entre foco e responsividade.",
+    dica: "Nem toda urgência é real. Saber filtrar interrupções protege o foco sem ignorar o que importa.",
     respostas: [
       {
-        texto: "Tentar fazer tudo ao mesmo tempo.",
+        texto: "Parar tudo e responder a todas as mensagens imediatamente.",
         xp: 5,
-        feedback: "Isso aumenta troca de contexto e tende a reduzir qualidade e previsibilidade.",
+        feedback: "Isso dispersa o foco e tende a prejudicar a tarefa mais importante do momento.",
       },
       {
-        texto: "Usar uma matriz de urgência x impacto.",
+        texto: "Avaliar a urgência real, responder o crítico e proteger o foco.",
         xp: 100,
-        feedback: "Boa escolha. Você transforma pressão difusa em uma fila mais racional de execução.",
+        feedback: "Boa escolha. Você filtra sem ignorar e mantém o trabalho prioritário em andamento.",
       },
       {
-        texto: "Seguir apenas a ordem de chegada das demandas.",
+        texto: "Ignorar todas as mensagens até terminar o que está fazendo.",
         xp: 40,
-        feedback: "A ordem de chegada ajuda um pouco, mas não substitui critério de negócio e risco.",
+        feedback: "Protege o foco, mas pode atrasar algo realmente urgente sem você perceber.",
       },
     ],
   }),
@@ -463,136 +463,137 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "communication-open-1",
     categoria: "Comunicação",
-    titulo: "Cliente Difícil",
+    titulo: "Alinhando Expectativas",
     pergunta:
-      "Um cliente está irritado dizendo que o sistema está inútil e exige resposta imediata. Como você responderia?",
-    descricao: "Responda com suas palavras, como se estivesse falando com o cliente.",
-    critériosAvaliacao: ["empatia", "clareza", "postura emocional"],
+      "Você percebe que o que o cliente pediu foi interpretado de formas diferentes pelos membros do time. Como comunicaria isso antes de continuar o desenvolvimento?",
+    descricao: "Descreva como evitaria o retrabalho e alinharia o entendimento de todos.",
+    criteriosAvaliacao: ["clareza", "proatividade", "comunicação"],
   }),
   createOpenChallenge({
     id: "communication-open-2",
     categoria: "Comunicação",
-    titulo: "Explicação Técnica",
+    titulo: "Má Notícia",
     pergunta:
-      "Você precisa explicar para um gestor não técnico por que o deploy foi adiado. Como explicaria?",
-    descricao: "Escreva uma resposta simples, objetiva e fácil de entender.",
-    critériosAvaliacao: ["simplificação", "didática", "ausência de jargão"],
+      "Um prazo importante não vai ser cumprido. Como você comunicaria isso ao gestor e ao cliente?",
+    descricao: "Escreva como anunciaria o problema com responsabilidade e proposta de solução.",
+    criteriosAvaliacao: ["transparência", "responsabilidade", "clareza"],
   }),
   createOpenChallenge({
     id: "communication-open-3",
     categoria: "Comunicação",
-    titulo: "Feedback Construtivo",
+    titulo: "Apresentação Técnica",
     pergunta:
-      "Um colega entregou um código com vários problemas. Como você daria esse feedback?",
-    descricao: "Escreva como você abordaria a conversa com respeito e clareza.",
-    critériosAvaliacao: ["respeito", "clareza", "assertividade"],
+      "Você precisa apresentar o progresso do projeto para um grupo de executivos sem background técnico. Como estruturaria essa comunicação?",
+    descricao: "Descreva como adaptaria a linguagem e o conteúdo para esse público.",
+    criteriosAvaliacao: ["adaptação de linguagem", "didática", "objetividade"],
   }),
   createOpenChallenge({
     id: "teamwork-open-1",
     categoria: "Trabalho em Equipe",
-    titulo: "Priorização em Equipe",
+    titulo: "Novo no Time",
     pergunta:
-      "Sua equipe tem várias tarefas e pouco tempo. Como você organizaria isso junto ao time?",
-    descricao: "Descreva como você conduziria a organização do trabalho com o grupo.",
-    critériosAvaliacao: ["colaboração", "liderança", "organização"],
+      "Um desenvolvedor júnior acabou de entrar no time no meio de uma sprint. Como você o integraria sem prejudicar as entregas?",
+    descricao: "Descreva como equilibraria a integração da pessoa com o ritmo do time.",
+    criteriosAvaliacao: ["acolhimento", "organização", "colaboração"],
   }),
   createOpenChallenge({
     id: "teamwork-open-2",
     categoria: "Trabalho em Equipe",
-    titulo: "Conflito entre Colegas",
+    titulo: "Colega que Não Entrega",
     pergunta:
-      "Dois desenvolvedores estão em conflito sobre uma decisão técnica. Como você lidaria com essa situação?",
-    descricao: "Explique como mediaria a situação sem reforçar a polarização.",
-    critériosAvaliacao: ["mediação", "neutralidade", "comunicação"],
+      "Um membro do time repetidamente não entrega o que prometeu nas sprints. Como você abordaria essa situação?",
+    descricao: "Explique como lidaria com isso sem ignorar e sem criar conflito desnecessário.",
+    criteriosAvaliacao: ["assertividade", "empatia", "comunicação"],
   }),
   createOpenChallenge({
     id: "teamwork-open-3",
     categoria: "Trabalho em Equipe",
-    titulo: "Decisão Coletiva",
+    titulo: "Time Remoto",
     pergunta:
-      "Existem duas possíveis soluções técnicas para um problema. Como você conduziria a decisão em equipe?",
-    descricao: "Mostre como equilibraria análise técnica e colaboração.",
-    critériosAvaliacao: ["pensamento crítico", "colaboração", "análise"],
+      "O time está distribuído em fusos horários diferentes e tem dificuldade de se alinhar nas entregas. Como você melhoraria a colaboração?",
+    descricao: "Descreva que mudanças de processo ou comunicação você proporia.",
+    criteriosAvaliacao: ["organização", "comunicação assíncrona", "colaboração"],
   }),
   createOpenChallenge({
     id: "problem-solving-open-1",
     categoria: "Resolução de Problemas",
-    titulo: "Sistema Fora do Ar",
-    pergunta: "O sistema caiu em produção. Quais seriam seus primeiros passos?",
-    descricao: "Escreva como você reagiria nos primeiros minutos do incidente.",
-    critériosAvaliacao: ["organização", "método", "priorização"],
+    titulo: "Dívida Técnica",
+    pergunta:
+      "O código do projeto acumulou muita dívida técnica e está comprometendo a velocidade do time. Como você abordaria esse problema?",
+    descricao: "Explique como priorizaria e comunicaria a necessidade de melhorias técnicas.",
+    criteriosAvaliacao: ["visão técnica", "priorização", "comunicação"],
   }),
   createOpenChallenge({
     id: "problem-solving-open-2",
     categoria: "Resolução de Problemas",
-    titulo: "Bug vs Feature",
+    titulo: "Sistema Lento",
     pergunta:
-      "Você tem um bug crítico e uma nova feature para entregar. Como decide o que fazer primeiro?",
-    descricao: "Explique qual critério usaria para decidir.",
-    critériosAvaliacao: ["priorização", "visão de produto", "responsabilidade"],
+      "Após um deploy, usuários começam a reclamar que o sistema ficou lento. Como você investigaria a causa?",
+    descricao: "Descreva sua abordagem de diagnóstico passo a passo.",
+    criteriosAvaliacao: ["investigação", "método", "raciocínio lógico"],
   }),
   createOpenChallenge({
     id: "problem-solving-open-3",
     categoria: "Resolução de Problemas",
-    titulo: "Erro Difícil",
+    titulo: "Requisito Ambíguo",
     pergunta:
-      "Você está lidando com um erro intermitente difícil de reproduzir. Como abordaria a solução?",
-    descricao: "Descreva sua estratégia de investigação.",
-    critériosAvaliacao: ["investigação", "uso de dados", "raciocínio lógico"],
+      "Você recebeu uma especificação confusa que pode ser interpretada de formas muito diferentes. O que você faz antes de começar a desenvolver?",
+    descricao: "Escreva como garantiria o entendimento correto antes de codar.",
+    criteriosAvaliacao: ["clareza", "proatividade", "comunicação"],
   }),
   createOpenChallenge({
     id: "time-management-open-1",
     categoria: "Gestão de Tempo",
-    titulo: "Muitas Tarefas",
+    titulo: "Planejamento da Semana",
     pergunta:
-      "Você recebeu várias tarefas urgentes ao mesmo tempo. Como organiza seu trabalho?",
-    descricao: "Explique como decide a ordem e protege seu foco.",
-    critériosAvaliacao: ["planejamento", "priorização", "gestão de tempo"],
+      "Você tem uma semana com muitas entregas e reuniões previstas. Como planeja para garantir que o essencial seja feito?",
+    descricao: "Descreva como organizaria os dias e protegeria o tempo para o que mais importa.",
+    criteriosAvaliacao: ["planejamento", "organização", "gestão de tempo"],
   }),
   createOpenChallenge({
     id: "time-management-open-2",
     categoria: "Gestão de Tempo",
-    titulo: "Prioridades",
+    titulo: "Dizer Não",
     pergunta:
-      "Como você decide o que é mais importante quando tudo parece urgente?",
-    descricao: "Descreva seu critério de comparação entre as demandas.",
-    critériosAvaliacao: ["análise de impacto", "critério", "organização"],
+      "Seu gestor pede que você encaixe mais uma tarefa numa semana já lotada. Como você responderia?",
+    descricao: "Explique como negociaria sem comprometer o que já foi comprometido.",
+    criteriosAvaliacao: ["assertividade", "negociação", "gestão de tempo"],
   }),
   createOpenChallenge({
     id: "time-management-open-3",
     categoria: "Gestão de Tempo",
-    titulo: "Estimativa",
+    titulo: "Tarefa Difícil",
     pergunta:
-      "Você precisa estimar o tempo de uma tarefa desconhecida. Como faz isso?",
-    descricao: "Escreva como você reduziria incerteza antes de estimar.",
-    critériosAvaliacao: ["planejamento", "decomposição", "análise"],
+      "Você está evitando uma tarefa complexa e desconfortável há dias, mesmo sabendo que ela é importante. Como encararia isso?",
+    descricao: "Descreva o que te trava e como você sairia do bloqueio.",
+    criteriosAvaliacao: ["autoconhecimento", "planejamento", "foco"],
   }),
   createOpenChallenge({
     id: "emotional-intelligence-open-1",
     categoria: "Inteligência Emocional",
-    titulo: "Receber Crítica",
+    titulo: "Síndrome do Impostor",
     pergunta:
-      "Você recebeu um feedback negativo em um code review. Como reage?",
-    descricao: "Mostre como lidaria com a situação sem perder maturidade.",
-    critériosAvaliacao: ["maturidade", "aprendizado", "controle emocional"],
+      "Você foi promovido mas sente que não é bom o suficiente para o novo cargo. Como lida com esse sentimento?",
+    descricao: "Mostre como equilibraria autoconfiança com humildade sem se paralisar.",
+    criteriosAvaliacao: ["autoconhecimento", "resiliência", "maturidade"],
   }),
   createOpenChallenge({
     id: "emotional-intelligence-open-2",
     categoria: "Inteligência Emocional",
-    titulo: "Pressão",
+    titulo: "Discordância com Gestor",
     pergunta:
-      "Você recebeu um prazo praticamente impossível. Como reage?",
-    descricao: "Explique como manteria responsabilidade sem prometer o impossível.",
-    critériosAvaliacao: ["controle emocional", "negociação", "responsabilidade"],
+      "Seu gestor descartou publicamente uma solução técnica sua sem justificar. Como você lidaria com isso?",
+    descricao: "Explique como expressaria seu ponto de vista sem comprometer o relacionamento.",
+    criteriosAvaliacao: ["controle emocional", "assertividade", "maturidade"],
   }),
   createOpenChallenge({
     id: "emotional-intelligence-open-3",
     categoria: "Inteligência Emocional",
-    titulo: "Projeto Falhou",
+    titulo: "Colega em Burnout",
     pergunta:
-      "Um projeto em que você trabalhou falhou. Como você lida com isso?",
-    descricao: "Descreva como transformaria a experiência em aprendizado.",
-    critériosAvaliacao: ["aprendizado", "resiliência", "reflexão"],
+      "Você percebe que um colega está sobrecarregado e mostrando sinais claros de esgotamento. O que você faz?",
+    descricao: "Descreva como apoiaria a pessoa e, se necessário, escalaria a situação.",
+    criteriosAvaliacao: ["empatia", "responsabilidade", "comunicação"],
   }),
 ];
 
@@ -1521,7 +1522,7 @@ function buildPublicChallenge(challenge, completedAttempt) {
     pergunta: challenge.pergunta,
     descricao: challenge.descricao,
     dica: challenge.dica || null,
-    critériosAvaliacao: challenge.critériosAvaliacao || [],
+    criteriosAvaliacao: challenge.criteriosAvaliacao || [],
     recompensas: {
       conclusionXp: CHALLENGE_COMPLETION_XP,
       idealBonusXp: IDEAL_ANSWER_BONUS_XP,
@@ -1636,8 +1637,8 @@ function extractJsonObject(text) {
 
 async function evaluateOpenChallengeWithAI({ resposta, challenge }) {
   const criteria =
-    Array.isArray(challenge.critériosAvaliacao) && challenge.critériosAvaliacao.length
-      ? challenge.critériosAvaliacao
+    Array.isArray(challenge.criteriosAvaliacao) && challenge.criteriosAvaliacao.length
+      ? challenge.criteriosAvaliacao
       : ["clareza", "empatia", "adequacao ao cenário"];
 
   if (!process.env.OPENAI_API_KEY) {

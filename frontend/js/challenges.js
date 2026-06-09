@@ -17,7 +17,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadChallenges() {
   try {
     const payload = await window.skillUpApi.getChallenges();
-    challenges = payload.challenges.filter((challenge) => !challenge.completed);
+    const filtered = payload.challenges.filter((challenge) => !challenge.completed);
+    const closed = filtered.filter((c) => c.tipo === "fechado").sort(() => Math.random() - 0.5);
+    const open = filtered.filter((c) => c.tipo === "aberto").sort(() => Math.random() - 0.5);
+    const maxLen = Math.max(closed.length, open.length);
+    challenges = [];
+    for (let i = 0; i < maxLen; i++) {
+      if (i < closed.length) challenges.push(closed[i]);
+      if (i < open.length) challenges.push(open[i]);
+    }
     currentChallengeIndex = 0;
 
     if (!challenges.length) {
