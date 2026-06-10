@@ -1911,62 +1911,69 @@
          }
       }
 
-      @media (max-width: 768px) {
+      @media (max-width: 576px) {
          .avatar-preview {
-            width: 190px;
-            height: 190px;
+            transform: scale(0.86);
+            transform-origin: top center;
+            margin-bottom: -31px;
+         }
+      }
+
+      @media (max-width: 767px) {
+         /* Features page */
+         .features-hero {
+            padding: 100px 16px 48px;
          }
 
-         .avatar-head {
-            left: 55px;
-            top: 46px;
+         .features-hero h1 {
+            font-size: 26px;
          }
 
-         .avatar-hair {
-            left: 45px;
-            top: 28px;
+         .features-text {
+            font-size: 15px;
          }
 
-         .avatar-fringe {
-            left: 65px;
-            top: 52px;
+         .features-grid {
+            padding: 48px 16px;
          }
 
-         .avatar-eye-left {
-            left: 81px;
+         .features-highlight {
+            padding: 48px 16px;
          }
 
-         .avatar-eye-right {
-            left: 107px;
+         .features-highlight h2 {
+            font-size: 20px;
          }
 
-         .avatar-mouth {
-            left: 88px;
+         .features-cta {
+            padding: 48px 16px;
          }
 
-         .avatar-neck {
-            left: 86px;
+         /* About page */
+         .about-hero {
+            padding: 100px 16px 48px;
          }
 
-         .avatar-torso {
-            left: 35px;
-            width: 120px;
+         .about-hero h1 {
+            font-size: 26px;
          }
 
-         .avatar-shadow {
-            left: 40px;
+         .about-text {
+            font-size: 15px;
          }
 
-         .avatar-arm-left {
-            left: 15px;
-            top: 130px;
-            height: 56px;
+         .about-section {
+            padding: 48px 16px;
          }
 
-         .avatar-arm-right {
-            left: 139px;
-            top: 130px;
-            height: 56px;
+         .about-img {
+            max-width: 160px;
+            width: 100%;
+            margin-top: 16px;
+         }
+
+         .about-cta {
+            padding: 48px 16px;
          }
       }
 
