@@ -417,6 +417,8 @@
       return;
     }
 
+    document.getElementById("logoutBtn")?.addEventListener("click", () => window.logout());
+
     try {
       const payload = await window.skillUpApi.getMe();
       window.skillUpAuth.updateStoredUser(payload.user);

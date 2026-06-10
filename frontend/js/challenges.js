@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+  document.getElementById("logoutBtn")?.addEventListener("click", () => window.logout());
+
   const nextButton = document.getElementById("nextBtn");
   if (nextButton) {
     nextButton.addEventListener("click", goToNextChallenge);
@@ -41,7 +43,16 @@ async function loadChallenges() {
   }
 }
 
+function renderProgress() {
+  const el = document.getElementById("challengeProgress");
+  if (!el) return;
+  const total = challenges.length;
+  if (!total) { el.textContent = ""; return; }
+  el.textContent = `Desafio ${currentChallengeIndex + 1} de ${total}`;
+}
+
 function renderCurrentChallenge() {
+  renderProgress();
   const challenge = challenges[currentChallengeIndex];
   const nextButton = document.getElementById("nextBtn");
   const categoryElement = document.getElementById("categoria");
@@ -180,13 +191,20 @@ function renderResult(result) {
     return;
   }
 
+  const badgeXpLines = Array.isArray(result.unlockedBadges)
+    ? result.unlockedBadges
+        .filter((b) => b.xpBonus > 0)
+        .map((b) => `<li><span>Badge: ${b.name}</span><strong>+${b.xpBonus} XP</strong></li>`)
+        .join("")
+    : "";
+
   const breakdownMarkup = Array.isArray(result.xpBreakdown)
     ? result.xpBreakdown
         .map((item) => {
           const signal = item.xp > 0 ? "+" : "";
           return `<li><span>${item.label}</span><strong>${signal}${item.xp} XP</strong></li>`;
         })
-        .join("")
+        .join("") + badgeXpLines
     : "";
 
   const badgesMarkup =
@@ -283,6 +301,9 @@ function renderFinishedState() {
   if (!categoryElement || !questionElement || !descriptionElement || !answersContainer) {
     return;
   }
+
+  const progressEl = document.getElementById("challengeProgress");
+  if (progressEl) progressEl.textContent = "";
 
   categoryElement.textContent = "Missão concluída";
   questionElement.textContent = "Você finalizou todos os desafios disponíveis.";

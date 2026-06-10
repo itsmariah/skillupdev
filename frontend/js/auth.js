@@ -359,6 +359,11 @@
       resetPasswordForm.addEventListener("submit", handleResetPasswordSubmit);
     }
 
+    document.getElementById("toggleSenhaIcon")?.addEventListener("click", () => togglePassword("senha", "toggleSenhaIcon"));
+    document.getElementById("toggleConfirmarSenhaIcon")?.addEventListener("click", () => togglePassword("confirmarSenha", "toggleConfirmarSenhaIcon"));
+    document.getElementById("toggleNovaSenhaIcon")?.addEventListener("click", () => togglePassword("novaSenha", "toggleNovaSenhaIcon"));
+    document.getElementById("toggleConfirmarNovaSenhaIcon")?.addEventListener("click", () => togglePassword("confirmarNovaSenha", "toggleConfirmarNovaSenhaIcon"));
+
     loadResetPasswordPage();
   });
 

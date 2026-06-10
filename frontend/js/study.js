@@ -241,12 +241,13 @@
             Responder agora
           </a>
         </div>
-        <button onclick="document.getElementById('studyPostBanner').remove()"
+        <button id="studyPostBannerClose"
           style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;opacity:0.7;padding:0;">✕</button>
       </div>
     `;
 
     document.body.appendChild(banner);
+    document.getElementById("studyPostBannerClose")?.addEventListener("click", () => banner.remove());
   }
 
   function checkAndShowPostBanner(user) {

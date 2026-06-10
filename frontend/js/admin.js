@@ -197,6 +197,9 @@
       return;
     }
 
+    document.getElementById("logoutBtn")?.addEventListener("click", () => window.logout());
+    document.getElementById("btnRefresh")?.addEventListener("click", load);
+
     window.adminApp = { load };
     load();
   });

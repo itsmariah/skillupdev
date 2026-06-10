@@ -697,6 +697,8 @@ const AVATAR_CATALOG = {
   ],
 };
 
+const BADGE_XP = { comum: 50, raro: 100, epico: 200, lendario: 400 };
+
 const BADGE_DEFINITIONS = [
   // ── Comum ─────────────────────────────────────────────────────────────────
   {
@@ -1503,6 +1505,9 @@ function syncBadges(user, database) {
 
   for (const definition of BADGE_DEFINITIONS) {
     if (definition.predicate(context) && !existingIds.has(definition.id)) {
+      const rarity = definition.rarity || "comum";
+      const xpBonus = BADGE_XP[rarity] || 0;
+
       const badge = {
         id: definition.id,
         earnedAt: new Date().toISOString(),
@@ -1510,12 +1515,16 @@ function syncBadges(user, database) {
 
       user.badges.push(badge);
       existingIds.add(definition.id);
+      user.xp = Math.max(0, (Number(user.xp) || 0) + xpBonus);
+      user.nivel = calculateLevel(user.xp);
+
       unlockedNow.push({
         id: definition.id,
         name: definition.name,
         description: definition.description,
         theme: definition.theme,
-        rarity: definition.rarity || "comum",
+        rarity,
+        xpBonus,
         unlocked: true,
         earnedAt: badge.earnedAt,
       });

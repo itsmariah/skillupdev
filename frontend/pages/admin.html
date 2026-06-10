@@ -1,8 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="../assets/images/SkillUpDevLogoSemNome.png">
   <title>Painel Admin - SkillUp Dev</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
@@ -105,9 +106,12 @@
 
   <nav class="navbar fixed-top navbar-expand-lg navbar-dark navbar-custom">
     <div class="container">
-      <a class="navbar-brand" href="../index.html">SkillUp Dev</a>
+      <a class="navbar-brand d-flex align-items-center" href="../index.html">
+        <img src="../assets/images/SkillUpDevLogoSemNome.png" height="35" class="me-2" alt="Logo SkillUp Dev">
+        <span>SkillUp Dev</span>
+      </a>
       <div class="ms-auto">
-        <button class="btn btn-outline-light" onclick="window.logout()">Sair</button>
+        <button id="logoutBtn" class="btn btn-outline-light">Sair</button>
       </div>
     </div>
   </nav>
@@ -123,7 +127,7 @@
           <p>Dados coletados dos participantes da pesquisa.</p>
         </div>
         <div class="d-flex gap-2 align-items-center">
-          <button class="btn btn-outline-light" id="btnRefresh" onclick="window.adminApp.load()">
+          <button class="btn btn-outline-light" id="btnRefresh">
             Atualizar
           </button>
           <button id="btnExport" class="btn btn-primary">
