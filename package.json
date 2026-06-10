@@ -2,7 +2,7 @@
   "name": "skillupdev",
   "version": "1.0.0",
   "description": "Plataforma gamificada de treinamento de soft skills para desenvolvedores.",
-  "main": "index.js",
+  "main": "backend/server.js",
   "scripts": {
     "start": "node backend/server.js",
     "dev": "node backend/server.js",
@@ -22,11 +22,11 @@
   },
   "homepage": "https://github.com/itsmariah/skillupdev#readme",
   "dependencies": {
-    "@dicebear/core": "^10.0.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.1",
     "express": "^5.2.1",
-    "node-fetch": "^3.3.2"
+    "express-rate-limit": "^8.5.2",
+    "helmet": "^8.2.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

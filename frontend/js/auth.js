@@ -175,9 +175,9 @@
     }
 
     previewLink.href = payload.previewResetUrl;
-    previewLink.textContent = "Abrir tela de redefinicao";
+    previewLink.textContent = "Abrir tela de redefinição";
     previewExpiry.textContent = payload.previewExpiresAt
-      ? `Link de teste valido ate ${formatDateTime(payload.previewExpiresAt)}.`
+      ? `Link de teste válido até ${formatDateTime(payload.previewExpiresAt)}.`
       : "";
     preview.classList.remove("d-none");
   }
@@ -218,7 +218,7 @@
     clearFeedback("registerFeedback");
 
     if (senha !== confirmarSenha) {
-      setFeedback("registerFeedback", "As senhas nao coincidem.", "danger");
+      setFeedback("registerFeedback", "As senhas não coincidem.", "danger");
       return;
     }
 
@@ -249,7 +249,7 @@
 
     clearFeedback("forgotPasswordFeedback");
     hideForgotPasswordPreview();
-    setButtonState(button, true, "Enviando...", "Enviar link de recuperacao");
+    setButtonState(button, true, "Enviando...", "Enviar link de recuperação");
 
     try {
       const payload = await window.skillUpApi.forgotPassword({ email });
@@ -258,7 +258,7 @@
     } catch (error) {
       setFeedback("forgotPasswordFeedback", error.message, "danger");
     } finally {
-      setButtonState(button, false, "Enviando...", "Enviar link de recuperacao");
+      setButtonState(button, false, "Enviando...", "Enviar link de recuperação");
     }
   }
 
@@ -271,12 +271,12 @@
 
     if (!token) {
       setFormAvailability("resetPasswordForm", false);
-      setFeedback("resetPasswordFeedback", "Link de recuperacao invalido ou incompleto.", "danger");
+      setFeedback("resetPasswordFeedback", "Link de recuperação inválido ou incompleto.", "danger");
       setElementText("resetPasswordStatus", "Solicite um novo link para redefinir sua senha.");
       return;
     }
 
-    setElementText("resetPasswordStatus", "Validando link de recuperacao...");
+    setElementText("resetPasswordStatus", "Validando link de recuperação...");
 
     try {
       const payload = await window.skillUpApi.validateResetToken(token);
@@ -286,7 +286,7 @@
 
       setElementText(
         "resetPasswordStatus",
-        `Link valido para ${payload.emailHint || "sua conta"}.${expirationLabel}`
+        `Link válido para ${payload.emailHint || "sua conta"}.${expirationLabel}`
       );
       setFormAvailability("resetPasswordForm", true);
     } catch (error) {
@@ -307,12 +307,12 @@
     clearFeedback("resetPasswordFeedback");
 
     if (!token) {
-      setFeedback("resetPasswordFeedback", "Link de recuperacao invalido ou incompleto.", "danger");
+      setFeedback("resetPasswordFeedback", "Link de recuperação inválido ou incompleto.", "danger");
       return;
     }
 
     if (senha !== confirmarSenha) {
-      setFeedback("resetPasswordFeedback", "As senhas nao coincidem.", "danger");
+      setFeedback("resetPasswordFeedback", "As senhas não coincidem.", "danger");
       return;
     }
 

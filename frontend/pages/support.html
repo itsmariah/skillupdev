@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suporte - SkillUp Dev</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="../js/main.js" defer></script>
+</head>
+
+<body>
+
+<div id="code-particles"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark navbar-custom">
+  <div class="container">
+
+    <a class="navbar-brand d-flex align-items-center" href="../index.html">
+      <img src="../assets/images/SkillUpDevLogoSemNome.png" height="35" class="me-2" alt="SkillUp Dev">
+      <span>SkillUp Dev</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupport"
+      aria-controls="navbarSupport" aria-expanded="false" aria-label="Abrir menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupport">
+      <ul class="navbar-nav ms-auto align-items-center">
+
+        <li class="nav-item">
+          <a class="nav-link" href="../index.html">Início</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="about.html">Sobre</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="features.html">Funcionalidades</a>
+        </li>
+
+        <li class="nav-item ms-3">
+          <a class="btn btn-primary" href="login.html">Entrar</a>
+        </li>
+
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="about-hero text-center">
+  <div class="container">
+    <h1>Suporte</h1>
+    <p class="about-text">
+      Está com dúvidas ou encontrou algum problema? Veja as perguntas frequentes abaixo
+      ou entre em contato conosco.
+    </p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="about-section">
+  <div class="container">
+
+    <h2 class="mb-4">Perguntas frequentes</h2>
+
+    <div class="accordion" id="faqAccordion">
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#faq1" aria-expanded="false">
+            Como faço para criar uma conta?
+          </button>
+        </h2>
+        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Acesse a página <a href="register.html">Criar conta</a> e preencha seu nome, e-mail e senha.
+            Após o cadastro, você será redirecionado automaticamente para o dashboard.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#faq2" aria-expanded="false">
+            Esqueci minha senha. O que faço?
+          </button>
+        </h2>
+        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Na página de login, clique em <strong>Esqueci minha senha</strong> e informe seu e-mail.
+            Você receberá um link de redefinição válido por 30 minutos.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#faq3" aria-expanded="false">
+            Como funcionam os desafios?
+          </button>
+        </h2>
+        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Existem dois tipos de desafio: <strong>fechado</strong> (múltipla escolha) e
+            <strong>aberto</strong> (resposta livre avaliada por IA). Cada desafio concluído
+            concede XP e pode desbloquear badges. Respostas ideais e sequências perfeitas
+            geram bônus extras de XP.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#faq4" aria-expanded="false">
+            O que é a sequência perfeita?
+          </button>
+        </h2>
+        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            A sequência perfeita conta quantas respostas ideais consecutivas você deu.
+            A cada 5 respostas ideais seguidas, você recebe um bônus de <strong>+80 XP</strong>.
+            Nas questões abertas, uma boa resposta (não ideal) mantém a sequência sem zerar.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#faq5" aria-expanded="false">
+            Meu progresso é salvo automaticamente?
+          </button>
+        </h2>
+        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Sim. Todo progresso — XP, nível, badges e desafios concluídos — é salvo automaticamente
+            após cada ação. Basta fazer login novamente para retomar de onde parou.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTATO -->
+<section class="about-section alt">
+  <div class="container text-center">
+    <h2>Ainda precisa de ajuda?</h2>
+    <p class="mt-3">
+      Entre em contato com a equipe do SkillUp Dev pelo e-mail abaixo.
+      Respondemos em até 24 horas úteis.
+    </p>
+    <a href="mailto:suporte@skillupdev.com" class="btn btn-primary mt-2">
+      suporte@skillupdev.com
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container text-center">
+    <p>© 2026 SkillUp Dev - Todos os direitos reservados</p>
+  </div>
+</footer>
+
+</body>
+</html>

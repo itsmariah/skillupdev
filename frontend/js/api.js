@@ -1,19 +1,9 @@
 (function attachSkillUpApi() {
   const TOKEN_KEY = "skillup_token";
   const USER_KEY = "skillup_user";
-  const FALLBACK_ORIGIN = "http://localhost:3000";
 
   function getApiOrigin() {
-    const currentOrigin = window.location.origin;
-    const isHttpOrigin = /^https?:\/\//i.test(currentOrigin);
-    const isLocalHost =
-      window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-
-    if (isHttpOrigin && isLocalHost) {
-      return currentOrigin;
-    }
-
-    return FALLBACK_ORIGIN;
+    return window.location.origin;
   }
 
   function getToken() {
@@ -71,7 +61,7 @@
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      const error = new Error(data.message || "Nao foi possivel concluir a requisicao.");
+      const error = new Error(data.message || "Não foi possível concluir a requisição.");
       error.status = response.status;
       error.payload = data;
       throw error;

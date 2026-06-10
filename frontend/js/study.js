@@ -249,9 +249,14 @@
     document.body.appendChild(banner);
   }
 
-  function checkAndShowPostBanner() {
+  function checkAndShowPostBanner(user) {
     const page = document.body.dataset.page;
     if (!["challenges", "dashboard"].includes(page)) return;
+
+    if (user) {
+      injectPostQuestionnaireBanner(user);
+      return;
+    }
 
     const token = window.skillUpApi?.getToken();
     if (!token) return;
@@ -261,9 +266,13 @@
     }).catch(() => {});
   }
 
+  window.skillUpStudy = { checkAndShowPostBanner };
+
   document.addEventListener("DOMContentLoaded", () => {
     buildPreForm();
     buildPostForm();
-    checkAndShowPostBanner();
+    if (document.body.dataset.page === "challenges") {
+      checkAndShowPostBanner();
+    }
   });
 })();

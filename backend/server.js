@@ -4,6 +4,8 @@ const fsPromises = require("fs/promises");
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
@@ -17,10 +19,15 @@ const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const OPEN_CHALLENGE_XP_MULTIPLIER = 1.2;
 const PASSWORD_RESET_TTL_MINUTES = 30;
 const PASSWORD_RESET_TTL_MS = PASSWORD_RESET_TTL_MINUTES * 60 * 1000;
+const SESSION_TTL_DAYS = 30;
+const SESSION_TTL_MS = SESSION_TTL_DAYS * 24 * 60 * 60 * 1000;
 const RESEND_API_URL = process.env.RESEND_API_URL || "https://api.resend.com/emails";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@skillupdev.com";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin@123";
-const STUDY_MIN_CHALLENGES = 5;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const FRONTEND_URL = process.env.FRONTEND_URL;
+const STUDY_MIN_CHALLENGES = 10;
+const MAX_NAME_LENGTH = 200;
+const MAX_OPEN_ANSWER_LENGTH = 3000;
 
 function normalizeTextValue(value) {
   return String(value || "")
@@ -857,11 +864,43 @@ const CRITERIA_KEYWORDS = {
   reflexao: ["refletir", "entender", "analisar", "post-mortem", "aprendizado"],
 };
 
-app.use(cors());
+const allowedOrigins = FRONTEND_URL
+  ? [FRONTEND_URL]
+  : process.env.NODE_ENV !== "production"
+    ? [`http://localhost:${PORT}`, `http://127.0.0.1:${PORT}`]
+    : [];
+
+app.use(cors({ origin: allowedOrigins.length > 0 ? allowedOrigins : false }));
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
+        styleSrc: ["'self'", "https:", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:"],
+        fontSrc: ["'self'", "https:", "data:"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        formAction: ["'self'"],
+        frameAncestors: ["'self'"],
+      },
+    },
+  })
+);
 app.use(express.json());
 app.use(express.static(FRONTEND_DIR));
 
+const authRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Muitas tentativas. Tente novamente em 15 minutos." },
+});
+
 let writeQueue = Promise.resolve();
+let inMemoryDatabase = null;
 
 function ensureDataFile() {
   if (!fs.existsSync(DATA_DIR)) {
@@ -1069,17 +1108,33 @@ function purgeExpiredPasswordResetTokens(database) {
   return database.passwordResetTokens.length !== previousLength;
 }
 
+function isSessionExpired(session) {
+  if (!session?.expiresAt) return true;
+  return new Date(session.expiresAt) < new Date();
+}
+
+function purgeExpiredSessions(database) {
+  const previousLength = Array.isArray(database.sessions) ? database.sessions.length : 0;
+  database.sessions = (database.sessions || []).filter((s) => !isSessionExpired(s));
+  return database.sessions.length !== previousLength;
+}
+
 async function readDatabase() {
+  if (inMemoryDatabase) {
+    return inMemoryDatabase;
+  }
+
   ensureDataFile();
 
   try {
     const raw = await fsPromises.readFile(DATA_FILE, "utf8");
     if (!raw.trim()) {
-      return createEmptyDatabase();
+      inMemoryDatabase = createEmptyDatabase();
+      return inMemoryDatabase;
     }
 
     const parsed = JSON.parse(raw);
-    return {
+    inMemoryDatabase = {
       users: Array.isArray(parsed.users) ? parsed.users.map(hydrateUser) : [],
       sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
       challengeAttempts: Array.isArray(parsed.challengeAttempts)
@@ -1090,18 +1145,21 @@ async function readDatabase() {
         : [],
       study_responses: Array.isArray(parsed.study_responses) ? parsed.study_responses : [],
     };
+    return inMemoryDatabase;
   } catch (error) {
     console.error("Erro ao ler banco local:", error);
-    return createEmptyDatabase();
+    inMemoryDatabase = createEmptyDatabase();
+    return inMemoryDatabase;
   }
 }
 
 async function writeDatabase(data) {
   ensureDataFile();
 
-  writeQueue = writeQueue.then(() =>
-    fsPromises.writeFile(DATA_FILE, `${JSON.stringify(data, null, 2)}\n`, "utf8")
-  );
+  const doWrite = () =>
+    fsPromises.writeFile(DATA_FILE, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+
+  writeQueue = writeQueue.then(doWrite, doWrite);
 
   return writeQueue;
 }
@@ -1755,7 +1813,12 @@ function buildXpBreakdown(qualityTier, streakBonusXp, xpMultiplier = 1) {
 
 function buildChallengeResult({ challenge, score, feedback, previousStreak }) {
   const qualityTier = deriveQualityTier(score, challenge.tipo);
-  const nextPerfectStreak = qualityTier === "ideal" ? previousStreak + 1 : 0;
+  const nextPerfectStreak =
+    qualityTier === "ideal"
+      ? previousStreak + 1
+      : qualityTier === "medium" && challenge.tipo === "aberto"
+        ? previousStreak
+        : 0;
   const streakBonusXp =
     nextPerfectStreak > 0 && nextPerfectStreak % PERFECT_STREAK_TARGET === 0
       ? PERFECT_STREAK_BONUS_XP
@@ -1784,9 +1847,13 @@ async function authenticateRequest(req, res, next) {
     return res.status(401).json({ message: "Token de acesso não informado." });
   }
 
-  const token = authorization.slice("Bearer ".length).trim();
+  const rawToken = authorization.slice("Bearer ".length).trim();
+  const tokenHash = hashToken(rawToken);
   const database = await readDatabase();
-  const session = database.sessions.find((item) => item.token === token);
+
+  purgeExpiredSessions(database);
+
+  const session = database.sessions.find((item) => item.tokenHash === tokenHash);
 
   if (!session) {
     return res.status(401).json({ message: "Sessão inválida ou expirada." });
@@ -1800,7 +1867,7 @@ async function authenticateRequest(req, res, next) {
 
   req.database = database;
   req.user = user;
-  req.token = token;
+  req.tokenHash = tokenHash;
 
   next();
 }
@@ -1820,13 +1887,17 @@ app.get("/api/health", (_req, res) => {
   });
 });
 
-app.post("/api/auth/register", async (req, res) => {
+app.post("/api/auth/register", authRateLimiter, async (req, res) => {
   const nome = String(req.body.nome || "").trim();
   const email = normalizeEmail(req.body.email);
   const senha = String(req.body.senha || "");
 
   if (!nome || !email || !senha) {
     return res.status(400).json({ message: "Preencha nome, email e senha." });
+  }
+
+  if (nome.length > MAX_NAME_LENGTH) {
+    return res.status(400).json({ message: `O nome pode ter no máximo ${MAX_NAME_LENGTH} caracteres.` });
   }
 
   if (senha.length < 6) {
@@ -1837,7 +1908,7 @@ app.post("/api/auth/register", async (req, res) => {
   const emailExists = database.users.some((item) => item.email === email);
 
   if (emailExists) {
-    return res.status(409).json({ message: "Já existe uma conta com este email." });
+    return res.status(409).json({ message: "Não foi possível criar a conta. Verifique os dados e tente novamente." });
   }
 
   const user = hydrateUser({
@@ -1860,9 +1931,10 @@ app.post("/api/auth/register", async (req, res) => {
 
   database.users.push(user);
   database.sessions.push({
-    token,
+    tokenHash: hashToken(token),
     userId: user.id,
     createdAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + SESSION_TTL_MS).toISOString(),
   });
 
   await writeDatabase(database);
@@ -1875,7 +1947,7 @@ app.post("/api/auth/register", async (req, res) => {
   });
 });
 
-app.post("/api/auth/login", async (req, res) => {
+app.post("/api/auth/login", authRateLimiter, async (req, res) => {
   const email = normalizeEmail(req.body.email);
   const senha = String(req.body.senha || "");
 
@@ -1890,16 +1962,15 @@ app.post("/api/auth/login", async (req, res) => {
     return res.status(401).json({ message: "Email ou senha inválidos." });
   }
 
-  database.sessions = database.sessions.filter((item) => item.userId !== user.id);
-
   const dailyLoginReward = applyDailyLoginReward(user);
   syncBadges(user, database);
 
   const token = createToken();
   database.sessions.push({
-    token,
+    tokenHash: hashToken(token),
     userId: user.id,
     createdAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + SESSION_TTL_MS).toISOString(),
   });
 
   await writeDatabase(database);
@@ -1912,7 +1983,7 @@ app.post("/api/auth/login", async (req, res) => {
   });
 });
 
-app.post("/api/auth/forgot-password", async (req, res) => {
+app.post("/api/auth/forgot-password", authRateLimiter, async (req, res) => {
   const email = normalizeEmail(req.body.email);
 
   if (!email) {
@@ -1977,7 +2048,7 @@ app.post("/api/auth/forgot-password", async (req, res) => {
   return res.json(response);
 });
 
-app.get("/api/auth/reset-password/validate", async (req, res) => {
+app.get("/api/auth/reset-password/validate", authRateLimiter, async (req, res) => {
   const token = String(req.query.token || "").trim();
 
   if (!token) {
@@ -2009,7 +2080,7 @@ app.get("/api/auth/reset-password/validate", async (req, res) => {
   });
 });
 
-app.post("/api/auth/reset-password", async (req, res) => {
+app.post("/api/auth/reset-password", authRateLimiter, async (req, res) => {
   const token = String(req.body.token || "").trim();
   const senha = String(req.body.senha || "");
 
@@ -2053,7 +2124,7 @@ app.post("/api/auth/reset-password", async (req, res) => {
 });
 
 app.post("/api/auth/logout", authenticateRequest, async (req, res) => {
-  req.database.sessions = req.database.sessions.filter((session) => session.token !== req.token);
+  req.database.sessions = req.database.sessions.filter((s) => s.tokenHash !== req.tokenHash);
   await writeDatabase(req.database);
 
   res.json({ message: "Sessão encerrada com sucesso." });
@@ -2135,6 +2206,10 @@ app.post("/api/challenges/:challengeId/submit", authenticateRequest, async (req,
 
     if (!texto) {
       return res.status(400).json({ message: "Digite uma resposta antes de enviar." });
+    }
+
+    if (texto.length > MAX_OPEN_ANSWER_LENGTH) {
+      return res.status(400).json({ message: `A resposta pode ter no máximo ${MAX_OPEN_ANSWER_LENGTH} caracteres.` });
     }
 
     answer = texto;
@@ -2227,6 +2302,15 @@ app.post("/api/study/questionnaire", authenticateRequest, async (req, res) => {
 
   if (alreadySubmitted) {
     return res.status(409).json({ message: "Questionário já respondido." });
+  }
+
+  if (type === "post") {
+    const attempts = getUserAttempts(req.user.id, req.database);
+    if (attempts.length < STUDY_MIN_CHALLENGES) {
+      return res.status(403).json({
+        message: `Complete ao menos ${STUDY_MIN_CHALLENGES} desafios antes de responder o questionário final.`,
+      });
+    }
   }
 
   const record = {
@@ -2371,15 +2455,14 @@ app.get("/api/admin/study-data/export", authenticateRequest, requireAdmin, async
     const ab = r.data?.abertas || {};
     const stats = r.data?.sessionStats || {};
     const susScore = sus.s1 ? calcSusScore(sus) : "";
+    const csvStr = (v) => `"${String(v || "").replace(/"/g, '""')}"`;
     return [
-      r.userName, r.userEmail, r.submittedAt,
+      csvStr(r.userName), csvStr(r.userEmail), csvStr(r.submittedAt),
       sus.s1||"", sus.s2||"", sus.s3||"", sus.s4||"", sus.s5||"",
       sus.s6||"", sus.s7||"", sus.s8||"", sus.s9||"", sus.s10||"", susScore,
       lik.desafiosInteressantes||"", lik.feedbackUtil||"", lik.reflexaoSoftSkills||"",
       lik.usariaNovamente||"", lik.feedbackCoerente||"", lik.feedbackVsGenerico||"",
-      `"${String(ab.gostou||"").replace(/"/g,'""')}"`,
-      `"${String(ab.melhorar||"").replace(/"/g,'""')}"`,
-      `"${String(ab.feedbackCoerente||"").replace(/"/g,'""')}"`,
+      csvStr(ab.gostou), csvStr(ab.melhorar), csvStr(ab.feedbackCoerente),
       stats.timeSpentMinutes||"", stats.challengesCompleted||"",
     ];
   });
@@ -2392,6 +2475,11 @@ app.get("/api/admin/study-data/export", authenticateRequest, requireAdmin, async
 });
 
 async function ensureAdminExists() {
+  if (!ADMIN_PASSWORD) {
+    console.warn("[Admin] ADMIN_PASSWORD não definido. Admin não será criado automaticamente.");
+    return;
+  }
+
   const database = await readDatabase();
 
   const adminExists = database.users.some((u) => u.isAdmin);
@@ -2415,7 +2503,7 @@ async function ensureAdminExists() {
 
   database.users.push(admin);
   await writeDatabase(database);
-  console.log(`[Admin] Usuário administrador criado: ${ADMIN_EMAIL}`);
+  console.log("[Admin] Usuário administrador criado com sucesso.");
 }
 
 app.listen(PORT, async () => {

@@ -192,6 +192,11 @@
 
     if (!window.skillUpAuth?.requireSession()) return;
 
+    if (!window.skillUpApi.getStoredUser()?.isAdmin) {
+      window.location.href = "dashboard.html";
+      return;
+    }
+
     window.adminApp = { load };
     load();
   });

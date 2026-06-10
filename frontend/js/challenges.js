@@ -1,3 +1,4 @@
+(function () {
 let challenges = [];
 let currentChallengeIndex = 0;
 
@@ -20,11 +21,12 @@ async function loadChallenges() {
     const filtered = payload.challenges.filter((challenge) => !challenge.completed);
     const closed = filtered.filter((c) => c.tipo === "fechado").sort(() => Math.random() - 0.5);
     const open = filtered.filter((c) => c.tipo === "aberto").sort(() => Math.random() - 0.5);
-    const maxLen = Math.max(closed.length, open.length);
     challenges = [];
-    for (let i = 0; i < maxLen; i++) {
-      if (i < closed.length) challenges.push(closed[i]);
-      if (i < open.length) challenges.push(open[i]);
+    let ci = 0, oi = 0;
+    while (ci < closed.length || oi < open.length) {
+      if (ci < closed.length) challenges.push(closed[ci++]);
+      if (ci < closed.length) challenges.push(closed[ci++]);
+      if (oi < open.length) challenges.push(open[oi++]);
     }
     currentChallengeIndex = 0;
 
@@ -234,9 +236,15 @@ function buildChallengeDescription(challenge) {
     parts.push(challenge.descricao);
   }
 
-  parts.push(
-    "Recompensas: +100 XP por concluir, +50 XP em resposta ideal e bônus de +30 XP a cada 3 respostas ideais seguidas."
-  );
+  if (challenge.tipo === "fechado") {
+    parts.push(
+      "Recompensas: +40 XP por concluir. Resposta ideal: +100 XP total. Bônus de +80 XP a cada 5 respostas ideais seguidas."
+    );
+  } else {
+    parts.push(
+      "Recompensas: +48 XP por concluir. Resposta ideal: +120 XP total. Bônus de +80 XP a cada 5 respostas ideais seguidas."
+    );
+  }
 
   if (challenge.tipo === "aberto" && Array.isArray(challenge.criteriosAvaliacao)) {
     const criteria = challenge.criteriosAvaliacao.filter(Boolean);
@@ -303,9 +311,10 @@ function goToNextChallenge() {
   currentChallengeIndex += 1;
 
   if (currentChallengeIndex >= challenges.length) {
-    window.location.href = "dashboard.html";
+    renderFinishedState();
     return;
   }
 
   renderCurrentChallenge();
 }
+})();

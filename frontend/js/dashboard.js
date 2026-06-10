@@ -85,7 +85,7 @@
 
     select.innerHTML = options
       .map((option) => {
-        const levelSuffix = option.unlocked ? "" : ` (Nivel ${option.minLevel})`;
+        const levelSuffix = option.unlocked ? "" : ` (Nível ${option.minLevel})`;
         const disabledAttr = option.unlocked ? "" : "disabled";
         const selectedAttr = option.id === selectedValue ? "selected" : "";
         return `<option value="${option.id}" ${disabledAttr} ${selectedAttr}>${option.label}${levelSuffix}</option>`;
@@ -280,7 +280,7 @@
     }
 
     if (user?.gamification?.dailyLoginAwardedToday) {
-      banner.textContent = "Bonus diario ja contabilizado hoje. Continue a sequencia.";
+      banner.textContent = "Bônus diário já contabilizado hoje. Continue a sequência.";
       banner.className = "dashboard-banner dashboard-banner-muted";
       banner.classList.remove("d-none");
       return;
@@ -292,23 +292,23 @@
   function renderProgressSummary(user) {
     const textFields = {
       userName: user.nome || "Dev",
-      userLevel: `Nivel ${user.level} | ${user.levelLabel}`,
+      userLevel: `Nível ${user.level} | ${user.levelLabel}`,
       levelDescription: user.isMaxLevel
-        ? "Voce chegou ao topo atual da trilha de soft skills."
-        : `Faltam ${user.xpToNextLevel} XP para avancar para o proximo nivel.`,
+        ? "Você chegou ao topo atual da trilha de soft skills."
+        : `Faltam ${user.xpToNextLevel} XP para avançar para o próximo nível.`,
       xpSummary: user.isMaxLevel
-        ? `${user.xp} XP totais | Nivel maximo`
+        ? `${user.xp} XP totais | Nível máximo`
         : `${user.currentLevelXp} XP / ${user.nextLevelXp} XP`,
       nextLevelHint: user.isMaxLevel
-        ? "Novos desafios agora servem para badges, avatar e consistencia."
-        : "Respostas ideais e sequencias perfeitas aceleram a progressao.",
+        ? "Novos desafios agora servem para badges, avatar e consistência."
+        : "Respostas ideais e sequências perfeitas aceleram a progressão.",
       challengeCount: `${user.completedChallenges}/${user.totalChallenges}`,
       pendingCount: String(user.pendingChallenges),
       badgeCount: String(user.gamification?.totalBadges || 0),
       perfectStreakCount: String(user.gamification?.perfectStreak || 0),
       dailyLoginStreakCount: String(user.gamification?.dailyLoginStreak || 0),
       idealAnswerCount: String(user.gamification?.idealAnswers || 0),
-      userLevelMirror: user.levelLabel || `Nivel ${user.level}`,
+      userLevelMirror: user.levelLabel || `Nível ${user.level}`,
     };
 
     Object.entries(textFields).forEach(([id, text]) => {
@@ -421,6 +421,7 @@
       const payload = await window.skillUpApi.getMe();
       window.skillUpAuth.updateStoredUser(payload.user);
       renderDashboard(payload.user);
+      window.skillUpStudy?.checkAndShowPostBanner(payload.user);
     } catch (_error) {
       window.skillUpApi.clearSession();
       window.location.href = "login.html";
