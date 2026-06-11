@@ -119,14 +119,14 @@
 
       .hero{
       padding:120px 20px;
-      background: linear-gradient(135deg,#eef1ff,#dfe6ff);
+      background: transparent;
       text-align:center;
       }
 
       .hero h1{
       font-size:42px;
       font-weight:800;
-      color:#2c2457;
+      color:white;
       margin-top:15px;
       }
 
@@ -184,7 +184,7 @@
       margin:auto;
       margin-top:15px;
       font-size:18px;
-      color:#555;
+      color:rgba(255,255,255,0.85);
       }
 
 
@@ -304,6 +304,7 @@
 
       padding:80px 20px;
       background:#f8f9ff;
+      color:#2c2457;
 
       }
 
