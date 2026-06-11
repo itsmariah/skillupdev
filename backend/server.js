@@ -2348,7 +2348,7 @@ app.post("/api/study/questionnaire", authenticateRequest, async (req, res) => {
     userName: req.user.nome,
     userEmail: req.user.email,
     type,
-    studyVersion: req.user.studyVersion || 1,
+    studyVersion: type === "pre" ? STUDY_VERSION : (req.user.studyVersion || 1),
     submittedAt: new Date().toISOString(),
     data,
   };
@@ -2438,10 +2438,13 @@ app.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (req, 
     };
   }
 
-  const v1Pre  = preResponses.filter((r) => (r.studyVersion || 1) === 1);
-  const v1Post = postResponses.filter((r) => (r.studyVersion || 1) === 1);
-  const v2Pre  = preResponses.filter((r) => (r.studyVersion || 1) === 2);
-  const v2Post = postResponses.filter((r) => (r.studyVersion || 1) === 2);
+  const v2UserIds = new Set(
+    users.filter((u) => (u.studyVersion || 1) === 2).map((u) => u.id)
+  );
+  const v1Pre  = preResponses.filter((r) => !v2UserIds.has(r.userId));
+  const v1Post = postResponses.filter((r) => !v2UserIds.has(r.userId));
+  const v2Pre  = preResponses.filter((r) => v2UserIds.has(r.userId));
+  const v2Post = postResponses.filter((r) => v2UserIds.has(r.userId));
 
   const participantCount = new Set([
     ...preResponses.map((r) => r.userId),
@@ -2484,7 +2487,7 @@ app.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (req, 
     openAnswers: postResponses.map((r) => ({
       userName: r.userName,
       submittedAt: r.submittedAt,
-      studyVersion: r.studyVersion || 1,
+      studyVersion: v2UserIds.has(r.userId) ? 2 : 1,
       gostou: r.data?.abertas?.gostou || "",
       melhorar: r.data?.abertas?.melhorar || "",
       feedbackCoerente: r.data?.abertas?.feedbackCoerente || "",
