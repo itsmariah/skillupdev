@@ -24,16 +24,27 @@
   function hide(id) { document.getElementById(id)?.classList.add("d-none"); }
   function show(id) { document.getElementById(id)?.classList.remove("d-none"); }
 
+  function versionBadge(v) {
+    return v === 2
+      ? '<span style="font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:20px;background:#dbeafe;color:#1e40af;">V2</span>'
+      : '<span style="font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:20px;background:#ede9fe;color:#5b21b6;">V1</span>';
+  }
+
   function renderSummaryCards(summary) {
     const container = document.getElementById("summaryCards");
     if (!container) return;
 
     const cards = [
-      { value: summary.participantCount,   label: "Participantes",                helper: "Total de usuários no estudo" },
-      { value: summary.preCompletedCount,  label: "Questionários Pré",            helper: "Etapa 1 concluída" },
-      { value: summary.postCompletedCount, label: "Questionários Pós",            helper: "Etapa 2 concluída" },
+      { value: summary.participantCount,   label: "Participantes",     helper: "Total no estudo" },
+      { value: summary.preCompletedCount,  label: "Questionários Pré", helper: "Etapa 1 concluída" },
+      { value: summary.postCompletedCount, label: "Questionários Pós", helper: "Etapa 2 concluída" },
       { value: summary.avgSusScore !== null ? summary.avgSusScore : "—", label: "SUS Score Médio", helper: "Usabilidade (0–100)" },
     ];
+
+    const vRows = [
+      { label: "Versão 1", data: summary.v1, color: "#5b21b6", bg: "#ede9fe" },
+      { label: "Versão 2", data: summary.v2, color: "#1e40af", bg: "#dbeafe" },
+    ].filter((r) => r.data && r.data.participantCount > 0);
 
     container.innerHTML = cards.map((c) => `
       <div class="col-6 col-md-3">
@@ -43,7 +54,24 @@
           <p class="stat-helper">${c.helper}</p>
         </div>
       </div>
-    `).join("");
+    `).join("") + (vRows.length ? `
+      <div class="col-12 mt-2">
+        <div class="dashboard-panel" style="padding:16px 20px;">
+          <div style="display:flex;gap:32px;flex-wrap:wrap;">
+            ${vRows.map((r) => `
+              <div>
+                <span style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${r.color};">${r.label}</span>
+                <div style="display:flex;gap:24px;margin-top:6px;flex-wrap:wrap;">
+                  <span style="font-size:0.85rem;color:#374151;"><strong>${r.data.participantCount}</strong> participantes</span>
+                  <span style="font-size:0.85rem;color:#374151;"><strong>${r.data.postCompletedCount}</strong> pós concluídos</span>
+                  <span style="font-size:0.85rem;color:#374151;">SUS: <strong>${r.data.avgSusScore !== null ? r.data.avgSusScore : "—"}</strong></span>
+                </div>
+              </div>
+            `).join('<div style="width:1px;background:#e5e7eb;"></div>')}
+          </div>
+        </div>
+      </div>
+    ` : "");
   }
 
   function renderSusBlock(summary) {
@@ -96,7 +124,7 @@
 
     el.innerHTML = openAnswers.map((r) => `
       <div class="open-answer-card">
-        <div class="open-answer-user">${escapeHtml(r.userName)} &mdash; ${new Date(r.submittedAt).toLocaleDateString("pt-BR")}</div>
+        <div class="open-answer-user">${escapeHtml(r.userName)} &mdash; ${new Date(r.submittedAt).toLocaleDateString("pt-BR")} ${versionBadge(r.studyVersion || 1)}</div>
         ${r.gostou ? `<div class="open-answer-label">O que mais gostou</div><div class="open-answer-text">"${escapeHtml(r.gostou)}"</div>` : ""}
         ${r.melhorar ? `<div class="open-answer-label">O que melhoraria</div><div class="open-answer-text">"${escapeHtml(r.melhorar)}"</div>` : ""}
         ${r.feedbackCoerente ? `<div class="open-answer-label">Sobre o feedback da IA</div><div class="open-answer-text">"${escapeHtml(r.feedbackCoerente)}"</div>` : ""}
@@ -140,6 +168,7 @@
       <tr>
         <td><strong style="color:#2c2457">${escapeHtml(p.nome)}</strong></td>
         <td class="text-muted" style="font-size:0.82rem;">${escapeHtml(p.email)}</td>
+        <td>${versionBadge(p.studyVersion || 1)}</td>
         <td><strong style="color:#2c2457">${p.challengesCompleted}</strong></td>
         <td>${statusBadge(p.studyPreDone)}</td>
         <td>${statusBadge(p.studyPostDone)}</td>

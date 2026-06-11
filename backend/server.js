@@ -26,6 +26,7 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@skillupdev.com";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const FRONTEND_URL = process.env.FRONTEND_URL;
 const STUDY_MIN_CHALLENGES = 10;
+const STUDY_VERSION = 2;
 const MAX_NAME_LENGTH = 200;
 const MAX_OPEN_ANSWER_LENGTH = 3000;
 
@@ -1713,17 +1714,23 @@ async function evaluateOpenChallengeWithAI({ resposta, challenge }) {
   }
 
   const prompt = [
-    "Avalie a resposta de um usuário em um desafio de soft skills.",
+    "Você é um avaliador especialista em soft skills para desenvolvedores de software.",
+    "Avalie a resposta abaixo e forneça um feedback detalhado, específico e educativo.",
+    "",
     `Categoria: ${challenge.categoria}`,
-    `Titulo do desafio: ${challenge.titulo}`,
+    `Desafio: ${challenge.titulo}`,
     `Pergunta: ${challenge.pergunta}`,
     `Resposta do usuário: ${resposta}`,
     "",
-    "Considere especialmente estes critérios:",
-    ...criteria.map((critérion) => `- ${critérion}`),
+    `Critérios avaliados: ${criteria.join(", ")}`,
     "",
-    "O feedback deve ser funcional, específico, educativo e curto.",
-    'Retorne apenas JSON válido no formato {"nota": 0-100, "feedback": "texto curto"}',
+    "Estruture o feedback em exatamente três partes:",
+    "1. O que foi bem: destaque 1-2 pontos fortes concretos da resposta.",
+    "2. O que faltou: aponte 1-2 lacunas ou pontos que ficaram fracos, sendo específico sobre o que estava ausente.",
+    "3. Como melhorar: dê uma dica prática e acionável para evoluir nessa competência.",
+    "",
+    "Seja direto e específico sobre esta resposta — nunca genérico. Use no máximo 6 frases no total.",
+    'Retorne apenas JSON válido: {"nota": 0-100, "feedback": "texto com as três partes claramente separadas"}',
   ].join("\n");
 
   try {
@@ -2328,6 +2335,7 @@ app.post("/api/study/questionnaire", authenticateRequest, async (req, res) => {
     userName: req.user.nome,
     userEmail: req.user.email,
     type,
+    studyVersion: req.user.studyVersion || 1,
     submittedAt: new Date().toISOString(),
     data,
   };
@@ -2336,6 +2344,7 @@ app.post("/api/study/questionnaire", authenticateRequest, async (req, res) => {
 
   if (type === "pre") {
     req.user.studyPreDone = true;
+    req.user.studyVersion = STUDY_VERSION;
   } else {
     req.user.studyPostDone = true;
   }
@@ -2398,6 +2407,29 @@ app.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (req, 
       : null;
   }
 
+  function buildVersionSummary(preResp, postResp) {
+    const sus = postResp.filter((r) => r.data?.sus).map((r) => calcSusScore(r.data.sus));
+    const avgSusV = sus.length ? Math.round(sus.reduce((a, b) => a + b, 0) / sus.length) : null;
+    const lkAvg = {};
+    for (const key of likertKeys) {
+      const vals = postResp.map((r) => Number(r.data?.likert?.[key])).filter((v) => v >= 1 && v <= 5);
+      lkAvg[key] = vals.length ? Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / 10 : null;
+    }
+    return {
+      participantCount: new Set([...preResp.map((r) => r.userId), ...postResp.map((r) => r.userId)]).size,
+      preCompletedCount: preResp.length,
+      postCompletedCount: postResp.length,
+      avgSusScore: avgSusV,
+      susClassification: avgSusV !== null ? susClassification(avgSusV) : null,
+      likertAverages: lkAvg,
+    };
+  }
+
+  const v1Pre  = preResponses.filter((r) => (r.studyVersion || 1) === 1);
+  const v1Post = postResponses.filter((r) => (r.studyVersion || 1) === 1);
+  const v2Pre  = preResponses.filter((r) => (r.studyVersion || 1) === 2);
+  const v2Post = postResponses.filter((r) => (r.studyVersion || 1) === 2);
+
   const participantCount = new Set([
     ...preResponses.map((r) => r.userId),
     ...postResponses.map((r) => r.userId),
@@ -2413,6 +2445,7 @@ app.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (req, 
         id: u.id,
         nome: u.nome,
         email: u.email,
+        studyVersion: u.studyVersion || 1,
         studyPreDone: Boolean(u.studyPreDone),
         studyPostDone: Boolean(u.studyPostDone),
         challengesCompleted: attempts.length,
@@ -2432,10 +2465,13 @@ app.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (req, 
       avgSusScore: avgSus,
       susClassification: avgSus !== null ? susClassification(avgSus) : null,
       likertAverages,
+      v1: buildVersionSummary(v1Pre, v1Post),
+      v2: buildVersionSummary(v2Pre, v2Post),
     },
     openAnswers: postResponses.map((r) => ({
       userName: r.userName,
       submittedAt: r.submittedAt,
+      studyVersion: r.studyVersion || 1,
       gostou: r.data?.abertas?.gostou || "",
       melhorar: r.data?.abertas?.melhorar || "",
       feedbackCoerente: r.data?.abertas?.feedbackCoerente || "",
