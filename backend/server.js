@@ -2483,6 +2483,28 @@ app.get("/api/admin/study-data/export", authenticateRequest, requireAdmin, async
   return res.send("﻿" + csv);
 });
 
+app.delete("/api/admin/users/:id", authenticateRequest, requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  const database = req.database;
+
+  const userIndex = database.users.findIndex((u) => u.id === id);
+  if (userIndex === -1) {
+    return res.status(404).json({ message: "Usuário não encontrado." });
+  }
+
+  if (database.users[userIndex].isAdmin) {
+    return res.status(403).json({ message: "Não é possível excluir um administrador." });
+  }
+
+  database.users.splice(userIndex, 1);
+  database.sessions        = (database.sessions        || []).filter((s) => s.userId !== id);
+  database.challengeAttempts = (database.challengeAttempts || []).filter((a) => a.userId !== id);
+  database.study_responses = (database.study_responses || []).filter((r) => r.userId !== id);
+
+  await writeDatabase(database);
+  return res.json({ message: "Participante excluído com sucesso." });
+});
+
 async function ensureAdminExists() {
   if (!ADMIN_PASSWORD) {
     console.warn("[Admin] ADMIN_PASSWORD não definido. Admin não será criado automaticamente.");

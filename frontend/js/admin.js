@@ -104,6 +104,26 @@
     `).join("");
   }
 
+  async function deleteParticipant(id, nome) {
+    if (!confirm(`Excluir "${nome}" do estudo? Esta ação remove todos os dados do participante e não pode ser desfeita.`)) return;
+
+    try {
+      const token = window.skillUpApi.getToken();
+      const origin = window.skillUpApi.getApiOrigin();
+      const res = await fetch(`${origin}/api/admin/users/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.message || "Erro ao excluir participante.");
+      }
+      await window.adminApp.load();
+    } catch (err) {
+      alert(err.message || "Erro ao excluir participante.");
+    }
+  }
+
   function renderParticipants(participants) {
     const tbody = document.getElementById("participantsTable");
     const noMsg = document.getElementById("noParticipants");
@@ -124,8 +144,17 @@
         <td>${statusBadge(p.studyPreDone)}</td>
         <td>${statusBadge(p.studyPostDone)}</td>
         <td>${p.susScore !== null ? `<strong style="color:#2c2457">${p.susScore}</strong>` : '<span class="text-muted">—</span>'}</td>
+        <td>
+          <button class="btn-delete-participant" data-id="${escapeHtml(p.id)}" data-nome="${escapeHtml(p.nome)}">
+            Excluir
+          </button>
+        </td>
       </tr>
     `).join("");
+
+    tbody.querySelectorAll(".btn-delete-participant").forEach((btn) => {
+      btn.addEventListener("click", () => deleteParticipant(btn.dataset.id, btn.dataset.nome));
+    });
   }
 
   function escapeHtml(str) {

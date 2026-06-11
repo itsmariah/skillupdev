@@ -99,6 +99,17 @@
     }
     .status-done    { background: #d1fae5; color: #065f46; }
     .status-pending { background: #f3f4f6; color: #9ca3af; }
+    .btn-delete-participant {
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 8px;
+      border: 1px solid #fca5a5;
+      background: transparent;
+      color: #dc2626;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .btn-delete-participant:hover { background: #fee2e2; }
   </style>
 </head>
 <body data-page="admin">
@@ -218,6 +229,7 @@
                       <th>Questionário Pré</th>
                       <th>Questionário Pós</th>
                       <th>SUS Score</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody id="participantsTable"></tbody>
