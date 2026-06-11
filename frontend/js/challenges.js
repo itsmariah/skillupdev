@@ -185,7 +185,12 @@ async function submitOpenChallenge(button) {
   button.textContent = "Analisando...";
   feedbackElement.innerHTML = `
     <div class="feedback-box">
-      <p>Analisando sua resposta...</p>
+      <div class="ai-loading">
+        <div class="ai-loading-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <span class="ai-loading-text">A IA está lendo sua resposta...</span>
+      </div>
     </div>
   `;
 
