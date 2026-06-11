@@ -213,13 +213,14 @@
   function injectPostQuestionnaireBanner(user) {
     if (user.studyPostDone || !user.studyPreDone) return;
     if (user.completedChallenges < 10) return;
+    if (document.getElementById("studyPostBanner")) return;
 
     const banner = document.createElement("div");
     banner.id = "studyPostBanner";
     banner.style.cssText = [
       "position:fixed; bottom:24px; right:24px; z-index:9999;",
       "background:linear-gradient(135deg,#059669,#0d9488);",
-      "border-radius:14px; padding:1.1rem 1.4rem; max-width:340px;",
+      "border-radius:14px; padding:1.1rem 1.4rem; max-width:360px;",
       "box-shadow:0 8px 32px rgba(0,0,0,0.4); color:white;",
       "animation: fadeInUp 0.4s ease;",
     ].join("");
@@ -234,20 +235,28 @@
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
         <div>
           <strong style="font-size:0.95rem;">Etapa 2 desbloqueada!</strong>
-          <p style="font-size:0.82rem; margin:6px 0 12px; opacity:0.9;">
-            Você completou desafios suficientes. Responda o questionário final e conclua o experimento.
+          <p style="font-size:0.82rem; margin:6px 0 14px; opacity:0.9; line-height:1.5;">
+            Você completou desafios suficientes para o estudo. Pode responder o questionário final agora ou continuar explorando a plataforma e responder quando quiser.
           </p>
-          <a href="questionnaire-post.html" class="btn btn-sm btn-light" style="color:#065f46; font-weight:600;">
-            Responder agora
-          </a>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a href="questionnaire-post.html" class="btn btn-sm btn-light" style="color:#065f46; font-weight:600;">
+              Responder agora
+            </a>
+            <button id="studyPostBannerClose"
+              class="btn btn-sm"
+              style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;font-weight:600;">
+              Continuar explorando
+            </button>
+          </div>
         </div>
-        <button id="studyPostBannerClose"
-          style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;opacity:0.7;padding:0;">✕</button>
+        <button id="studyPostBannerDismiss"
+          style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;opacity:0.7;padding:0;flex-shrink:0;">✕</button>
       </div>
     `;
 
     document.body.appendChild(banner);
     document.getElementById("studyPostBannerClose")?.addEventListener("click", () => banner.remove());
+    document.getElementById("studyPostBannerDismiss")?.addEventListener("click", () => banner.remove());
   }
 
   function checkAndShowPostBanner(user) {

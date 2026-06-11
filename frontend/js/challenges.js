@@ -151,6 +151,7 @@ async function submitClosedChallenge(challengeId, answerId) {
     });
 
     window.skillUpAuth?.updateStoredUser(payload.user);
+    window.skillUpStudy?.checkAndShowPostBanner(payload.user);
     renderResult(payload.result);
   } catch (error) {
     buttons.forEach((button) => {
@@ -194,6 +195,7 @@ async function submitOpenChallenge(button) {
     });
 
     window.skillUpAuth?.updateStoredUser(payload.user);
+    window.skillUpStudy?.checkAndShowPostBanner(payload.user);
     textarea.disabled = true;
     button.classList.add("d-none");
     renderResult(payload.result);
