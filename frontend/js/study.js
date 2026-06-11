@@ -1,4 +1,5 @@
 (function initStudy() {
+  const STUDY_OPTED_OUT_KEY = "skillup_study_opted_out";
   const SUS_QUESTIONS = [
     { id: "s1",  text: "Eu usaria essa plataforma com frequência." },
     { id: "s2",  text: "Achei a plataforma desnecessariamente complexa." },
@@ -259,9 +260,85 @@
     document.getElementById("studyPostBannerDismiss")?.addEventListener("click", () => banner.remove());
   }
 
+  // ─── MODAL DE OPT-IN PÓS-ESTUDO ───────────────────────────────────────────
+
+  function injectStudyOptInModal() {
+    if (document.getElementById("studyOptInModal")) return;
+
+    const overlay = document.createElement("div");
+    overlay.id = "studyOptInModal";
+    overlay.style.cssText = [
+      "position:fixed; inset:0; z-index:10000;",
+      "background:rgba(29,24,58,0.7);",
+      "display:flex; align-items:center; justify-content:center; padding:20px;",
+      "animation:fadeIn 0.25s ease;",
+    ].join("");
+
+    overlay.innerHTML = `
+      <style>
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+        @keyframes slideUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+      </style>
+      <div style="background:white; border-radius:20px; padding:2rem 2rem 1.75rem;
+                  max-width:460px; width:100%; text-align:center;
+                  box-shadow:0 24px 64px rgba(0,0,0,0.35);
+                  animation:slideUp 0.3s ease;">
+        <div style="font-size:2.2rem; margin-bottom:0.75rem;">🎓</div>
+        <h3 style="color:#2c2457; font-weight:800; font-size:1.2rem; margin-bottom:0.6rem;">
+          Estudo Piloto Encerrado
+        </h3>
+        <p style="color:#6b7280; font-size:0.9rem; line-height:1.65; margin-bottom:1.5rem;">
+          O estudo piloto da SkillUp Dev foi finalizado. Caso queira, você ainda pode
+          testar a plataforma e responder o questionário para ajudar os desenvolvedores
+          na evolução contínua do projeto! :)
+        </p>
+        <div style="display:flex; gap:10px; justify-content:center;">
+          <button id="studyOptInYes"
+            style="flex:1; max-width:190px; padding:10px 16px; border-radius:10px; border:none;
+                   background:linear-gradient(135deg,#5b6cff,#7a88ff); color:white;
+                   font-weight:700; font-size:0.9rem; cursor:pointer;">
+            Sim, quero participar!
+          </button>
+          <button id="studyOptInNo"
+            style="flex:1; max-width:190px; padding:10px 16px; border-radius:10px;
+                   border:1px solid #d1d5db; background:transparent; color:#6b7280;
+                   font-weight:600; font-size:0.9rem; cursor:pointer;">
+            Não, obrigado
+          </button>
+        </div>
+        <p style="margin-top:1rem; font-size:0.75rem; color:#9ca3af;">
+          Você pode acessar o questionário a qualquer momento pelo menu do dashboard.
+        </p>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    document.getElementById("studyOptInYes")?.addEventListener("click", () => {
+      overlay.remove();
+      window.location.href = "questionnaire-pre.html";
+    });
+
+    document.getElementById("studyOptInNo")?.addEventListener("click", () => {
+      localStorage.setItem(STUDY_OPTED_OUT_KEY, "1");
+      overlay.remove();
+    });
+  }
+
+  function checkAndShowStudyOptIn() {
+    if (document.body.dataset.page !== "dashboard") return;
+    if (localStorage.getItem(STUDY_OPTED_OUT_KEY)) return;
+
+    const user = window.skillUpApi.getStoredUser();
+    if (!user || user.studyPreDone) return;
+
+    injectStudyOptInModal();
+  }
+
   function checkAndShowPostBanner(user) {
     const page = document.body.dataset.page;
     if (!["challenges", "dashboard"].includes(page)) return;
+    if (localStorage.getItem(STUDY_OPTED_OUT_KEY)) return;
 
     if (user) {
       injectPostQuestionnaireBanner(user);
@@ -281,6 +358,7 @@
   document.addEventListener("DOMContentLoaded", () => {
     buildPreForm();
     buildPostForm();
+    checkAndShowStudyOptIn();
     if (document.body.dataset.page === "challenges") {
       checkAndShowPostBanner();
     }

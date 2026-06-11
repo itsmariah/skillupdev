@@ -96,7 +96,6 @@
 
   function resolvePostLoginRedirect(user) {
     if (user.isAdmin) return "admin.html";
-    if (!user.studyPreDone) return "questionnaire-pre.html";
     return "dashboard.html";
   }
 
