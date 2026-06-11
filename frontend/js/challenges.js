@@ -100,13 +100,19 @@ function renderClosedChallenge(challenge, container) {
   });
 }
 
+const MIN_ANSWER_LENGTH = 30;
+
 function renderOpenChallenge(_challenge, container) {
   container.innerHTML = `
     <textarea
       id="respostaUsuario"
       class="form-control challenge-textarea"
       placeholder="Digite sua resposta aqui..."
+      maxlength="3000"
     ></textarea>
+    <div id="answerCounter" style="font-size:0.78rem;color:#9ca3af;text-align:right;margin-top:4px;">
+      0 / ${MIN_ANSWER_LENGTH} caracteres mínimos
+    </div>
     <button
       id="submitOpenChallenge"
       class="btn btn-primary challenge-submit-btn"
@@ -116,10 +122,20 @@ function renderOpenChallenge(_challenge, container) {
     </button>
   `;
 
-  const submitButton = document.getElementById("submitOpenChallenge");
+  const textarea = document.getElementById("respostaUsuario");
+  const counter  = document.getElementById("answerCounter");
 
-  submitButton?.addEventListener("click", async () => {
-    await submitOpenChallenge(submitButton);
+  textarea?.addEventListener("input", () => {
+    const len = textarea.value.trim().length;
+    const ok  = len >= MIN_ANSWER_LENGTH;
+    counter.textContent = ok
+      ? `${len} caracteres`
+      : `${len} / ${MIN_ANSWER_LENGTH} caracteres mínimos`;
+    counter.style.color = ok ? "#10b981" : "#9ca3af";
+  });
+
+  document.getElementById("submitOpenChallenge")?.addEventListener("click", async (e) => {
+    await submitOpenChallenge(e.currentTarget);
   });
 }
 
@@ -156,6 +172,11 @@ async function submitOpenChallenge(button) {
 
   if (!text) {
     renderError("Digite uma resposta antes de enviar.");
+    return;
+  }
+
+  if (text.length < MIN_ANSWER_LENGTH) {
+    renderError(`Elabore melhor sua resposta. Mínimo de ${MIN_ANSWER_LENGTH} caracteres.`);
     return;
   }
 

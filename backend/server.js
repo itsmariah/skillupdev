@@ -28,6 +28,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL;
 const STUDY_MIN_CHALLENGES = 10;
 const STUDY_VERSION = 2;
 const MAX_NAME_LENGTH = 200;
+const MIN_OPEN_ANSWER_LENGTH = 30;
 const MAX_OPEN_ANSWER_LENGTH = 3000;
 
 function normalizeTextValue(value) {
@@ -1659,19 +1660,27 @@ function buildHeuristicFeedback(answer, criteria = []) {
 
   const finalScore = Math.max(35, Math.min(score, 100));
 
-  let feedback =
-    "Sua resposta está no caminho certo, mas ainda pode ganhar mais estrutura e objetividade.";
+  let feedback;
 
-  if (finalScore >= OPEN_CHALLENGE_IDEAL_SCORE) {
-    feedback =
-      "Boa resposta. Você demonstrou maturidade, contexto e um encaminhamento claro para a situação.";
+  if (words.length < 8) {
+    feedback = "A resposta está muito curta para ser avaliada com precisão. Desenvolva melhor sua linha de raciocínio, explique o contexto e detalhe como agiria na situação.";
+  } else if (finalScore >= OPEN_CHALLENGE_IDEAL_SCORE) {
+    feedback = "Boa resposta. Você demonstrou maturidade, contexto e um encaminhamento claro para a situação.";
+    if (missingCriteria.length > 0) {
+      feedback += ` Reforce especialmente ${missingCriteria.slice(0, 2).join(" e ")}.`;
+    }
   } else if (finalScore >= OPEN_CHALLENGE_MEDIUM_SCORE) {
-    feedback =
-      "A resposta mostra boa intenção e uma linha de raciocínio útil, mas ainda pode ficar mais forte.";
-  }
-
-  if (missingCriteria.length > 0) {
-    feedback += ` Reforce especialmente ${missingCriteria.slice(0, 2).join(" e ")}.`;
+    feedback = "A resposta mostra boa intenção e uma linha de raciocínio útil, mas ainda pode ficar mais forte.";
+    if (missingCriteria.length > 0) {
+      feedback += ` Reforce especialmente ${missingCriteria.slice(0, 2).join(" e ")}.`;
+    }
+  } else {
+    feedback = "A resposta precisa de mais desenvolvimento.";
+    if (missingCriteria.length > 0) {
+      feedback += ` Trabalhe especialmente ${missingCriteria.slice(0, 2).join(" e ")}.`;
+    } else {
+      feedback += " Estruture melhor suas ideias, seja mais específico e detalhe como agiria na situação.";
+    }
   }
 
   return {
@@ -2222,6 +2231,10 @@ app.post("/api/challenges/:challengeId/submit", authenticateRequest, async (req,
 
     if (!texto) {
       return res.status(400).json({ message: "Digite uma resposta antes de enviar." });
+    }
+
+    if (texto.length < MIN_OPEN_ANSWER_LENGTH) {
+      return res.status(400).json({ message: `Elabore melhor sua resposta. Mínimo de ${MIN_OPEN_ANSWER_LENGTH} caracteres.` });
     }
 
     if (texto.length > MAX_OPEN_ANSWER_LENGTH) {
