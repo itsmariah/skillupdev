@@ -131,7 +131,8 @@
       }
 
       .hero-logo{
-      width:180px;
+      width:370px;
+      max-width:80%;
       margin-bottom:15px;
 
       /* HERO LOGO ANIMATION */
@@ -235,6 +236,61 @@
       border-radius:30px;
 
       }
+
+      /* Botão flutuante — voltar ao início da página */
+
+      .back-to-top{
+
+      position:fixed;
+      right:24px;
+      bottom:24px;
+
+      width:48px;
+      height:48px;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      background:linear-gradient(135deg,#5b6cff,#7a88ff);
+      border:none;
+      border-radius:50%;
+
+      color:white;
+      font-size:20px;
+      line-height:1;
+
+      box-shadow:0 6px 15px rgba(91,108,255,0.35);
+      transition:all 0.25s ease;
+
+      opacity:0;
+      visibility:hidden;
+      transform:translateY(10px);
+
+      z-index:999;
+
+      }
+
+      .back-to-top.show{
+
+      opacity:1;
+      visibility:visible;
+      transform:translateY(0);
+
+      }
+
+      .back-to-top:hover{
+
+      transform:translateY(-2px);
+
+      box-shadow:
+      0 10px 25px rgba(91,108,255,0.5),
+      0 0 15px rgba(122,136,255,0.6);
+
+      background:linear-gradient(135deg,#4a59e8,#6d7cff);
+
+      }
+
       /* BACKGROUND CODE PARTÍCULAS */
 
       #code-particles{

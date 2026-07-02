@@ -24,6 +24,22 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("scroll", handleNavbarScroll, { passive: true });
   }
 
+  const backToTopButton = document.getElementById("backToTop");
+
+  if (backToTopButton) {
+    const toggleBackToTop = () => {
+      backToTopButton.classList.toggle("show", window.scrollY > 300);
+    };
+
+    toggleBackToTop();
+
+    window.addEventListener("scroll", toggleBackToTop, { passive: true });
+
+    backToTopButton.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
   const container = document.getElementById("code-particles");
 
   if (!container) {
