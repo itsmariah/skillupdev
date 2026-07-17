@@ -6,6 +6,7 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const { Redis } = require("@upstash/redis");
 
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
@@ -15,6 +16,14 @@ const FRONTEND_DIR = path.join(__dirname, "..", "frontend");
 const DEFAULT_DATA_FILE = path.join(__dirname, "data", "db.json");
 const DATA_FILE = process.env.DATA_FILE ? path.resolve(process.env.DATA_FILE) : DEFAULT_DATA_FILE;
 const DATA_DIR = path.dirname(DATA_FILE);
+const REDIS_DB_KEY = process.env.REDIS_DB_KEY || "skillupdev:db";
+const redisClient =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new Redis({
+        url: process.env.UPSTASH_REDIS_REST_URL,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN,
+      })
+    : null;
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const OPEN_CHALLENGE_XP_MULTIPLIER = 1.2;
 const PASSWORD_RESET_TTL_MINUTES = 30;
@@ -1123,21 +1132,40 @@ function purgeExpiredSessions(database) {
   return database.sessions.length !== previousLength;
 }
 
+async function loadPersistedDatabase() {
+  if (redisClient) {
+    const stored = await redisClient.get(REDIS_DB_KEY);
+    return stored || null;
+  }
+
+  ensureDataFile();
+  const raw = await fsPromises.readFile(DATA_FILE, "utf8");
+  return raw.trim() ? JSON.parse(raw) : null;
+}
+
+async function persistDatabase(data) {
+  if (redisClient) {
+    await redisClient.set(REDIS_DB_KEY, data);
+    return;
+  }
+
+  ensureDataFile();
+  await fsPromises.writeFile(DATA_FILE, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+}
+
 async function readDatabase() {
   if (inMemoryDatabase) {
     return inMemoryDatabase;
   }
 
-  ensureDataFile();
-
   try {
-    const raw = await fsPromises.readFile(DATA_FILE, "utf8");
-    if (!raw.trim()) {
+    const parsed = await loadPersistedDatabase();
+
+    if (!parsed) {
       inMemoryDatabase = createEmptyDatabase();
       return inMemoryDatabase;
     }
 
-    const parsed = JSON.parse(raw);
     inMemoryDatabase = {
       users: Array.isArray(parsed.users) ? parsed.users.map(hydrateUser) : [],
       sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
@@ -1151,17 +1179,14 @@ async function readDatabase() {
     };
     return inMemoryDatabase;
   } catch (error) {
-    console.error("Erro ao ler banco local:", error);
+    console.error("Erro ao ler banco:", error);
     inMemoryDatabase = createEmptyDatabase();
     return inMemoryDatabase;
   }
 }
 
 async function writeDatabase(data) {
-  ensureDataFile();
-
-  const doWrite = () =>
-    fsPromises.writeFile(DATA_FILE, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+  const doWrite = () => persistDatabase(data);
 
   writeQueue = writeQueue.then(doWrite, doWrite);
 
