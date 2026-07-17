@@ -11,6 +11,7 @@ const { Redis } = require("@upstash/redis");
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const app = express();
+app.set("trust proxy", 1);
 const PORT = Number(process.env.PORT) || 3000;
 const FRONTEND_DIR = path.join(__dirname, "..", "frontend");
 const DEFAULT_DATA_FILE = path.join(__dirname, "data", "db.json");
