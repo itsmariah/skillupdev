@@ -106,6 +106,7 @@ async function respondAlreadyCompleted(res, user, existingAttempt) {
       qualityTier: existingAttempt.qualityTier,
       xpBreakdown: existingAttempt.xpBreakdown,
       unlockedBadges: existingAttempt.unlockedBadges,
+      evaluator: existingAttempt.evaluator,
     },
     user: buildUserResponse(user, attempts),
   });
@@ -121,6 +122,7 @@ async function handleChallengeSubmission(req, res, challenge) {
   let answer = "";
   let score = 0;
   let feedback = "";
+  let evaluation = { evaluator: "closed" };
 
   if (challenge.tipo === "fechado") {
     const respostaId = String(req.body.respostaId || "").trim();
@@ -149,13 +151,14 @@ async function handleChallengeSubmission(req, res, challenge) {
     }
 
     answer = texto;
-    const evaluation = await evaluateOpenChallengeWithAI({
+    const aiResult = await evaluateOpenChallengeWithAI({
       resposta: texto,
       challenge,
     });
 
-    score = evaluation.nota;
-    feedback = evaluation.feedback;
+    score = aiResult.nota;
+    feedback = aiResult.feedback;
+    evaluation = aiResult.evaluation;
   }
 
   let outcome;
@@ -198,6 +201,8 @@ async function handleChallengeSubmission(req, res, challenge) {
         xpAwarded: result.xpGanho,
         xpBreakdown: result.xpBreakdown,
         unlockedBadges: [],
+        evaluator: evaluation.evaluator,
+        evaluation,
         createdAt: new Date().toISOString(),
       };
 
@@ -232,6 +237,7 @@ async function handleChallengeSubmission(req, res, challenge) {
       perfectStreak: result.perfectStreak,
       xpBreakdown: result.xpBreakdown,
       unlockedBadges,
+      evaluator: evaluation.evaluator,
     },
     user: buildUserResponse(user, attempts),
   });

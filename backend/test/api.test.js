@@ -121,6 +121,7 @@ test("desafio fechado ideal soma XP e desbloqueia a primeira badge", async () =>
   assert.equal(status, 200);
   assert.equal(data.result.qualityTier, "ideal");
   assert.equal(data.result.xpGanho, 100);
+  assert.equal(data.result.evaluator, "closed");
   assert.deepEqual(data.result.unlockedBadges.map((badge) => badge.id), ["first-mission"]);
   assert.equal(data.user.xp, 20 + 100 + 50);
   assert.equal(data.user.completedChallenges, 1);
@@ -174,6 +175,11 @@ test("desafio aberto sem IA configurada usa a avaliação heurística", async ()
   assert.equal(status, 200);
   assert.ok(data.result.nota >= 35 && data.result.nota <= 100);
   assert.ok(data.result.feedback);
+  assert.equal(data.result.evaluator, "heuristic");
+
+  const stored = await db.findAttempt(userId, "communication-open-1");
+  assert.equal(stored.evaluator, "heuristic");
+  assert.equal(stored.evaluation.fallbackReason, "OPENAI_API_KEY não configurada");
 });
 
 test("resposta aberta curta demais é recusada sem gravar nada", async () => {

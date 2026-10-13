@@ -128,7 +128,7 @@ Base técnica para o projeto crescer com segurança.
 - [ ] Validação das variáveis de ambiente na inicialização
 - [ ] Sessão em cookie seguro e limites de requisição por rota e por conta
 - [ ] Papéis de usuário no lugar do `isAdmin`
-- [ ] Avaliação da IA mais robusta: saída estruturada, proteção contra manipulação da nota e registro de quem avaliou (IA ou heurística)
+- [x] Avaliação da IA mais robusta: saída estruturada, proteção contra manipulação da nota e registro de quem avaliou (IA ou heurística)
 - [ ] Lint, formatação e CI
 
 ### Fase 2 — Experiência `P1/P2`

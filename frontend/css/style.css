@@ -1977,6 +1977,12 @@
          margin-top: 12px !important;
       }
 
+      .feedback-evaluator-note {
+         margin-top: 8px !important;
+         font-size: 0.85rem;
+         opacity: 0.75;
+      }
+
       .result-badges {
          margin-top: 14px;
          display: flex;

@@ -262,6 +262,11 @@ function renderResult(result) {
         ${escapeHtml(getQualityLabel(result.qualityTier))} | Nota: ${escapeHtml(result.nota)} | XP ganho: ${escapeHtml(result.xpGanho)}
       </p>
       <p>${escapeHtml(result.feedback)}</p>
+      ${
+        result.evaluator === "heuristic"
+          ? `<p class="feedback-evaluator-note">A avaliação por IA não estava disponível agora. Esta nota veio de uma análise automática simplificada.</p>`
+          : ""
+      }
       <p class="feedback-consequence"><strong>Consequência:</strong> ${escapeHtml(result.consequence)}</p>
       ${breakdownMarkup ? `<ul class="result-breakdown">${breakdownMarkup}</ul>` : ""}
       ${badgesMarkup}

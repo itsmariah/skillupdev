@@ -18,6 +18,8 @@ function rowToAttempt(row) {
     xpAwarded: row.xp_awarded,
     xpBreakdown: row.xp_breakdown,
     unlockedBadges: row.unlocked_badges,
+    evaluator: row.evaluator,
+    evaluation: row.evaluation,
     createdAt: toIso(row.created_at),
   };
 }
@@ -43,8 +45,9 @@ async function insertAttempt(attempt, db = getClient()) {
   await db.query(
     `INSERT INTO challenge_attempts (
        id, user_id, challenge_id, challenge_type, category, answer, feedback, consequence,
-       score, quality_tier, was_ideal, xp_awarded, xp_breakdown, unlocked_badges, created_at
-     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
+       score, quality_tier, was_ideal, xp_awarded, xp_breakdown, unlocked_badges, created_at,
+       evaluator, evaluation
+     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)`,
     [
       attempt.id,
       attempt.userId,
@@ -61,6 +64,8 @@ async function insertAttempt(attempt, db = getClient()) {
       JSON.stringify(attempt.xpBreakdown || []),
       JSON.stringify(attempt.unlockedBadges || []),
       attempt.createdAt || new Date().toISOString(),
+      attempt.evaluator || null,
+      attempt.evaluation ? JSON.stringify(attempt.evaluation) : null,
     ]
   );
 }
