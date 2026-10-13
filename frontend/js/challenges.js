@@ -211,6 +211,16 @@ async function submitOpenChallenge(button) {
   }
 }
 
+// Feedback e consequência vêm do servidor (inclusive da saída da IA): sempre escapar antes de usar em innerHTML.
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function renderResult(result) {
   const feedbackElement = document.getElementById("feedback");
   const nextButton = document.getElementById("nextBtn");
@@ -222,7 +232,7 @@ function renderResult(result) {
   const badgeXpLines = Array.isArray(result.unlockedBadges)
     ? result.unlockedBadges
         .filter((b) => b.xpBonus > 0)
-        .map((b) => `<li><span>Badge: ${b.name}</span><strong>+${b.xpBonus} XP</strong></li>`)
+        .map((b) => `<li><span>Badge: ${escapeHtml(b.name)}</span><strong>+${escapeHtml(b.xpBonus)} XP</strong></li>`)
         .join("")
     : "";
 
@@ -230,7 +240,7 @@ function renderResult(result) {
     ? result.xpBreakdown
         .map((item) => {
           const signal = item.xp > 0 ? "+" : "";
-          return `<li><span>${item.label}</span><strong>${signal}${item.xp} XP</strong></li>`;
+          return `<li><span>${escapeHtml(item.label)}</span><strong>${signal}${escapeHtml(item.xp)} XP</strong></li>`;
         })
         .join("") + badgeXpLines
     : "";
@@ -240,7 +250,7 @@ function renderResult(result) {
       ? `
         <div class="result-badges">
           ${result.unlockedBadges
-            .map((badge) => `<span class="badge-pill">${badge.name}</span>`)
+            .map((badge) => `<span class="badge-pill">${escapeHtml(badge.name)}</span>`)
             .join("")}
         </div>
       `
@@ -249,10 +259,10 @@ function renderResult(result) {
   feedbackElement.innerHTML = `
     <div class="feedback-box">
       <p class="feedback-score">
-        ${getQualityLabel(result.qualityTier)} | Nota: ${result.nota} | XP ganho: ${result.xpGanho}
+        ${escapeHtml(getQualityLabel(result.qualityTier))} | Nota: ${escapeHtml(result.nota)} | XP ganho: ${escapeHtml(result.xpGanho)}
       </p>
-      <p>${result.feedback}</p>
-      <p class="feedback-consequence"><strong>Consequência:</strong> ${result.consequence}</p>
+      <p>${escapeHtml(result.feedback)}</p>
+      <p class="feedback-consequence"><strong>Consequência:</strong> ${escapeHtml(result.consequence)}</p>
       ${breakdownMarkup ? `<ul class="result-breakdown">${breakdownMarkup}</ul>` : ""}
       ${badgesMarkup}
     </div>
@@ -270,7 +280,7 @@ function renderError(message) {
 
   feedbackElement.innerHTML = `
     <div class="feedback-box">
-      <p>${message}</p>
+      <p>${escapeHtml(message)}</p>
     </div>
   `;
 }

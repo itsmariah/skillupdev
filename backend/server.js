@@ -32,6 +32,8 @@ const PASSWORD_RESET_TTL_MS = PASSWORD_RESET_TTL_MINUTES * 60 * 1000;
 const SESSION_TTL_DAYS = 30;
 const SESSION_TTL_MS = SESSION_TTL_DAYS * 24 * 60 * 60 * 1000;
 const RESEND_API_URL = process.env.RESEND_API_URL || "https://api.resend.com/emails";
+const OPENAI_TIMEOUT_MS = 20 * 1000;
+const EMAIL_TIMEOUT_MS = 10 * 1000;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@skillupdev.com";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const FRONTEND_URL = process.env.FRONTEND_URL;
@@ -890,7 +892,7 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
+        scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
         styleSrc: ["'self'", "https:", "'unsafe-inline'"],
         imgSrc: ["'self'", "data:"],
         fontSrc: ["'self'", "https:", "data:"],
@@ -1159,31 +1161,31 @@ async function readDatabase() {
     return inMemoryDatabase;
   }
 
-  try {
-    const parsed = await loadPersistedDatabase();
+  // Não há fallback para banco vazio em caso de erro: um banco vazio em memória
+  // seria gravado por cima dos dados reais na próxima escrita.
+  const parsed = await loadPersistedDatabase();
 
-    if (!parsed) {
-      inMemoryDatabase = createEmptyDatabase();
-      return inMemoryDatabase;
-    }
-
-    inMemoryDatabase = {
-      users: Array.isArray(parsed.users) ? parsed.users.map(hydrateUser) : [],
-      sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
-      challengeAttempts: Array.isArray(parsed.challengeAttempts)
-        ? parsed.challengeAttempts.map(hydrateAttempt)
-        : [],
-      passwordResetTokens: Array.isArray(parsed.passwordResetTokens)
-        ? parsed.passwordResetTokens.map(hydratePasswordResetToken)
-        : [],
-      study_responses: Array.isArray(parsed.study_responses) ? parsed.study_responses : [],
-    };
-    return inMemoryDatabase;
-  } catch (error) {
-    console.error("Erro ao ler banco:", error);
+  if (!parsed) {
     inMemoryDatabase = createEmptyDatabase();
     return inMemoryDatabase;
   }
+
+  if (typeof parsed !== "object" || !Array.isArray(parsed.users)) {
+    throw new Error("Banco persistido em formato inesperado (sem lista de usuários).");
+  }
+
+  inMemoryDatabase = {
+    users: parsed.users.map(hydrateUser),
+    sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
+    challengeAttempts: Array.isArray(parsed.challengeAttempts)
+      ? parsed.challengeAttempts.map(hydrateAttempt)
+      : [],
+    passwordResetTokens: Array.isArray(parsed.passwordResetTokens)
+      ? parsed.passwordResetTokens.map(hydratePasswordResetToken)
+      : [],
+    study_responses: Array.isArray(parsed.study_responses) ? parsed.study_responses : [],
+  };
+  return inMemoryDatabase;
 }
 
 async function writeDatabase(data) {
@@ -1263,20 +1265,21 @@ function findPasswordResetToken(database, rawToken) {
   });
 }
 
-function shouldExposeResetPreview(req) {
-  const hostname = String(req.hostname || "").toLowerCase();
-  return hostname === "localhost" || hostname === "127.0.0.1";
+// O hostname da requisição é controlável pelo cliente (X-Forwarded-Host com trust proxy),
+// então o preview depende só de configuração do servidor.
+function shouldExposeResetPreview() {
+  return process.env.NODE_ENV !== "production" && process.env.ALLOW_RESET_PREVIEW === "true";
 }
 
-function getAppBaseUrl(req) {
-  const fallbackUrl = `${req.protocol}://${req.get("host")}`;
-  return String(process.env.APP_BASE_URL || fallbackUrl)
+// Nunca deriva a URL do header Host, para evitar host header poisoning no link de reset.
+function getAppBaseUrl() {
+  return String(process.env.APP_BASE_URL || `http://localhost:${PORT}`)
     .trim()
     .replace(/\/+$/, "");
 }
 
 function buildPasswordResetUrl(req, rawToken) {
-  return `${getAppBaseUrl(req)}/pages/reset_password.html?token=${encodeURIComponent(
+  return `${getAppBaseUrl()}/pages/reset_password.html?token=${encodeURIComponent(
     rawToken
   )}`;
 }
@@ -1407,6 +1410,7 @@ async function sendEmailWithResend({ to, subject, html, text }) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(EMAIL_TIMEOUT_MS),
   });
 
   const data = await response.json().catch(() => ({}));
@@ -1780,6 +1784,7 @@ async function evaluateOpenChallengeWithAI({ resposta, challenge }) {
         messages: [{ role: "user", content: prompt }],
         temperature: 0.3,
       }),
+      signal: AbortSignal.timeout(OPENAI_TIMEOUT_MS),
     });
 
     if (!response.ok) {
@@ -2057,6 +2062,8 @@ app.post("/api/auth/forgot-password", authRateLimiter, async (req, res) => {
     database.passwordResetTokens.push(record);
     await writeDatabase(database);
 
+    // A resposta ao cliente é sempre a mesma, exista ou não a conta, para não revelar
+    // quais e-mails estão cadastrados. Falhas de envio ficam só no log.
     if (isRealEmailConfigured()) {
       try {
         await sendPasswordResetEmail({
@@ -2067,29 +2074,20 @@ app.post("/api/auth/forgot-password", authRateLimiter, async (req, res) => {
         });
       } catch (error) {
         console.error("Falha ao enviar email de recuperação:", error);
-        return res.status(502).json({
-          message:
-            "Não foi possível enviar o email de recuperação agora. Confira a configuração de email e tente novamente.",
-        });
       }
-
-      response.message =
-        "Se existir uma conta com este email, enviamos um link de recuperação. Verifique sua caixa de entrada e a pasta de spam.";
-      return res.json(response);
-    }
-
-    if (shouldExposeResetPreview(req)) {
+    } else if (shouldExposeResetPreview()) {
       response.message =
         "Email real não configurado neste ambiente. Use o link de teste abaixo para validar o fluxo.";
       response.previewResetUrl = buildPasswordResetUrl(req, rawToken);
       response.previewExpiresAt = record.expiresAt;
       return res.json(response);
+    } else {
+      console.error(
+        "Envio de e-mail não configurado. Defina EMAIL_PROVIDER, EMAIL_FROM e RESEND_API_KEY."
+      );
     }
 
-    return res.status(503).json({
-      message:
-        "Envio de e-mail não configurado no servidor. Defina as variáveis EMAIL_PROVIDER, EMAIL_FROM e RESEND_API_KEY.",
-    });
+    return res.json(response);
   }
 
   if (removedExpiredTokens) {
@@ -2210,6 +2208,11 @@ app.get("/api/challenges", authenticateRequest, async (req, res) => {
   });
 });
 
+// Envios em andamento por usuário+desafio. Sem isso, duas requisições simultâneas passam
+// pela checagem de tentativa existente enquanto aguardam a IA e ambas gravam XP.
+// Vale para uma única instância; com banco relacional vira restrição única.
+const submissionsInFlight = new Set();
+
 app.post("/api/challenges/:challengeId/submit", authenticateRequest, async (req, res) => {
   const challenge = getChallengeById(req.params.challengeId);
 
@@ -2217,6 +2220,22 @@ app.post("/api/challenges/:challengeId/submit", authenticateRequest, async (req,
     return res.status(404).json({ message: "Desafio não encontrado." });
   }
 
+  const submissionKey = `${req.user.id}:${challenge.id}`;
+
+  if (submissionsInFlight.has(submissionKey)) {
+    return res.status(409).json({ message: "Sua resposta para este desafio já está sendo avaliada." });
+  }
+
+  submissionsInFlight.add(submissionKey);
+
+  try {
+    return await handleChallengeSubmission(req, res, challenge);
+  } finally {
+    submissionsInFlight.delete(submissionKey);
+  }
+});
+
+async function handleChallengeSubmission(req, res, challenge) {
   const existingAttempt = req.database.challengeAttempts.find(
     (attempt) => attempt.userId === req.user.id && attempt.challengeId === challenge.id
   );
@@ -2333,7 +2352,7 @@ app.post("/api/challenges/:challengeId/submit", authenticateRequest, async (req,
     },
     user: buildUserResponse(req.user, req.database),
   });
-});
+}
 
 app.post("/api/study/questionnaire", authenticateRequest, async (req, res) => {
   const type = String(req.body.type || "");
@@ -2615,7 +2634,22 @@ async function ensureAdminExists() {
   console.log("[Admin] Usuário administrador criado com sucesso.");
 }
 
-app.listen(PORT, async () => {
-  await ensureAdminExists();
-  console.log(`SkillUp Dev backend online em http://localhost:${PORT}`);
-});
+async function start() {
+  try {
+    await readDatabase();
+    await ensureAdminExists();
+  } catch (error) {
+    console.error("[Banco] Falha ao carregar o banco. Servidor não será iniciado para não sobrescrever dados.", error);
+    process.exit(1);
+  }
+
+  if (!process.env.APP_BASE_URL) {
+    console.warn("[Config] APP_BASE_URL não definido. Links de e-mail apontarão para localhost.");
+  }
+
+  app.listen(PORT, () => {
+    console.log(`SkillUp Dev backend online em http://localhost:${PORT}`);
+  });
+}
+
+start();
