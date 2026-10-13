@@ -2,7 +2,7 @@ const express = require("express");
 const crypto = require("crypto");
 
 const { SESSION_TTL_MS, MAX_NAME_LENGTH } = require("../config");
-const { purgeExpiredPasswordResetTokens, readDatabase, writeDatabase } = require("../db");
+const db = require("../db");
 const { normalizeEmail } = require("../lib/text");
 const { authRateLimiter, authenticateRequest } = require("../middleware/auth");
 const {
@@ -11,7 +11,6 @@ const {
   createToken,
   hashToken,
   createPasswordResetToken,
-  findPasswordResetToken,
 } = require("../services/auth");
 const {
   shouldExposeResetPreview,
@@ -30,6 +29,23 @@ const { hydrateUser, buildUserResponse } = require("../services/users");
 
 const router = express.Router();
 
+function createSession(userId) {
+  const token = createToken();
+  const createdAt = new Date();
+
+  return {
+    token,
+    record: {
+      tokenHash: hashToken(token),
+      userId,
+      createdAt: createdAt.toISOString(),
+      expiresAt: new Date(createdAt.getTime() + SESSION_TTL_MS).toISOString(),
+    },
+  };
+}
+
+const REGISTER_CONFLICT_MESSAGE = "Não foi possível criar a conta. Verifique os dados e tente novamente.";
+
 router.post("/api/auth/register", authRateLimiter, async (req, res) => {
   const nome = String(req.body.nome || "").trim();
   const email = normalizeEmail(req.body.email);
@@ -47,11 +63,8 @@ router.post("/api/auth/register", authRateLimiter, async (req, res) => {
     return res.status(400).json({ message: "A senha precisa ter pelo menos 6 caracteres." });
   }
 
-  const database = await readDatabase();
-  const emailExists = database.users.some((item) => item.email === email);
-
-  if (emailExists) {
-    return res.status(409).json({ message: "Não foi possível criar a conta. Verifique os dados e tente novamente." });
+  if (await db.findUserByEmail(email)) {
+    return res.status(409).json({ message: REGISTER_CONFLICT_MESSAGE });
   }
 
   const user = hydrateUser({
@@ -68,25 +81,28 @@ router.post("/api/auth/register", authRateLimiter, async (req, res) => {
   });
 
   const dailyLoginReward = applyDailyLoginReward(user);
-  syncBadges(user, database);
+  syncBadges(user, []);
 
-  const token = createToken();
+  const session = createSession(user.id);
 
-  database.users.push(user);
-  database.sessions.push({
-    tokenHash: hashToken(token),
-    userId: user.id,
-    createdAt: new Date().toISOString(),
-    expiresAt: new Date(Date.now() + SESSION_TTL_MS).toISOString(),
-  });
-
-  await writeDatabase(database);
+  try {
+    await db.getClient().transaction(async (tx) => {
+      await db.insertUser(user, tx);
+      await db.insertSession(session.record, tx);
+    });
+  } catch (error) {
+    // Dois cadastros simultâneos com o mesmo e-mail: o segundo esbarra na restrição única.
+    if (db.isUniqueViolation(error)) {
+      return res.status(409).json({ message: REGISTER_CONFLICT_MESSAGE });
+    }
+    throw error;
+  }
 
   return res.status(201).json({
     message: "Conta criada com sucesso.",
-    token,
+    token: session.token,
     dailyLoginReward,
-    user: buildUserResponse(user, database),
+    user: buildUserResponse(user, []),
   });
 });
 
@@ -98,31 +114,29 @@ router.post("/api/auth/login", authRateLimiter, async (req, res) => {
     return res.status(400).json({ message: "Informe email e senha." });
   }
 
-  const database = await readDatabase();
-  const user = database.users.find((item) => item.email === email);
+  const user = await db.findUserByEmail(email);
 
   if (!user || !verifyPassword(senha, user.passwordHash)) {
     return res.status(401).json({ message: "Email ou senha inválidos." });
   }
 
+  const attempts = await db.listAttemptsByUser(user.id);
   const dailyLoginReward = applyDailyLoginReward(user);
-  syncBadges(user, database);
+  syncBadges(user, attempts);
 
-  const token = createToken();
-  database.sessions.push({
-    tokenHash: hashToken(token),
-    userId: user.id,
-    createdAt: new Date().toISOString(),
-    expiresAt: new Date(Date.now() + SESSION_TTL_MS).toISOString(),
+  const session = createSession(user.id);
+
+  await db.getClient().transaction(async (tx) => {
+    await db.saveUser(user, tx);
+    await db.insertSession(session.record, tx);
   });
-
-  await writeDatabase(database);
+  await db.purgeExpiredSessions();
 
   return res.json({
     message: "Login realizado com sucesso.",
-    token,
+    token: session.token,
     dailyLoginReward,
-    user: buildUserResponse(user, database),
+    user: buildUserResponse(user, attempts),
   });
 });
 
@@ -133,21 +147,19 @@ router.post("/api/auth/forgot-password", authRateLimiter, async (req, res) => {
     return res.status(400).json({ message: "Informe um e-mail válido." });
   }
 
-  const database = await readDatabase();
-  const removedExpiredTokens = purgeExpiredPasswordResetTokens(database);
-  const user = database.users.find((item) => item.email === email);
+  await db.purgeExpiredResetTokens();
+  const user = await db.findUserByEmail(email);
   const response = {
     message: "Se existir uma conta com este email, enviaremos as instruções de recuperação.",
   };
 
   if (user) {
-    database.passwordResetTokens = (database.passwordResetTokens || []).filter(
-      (resetToken) => resetToken.userId !== user.id
-    );
-
     const { rawToken, record } = createPasswordResetToken(user.id);
-    database.passwordResetTokens.push(record);
-    await writeDatabase(database);
+
+    await db.getClient().transaction(async (tx) => {
+      await db.deleteResetTokensByUser(user.id, tx);
+      await db.insertResetToken(record, tx);
+    });
 
     // A resposta ao cliente é sempre a mesma, exista ou não a conta, para não revelar
     // quais e-mails estão cadastrados. Falhas de envio ficam só no log.
@@ -173,12 +185,6 @@ router.post("/api/auth/forgot-password", authRateLimiter, async (req, res) => {
         "Envio de e-mail não configurado. Defina EMAIL_PROVIDER, EMAIL_FROM e RESEND_API_KEY."
       );
     }
-
-    return res.json(response);
-  }
-
-  if (removedExpiredTokens) {
-    await writeDatabase(database);
   }
 
   return res.json(response);
@@ -191,21 +197,10 @@ router.get("/api/auth/reset-password/validate", authRateLimiter, async (req, res
     return res.status(400).json({ message: "Token de recuperação não informado." });
   }
 
-  const database = await readDatabase();
-  const removedExpiredTokens = purgeExpiredPasswordResetTokens(database);
-  const resetToken = findPasswordResetToken(database, token);
+  const resetToken = await db.findActiveResetToken(hashToken(token));
+  const user = resetToken ? await db.findUserById(resetToken.userId) : null;
 
-  if (removedExpiredTokens) {
-    await writeDatabase(database);
-  }
-
-  if (!resetToken) {
-    return res.status(400).json({ message: "Link de recuperação inválido ou expirado." });
-  }
-
-  const user = database.users.find((item) => item.id === resetToken.userId);
-
-  if (!user) {
+  if (!resetToken || !user) {
     return res.status(400).json({ message: "Link de recuperação inválido ou expirado." });
   }
 
@@ -228,31 +223,21 @@ router.post("/api/auth/reset-password", authRateLimiter, async (req, res) => {
     return res.status(400).json({ message: "A senha precisa ter pelo menos 6 caracteres." });
   }
 
-  const database = await readDatabase();
-  const removedExpiredTokens = purgeExpiredPasswordResetTokens(database);
+  const resetToken = await db.findActiveResetToken(hashToken(token));
+  const user = resetToken ? await db.findUserById(resetToken.userId) : null;
 
-  const resetToken = findPasswordResetToken(database, token);
-
-  if (!resetToken) {
-    if (removedExpiredTokens) {
-      await writeDatabase(database);
-    }
+  if (!resetToken || !user) {
     return res.status(400).json({ message: "Link de recuperação inválido ou expirado." });
   }
 
-  const user = database.users.find((item) => item.id === resetToken.userId);
-
-  if (!user) {
-    return res.status(400).json({ message: "Link de recuperação inválido ou expirado." });
-  }
-
+  // Troca a senha, derruba todas as sessões e invalida os links de redefinição.
   user.passwordHash = createPasswordHash(senha);
-  database.sessions = database.sessions.filter((session) => session.userId !== user.id);
-  database.passwordResetTokens = database.passwordResetTokens.filter(
-    (item) => item.userId !== user.id
-  );
 
-  await writeDatabase(database);
+  await db.getClient().transaction(async (tx) => {
+    await db.saveUser(user, tx);
+    await db.deleteSessionsByUser(user.id, tx);
+    await db.deleteResetTokensByUser(user.id, tx);
+  });
 
   return res.json({
     message: "Senha redefinida com sucesso. Faça login com a nova senha.",
@@ -260,8 +245,7 @@ router.post("/api/auth/reset-password", authRateLimiter, async (req, res) => {
 });
 
 router.post("/api/auth/logout", authenticateRequest, async (req, res) => {
-  req.database.sessions = req.database.sessions.filter((s) => s.tokenHash !== req.tokenHash);
-  await writeDatabase(req.database);
+  await db.deleteSession(req.tokenHash);
 
   res.json({ message: "Sessão encerrada com sucesso." });
 });

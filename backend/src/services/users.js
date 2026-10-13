@@ -6,7 +6,7 @@ const {
   buildAvatarCatalog,
   normalizeAvatarConfig,
   createDefaultGamificationState,
-  getUserAttempts,
+  filterValidAttempts,
   getProgress,
   buildBadgeCatalog,
   buildCategoryProgress,
@@ -33,10 +33,10 @@ function hydrateUser(user) {
   };
 }
 
-function buildUserResponse(user, database) {
+function buildUserResponse(user, userAttempts) {
   const progress = getProgress(user.xp);
-  const attempts = getUserAttempts(user.id, database);
-  const badgeCatalog = buildBadgeCatalog(user, database);
+  const attempts = filterValidAttempts(userAttempts);
+  const badgeCatalog = buildBadgeCatalog(user, userAttempts);
   const unlockedBadges = badgeCatalog.filter((badge) => badge.unlocked);
 
   return {

@@ -2,12 +2,14 @@ const express = require("express");
 const crypto = require("crypto");
 
 const { STUDY_MIN_CHALLENGES, STUDY_VERSION } = require("../config");
-const { writeDatabase } = require("../db");
+const db = require("../db");
 const { authenticateRequest } = require("../middleware/auth");
-const { getUserAttempts } = require("../services/gamification");
+const { filterValidAttempts } = require("../services/gamification");
 const { buildUserResponse } = require("../services/users");
 
 const router = express.Router();
+
+const ALREADY_SUBMITTED_MESSAGE = "Questionário já respondido.";
 
 router.post("/api/study/questionnaire", authenticateRequest, async (req, res) => {
   const type = String(req.body.type || "");
@@ -21,25 +23,16 @@ router.post("/api/study/questionnaire", authenticateRequest, async (req, res) =>
     return res.status(400).json({ message: "Dados do questionário não informados." });
   }
 
-  if (!req.database.study_responses) {
-    req.database.study_responses = [];
+  if (await db.findStudyResponse(req.user.id, type)) {
+    return res.status(409).json({ message: ALREADY_SUBMITTED_MESSAGE });
   }
 
-  const alreadySubmitted = req.database.study_responses.some(
-    (r) => r.userId === req.user.id && r.type === type
-  );
+  const attempts = await db.listAttemptsByUser(req.user.id);
 
-  if (alreadySubmitted) {
-    return res.status(409).json({ message: "Questionário já respondido." });
-  }
-
-  if (type === "post") {
-    const attempts = getUserAttempts(req.user.id, req.database);
-    if (attempts.length < STUDY_MIN_CHALLENGES) {
-      return res.status(403).json({
-        message: `Complete ao menos ${STUDY_MIN_CHALLENGES} desafios antes de responder o questionário final.`,
-      });
-    }
+  if (type === "post" && filterValidAttempts(attempts).length < STUDY_MIN_CHALLENGES) {
+    return res.status(403).json({
+      message: `Complete ao menos ${STUDY_MIN_CHALLENGES} desafios antes de responder o questionário final.`,
+    });
   }
 
   const record = {
@@ -53,8 +46,6 @@ router.post("/api/study/questionnaire", authenticateRequest, async (req, res) =>
     data,
   };
 
-  req.database.study_responses.push(record);
-
   if (type === "pre") {
     req.user.studyPreDone = true;
     req.user.studyVersion = STUDY_VERSION;
@@ -62,11 +53,21 @@ router.post("/api/study/questionnaire", authenticateRequest, async (req, res) =>
     req.user.studyPostDone = true;
   }
 
-  await writeDatabase(req.database);
+  try {
+    await db.getClient().transaction(async (tx) => {
+      await db.insertStudyResponse(record, tx);
+      await db.saveUser(req.user, tx);
+    });
+  } catch (error) {
+    if (db.isUniqueViolation(error)) {
+      return res.status(409).json({ message: ALREADY_SUBMITTED_MESSAGE });
+    }
+    throw error;
+  }
 
   return res.json({
     message: "Questionário salvo com sucesso.",
-    user: buildUserResponse(req.user, req.database),
+    user: buildUserResponse(req.user, attempts),
   });
 });
 

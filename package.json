@@ -8,6 +8,7 @@
     "dev": "node backend/server.js",
     "check": "node --check backend/server.js",
     "backup": "node backend/scripts/backup-redis.js",
+    "db:import": "node backend/scripts/import-json-to-postgres.js",
     "test": "node --test"
   },
   "repository": {
@@ -31,9 +32,11 @@
     "dotenv": "^17.4.1",
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.2",
-    "helmet": "^8.2.0"
+    "helmet": "^8.2.0",
+    "pg": "^8.23.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "nodemon": "^3.1.14"
   }
 }

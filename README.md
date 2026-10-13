@@ -2,7 +2,7 @@
 
 Plataforma web gamificada voltada ao apromoramento de soft skills para desenvolvedores, com desafios interativos e feedback automatizado com apoio de IA.
 
-![HTML5](https://img.shields.io/badge/HTML-E34F26?style=for-the-badge&logo=html5) ![CSS3](https://img.shields.io/badge/CSS-1572B6?style=for-the-badge&logo=css3) ![JavaScript](https://img.shields.io/badge/JavaScript-black?style=for-the-badge&logo=javascript) ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) ![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white) ![OpenAI API](https://img.shields.io/badge/OpenAI_API-412991?style=for-the-badge&logo=openai&logoColor=white) ![Redis](https://img.shields.io/badge/Upstash_Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white) ![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
+![HTML5](https://img.shields.io/badge/HTML-E34F26?style=for-the-badge&logo=html5) ![CSS3](https://img.shields.io/badge/CSS-1572B6?style=for-the-badge&logo=css3) ![JavaScript](https://img.shields.io/badge/JavaScript-black?style=for-the-badge&logo=javascript) ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) ![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white) ![OpenAI API](https://img.shields.io/badge/OpenAI_API-412991?style=for-the-badge&logo=openai&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL_(Neon)-4169E1?style=for-the-badge&logo=postgresql&logoColor=white) ![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
 
 ## 📌 Sobre o projeto
 
@@ -29,7 +29,7 @@ Desenvolver uma solução digital que auxilie desenvolvedores a aprimorarem soft
 | 🎨 Front-end | HTML5 • CSS3 • JavaScript |
 | ⚙️ Back-end | Node.js • Express |
 | 🤖 IA | OpenAI API (GPT-4o mini) |
-| 🗄️ Banco de Dados | Upstash Redis (produção) • JSON local (dev) |
+| 🗄️ Banco de Dados | PostgreSQL no Neon (produção) • PGlite (desenvolvimento e testes) |
 | ☁️ Hospedagem | Render |
 | 📧 E-mail | Resend |
 | 🔒 Segurança | Helmet • Express Rate Limit • CORS |
@@ -122,9 +122,9 @@ Correções pequenas e pontuais antes de qualquer funcionalidade nova.
 Base técnica para o projeto crescer com segurança.
 
 - [x] Testes automatizados das regras atuais (XP, níveis, badges, sequências) antes de refatorar (`npm test`)
-- [ ] Testes de integração da API (cadastro, login, reset de senha, envio de desafios, admin)
+- [x] Testes de integração da API (cadastro, login, reset de senha, envio de desafios, admin)
 - [x] Dividir o `server.js` em módulos (auth, desafios, avaliação, gamificação, estudo)
-- [ ] Migrar o banco para PostgreSQL com migrações e importação dos dados atuais
+- [x] Migrar o banco para PostgreSQL (Neon) com migrações e importação dos dados atuais
 - [ ] Validação das variáveis de ambiente na inicialização
 - [ ] Sessão em cookie seguro e limites de requisição por rota e por conta
 - [ ] Papéis de usuário no lugar do `isAdmin`

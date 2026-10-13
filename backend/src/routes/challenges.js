@@ -3,7 +3,7 @@ const crypto = require("crypto");
 
 const { MIN_OPEN_ANSWER_LENGTH, MAX_OPEN_ANSWER_LENGTH } = require("../config");
 const { CHALLENGES, getChallengeById } = require("../content/challenges");
-const { writeDatabase } = require("../db");
+const db = require("../db");
 const { authenticateRequest } = require("../middleware/auth");
 const { evaluateOpenChallengeWithAI } = require("../services/evaluation");
 const {
@@ -12,7 +12,6 @@ const {
   PERFECT_STREAK_BONUS_XP,
   calculateLevel,
   normalizeAvatarConfig,
-  getUserAttempts,
   syncBadges,
   buildChallengeResult,
 } = require("../services/gamification");
@@ -56,7 +55,7 @@ function buildPublicChallenge(challenge, completedAttempt) {
 }
 
 router.get("/api/challenges", authenticateRequest, async (req, res) => {
-  const userAttempts = getUserAttempts(req.user.id, req.database);
+  const userAttempts = await db.listAttemptsByUser(req.user.id);
 
   res.json({
     challenges: CHALLENGES.map((challenge) =>
@@ -68,9 +67,8 @@ router.get("/api/challenges", authenticateRequest, async (req, res) => {
   });
 });
 
-// Envios em andamento por usuário+desafio. Sem isso, duas requisições simultâneas passam
-// pela checagem de tentativa existente enquanto aguardam a IA e ambas gravam XP.
-// Vale para uma única instância; com banco relacional vira restrição única.
+// Envios em andamento por usuário+desafio. A restrição única no banco já impede XP em dobro;
+// isto evita avaliar com a IA (e pagar por) duas respostas simultâneas do mesmo desafio.
 const submissionsInFlight = new Set();
 
 router.post("/api/challenges/:challengeId/submit", authenticateRequest, async (req, res) => {
@@ -95,25 +93,29 @@ router.post("/api/challenges/:challengeId/submit", authenticateRequest, async (r
   }
 });
 
+async function respondAlreadyCompleted(res, user, existingAttempt) {
+  const attempts = await db.listAttemptsByUser(user.id);
+
+  return res.status(409).json({
+    message: "Este desafio já foi concluído.",
+    result: {
+      nota: existingAttempt.score,
+      feedback: existingAttempt.feedback,
+      consequence: existingAttempt.consequence,
+      xpGanho: existingAttempt.xpAwarded,
+      qualityTier: existingAttempt.qualityTier,
+      xpBreakdown: existingAttempt.xpBreakdown,
+      unlockedBadges: existingAttempt.unlockedBadges,
+    },
+    user: buildUserResponse(user, attempts),
+  });
+}
+
 async function handleChallengeSubmission(req, res, challenge) {
-  const existingAttempt = req.database.challengeAttempts.find(
-    (attempt) => attempt.userId === req.user.id && attempt.challengeId === challenge.id
-  );
+  const existingAttempt = await db.findAttempt(req.user.id, challenge.id);
 
   if (existingAttempt) {
-    return res.status(409).json({
-      message: "Este desafio já foi concluído.",
-      result: {
-        nota: existingAttempt.score,
-        feedback: existingAttempt.feedback,
-        consequence: existingAttempt.consequence,
-        xpGanho: existingAttempt.xpAwarded,
-        qualityTier: existingAttempt.qualityTier,
-        xpBreakdown: existingAttempt.xpBreakdown,
-        unlockedBadges: existingAttempt.unlockedBadges,
-      },
-      user: buildUserResponse(req.user, req.database),
-    });
+    return respondAlreadyCompleted(res, req.user, existingAttempt);
   }
 
   let answer = "";
@@ -156,46 +158,67 @@ async function handleChallengeSubmission(req, res, challenge) {
     feedback = evaluation.feedback;
   }
 
-  const result = buildChallengeResult({
-    challenge,
-    score,
-    feedback,
-    previousStreak: Number(req.user.gamification?.perfectStreak) || 0,
-  });
+  let outcome;
 
-  req.user.xp = Math.max(0, Number(req.user.xp) + result.xpGanho);
-  req.user.nivel = calculateLevel(req.user.xp);
-  req.user.avatarConfig = normalizeAvatarConfig(req.user.avatarConfig, req.user.xp);
-  req.user.gamification.perfectStreak = result.perfectStreak;
+  try {
+    // A avaliação da IA fica fora da transação para não segurar a trava durante a chamada.
+    // Dentro dela, o usuário é relido com FOR UPDATE: XP e sequência partem do estado atual.
+    outcome = await db.getClient().transaction(async (tx) => {
+      const user = await db.findUserById(req.user.id, tx, { forUpdate: true });
+      const previousAttempts = await db.listAttemptsByUser(user.id, tx);
 
-  if (result.wasIdeal) {
-    req.user.gamification.idealAnswers = (Number(req.user.gamification.idealAnswers) || 0) + 1;
+      const result = buildChallengeResult({
+        challenge,
+        score,
+        feedback,
+        previousStreak: Number(user.gamification?.perfectStreak) || 0,
+      });
+
+      user.xp = Math.max(0, Number(user.xp) + result.xpGanho);
+      user.nivel = calculateLevel(user.xp);
+      user.avatarConfig = normalizeAvatarConfig(user.avatarConfig, user.xp);
+      user.gamification.perfectStreak = result.perfectStreak;
+
+      if (result.wasIdeal) {
+        user.gamification.idealAnswers = (Number(user.gamification.idealAnswers) || 0) + 1;
+      }
+
+      const attemptRecord = {
+        id: crypto.randomUUID(),
+        userId: user.id,
+        challengeId: challenge.id,
+        challengeType: challenge.tipo,
+        category: challenge.categoria,
+        answer,
+        feedback: result.feedback,
+        consequence: result.consequence,
+        score: result.nota,
+        qualityTier: result.qualityTier,
+        wasIdeal: result.wasIdeal,
+        xpAwarded: result.xpGanho,
+        xpBreakdown: result.xpBreakdown,
+        unlockedBadges: [],
+        createdAt: new Date().toISOString(),
+      };
+
+      const attempts = [...previousAttempts, attemptRecord];
+      const unlockedBadges = syncBadges(user, attempts);
+      attemptRecord.unlockedBadges = unlockedBadges;
+
+      await db.insertAttempt(attemptRecord, tx);
+      await db.saveUser(user, tx);
+
+      return { user, attempts, result, unlockedBadges };
+    });
+  } catch (error) {
+    if (db.isUniqueViolation(error)) {
+      const attempt = await db.findAttempt(req.user.id, challenge.id);
+      return respondAlreadyCompleted(res, req.user, attempt);
+    }
+    throw error;
   }
 
-  const attemptRecord = {
-    id: crypto.randomUUID(),
-    userId: req.user.id,
-    challengeId: challenge.id,
-    challengeType: challenge.tipo,
-    category: challenge.categoria,
-    answer,
-    feedback: result.feedback,
-    consequence: result.consequence,
-    score: result.nota,
-    qualityTier: result.qualityTier,
-    wasIdeal: result.wasIdeal,
-    xpAwarded: result.xpGanho,
-    xpBreakdown: result.xpBreakdown,
-    unlockedBadges: [],
-    createdAt: new Date().toISOString(),
-  };
-
-  req.database.challengeAttempts.push(attemptRecord);
-
-  const unlockedBadges = syncBadges(req.user, req.database);
-  attemptRecord.unlockedBadges = unlockedBadges;
-
-  await writeDatabase(req.database);
+  const { user, attempts, result, unlockedBadges } = outcome;
 
   return res.json({
     message: "Desafio avaliado com sucesso.",
@@ -210,7 +233,7 @@ async function handleChallengeSubmission(req, res, challenge) {
       xpBreakdown: result.xpBreakdown,
       unlockedBadges,
     },
-    user: buildUserResponse(req.user, req.database),
+    user: buildUserResponse(user, attempts),
   });
 }
 

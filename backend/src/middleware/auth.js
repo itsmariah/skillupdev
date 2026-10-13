@@ -1,6 +1,6 @@
 const rateLimit = require("express-rate-limit");
 
-const { purgeExpiredSessions, readDatabase } = require("../db");
+const { findActiveSession, findUserById } = require("../db");
 const { hashToken } = require("../services/auth");
 
 const authRateLimiter = rateLimit({
@@ -20,23 +20,18 @@ async function authenticateRequest(req, res, next) {
 
   const rawToken = authorization.slice("Bearer ".length).trim();
   const tokenHash = hashToken(rawToken);
-  const database = await readDatabase();
-
-  purgeExpiredSessions(database);
-
-  const session = database.sessions.find((item) => item.tokenHash === tokenHash);
+  const session = await findActiveSession(tokenHash);
 
   if (!session) {
     return res.status(401).json({ message: "Sessão inválida ou expirada." });
   }
 
-  const user = database.users.find((item) => item.id === session.userId);
+  const user = await findUserById(session.userId);
 
   if (!user) {
     return res.status(401).json({ message: "Usuário da sessão não encontrado." });
   }
 
-  req.database = database;
   req.user = user;
   req.tokenHash = tokenHash;
 

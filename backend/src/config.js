@@ -4,10 +4,10 @@ require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 
 const PORT = Number(process.env.PORT) || 3000;
 const FRONTEND_DIR = path.join(__dirname, "..", "..", "frontend");
-const DEFAULT_DATA_FILE = path.join(__dirname, "..", "data", "db.json");
-const DATA_FILE = process.env.DATA_FILE ? path.resolve(process.env.DATA_FILE) : DEFAULT_DATA_FILE;
-const DATA_DIR = path.dirname(DATA_FILE);
-const REDIS_DB_KEY = process.env.REDIS_DB_KEY || "skillupdev:db";
+// PostgreSQL (Neon em produção). Sem DATABASE_URL, o desenvolvimento local usa o PGlite,
+// gravando em PGLITE_DATA_DIR ("memory://" mantém tudo só em memória, como nos testes).
+const DATABASE_URL = String(process.env.DATABASE_URL || "").trim();
+const PGLITE_DATA_DIR = process.env.PGLITE_DATA_DIR || path.join(__dirname, "..", "data", "pglite");
 
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
@@ -30,10 +30,8 @@ const MAX_OPEN_ANSWER_LENGTH = 3000;
 module.exports = {
   PORT,
   FRONTEND_DIR,
-  DEFAULT_DATA_FILE,
-  DATA_FILE,
-  DATA_DIR,
-  REDIS_DB_KEY,
+  DATABASE_URL,
+  PGLITE_DATA_DIR,
   OPENAI_MODEL,
   PASSWORD_RESET_TTL_MINUTES,
   PASSWORD_RESET_TTL_MS,

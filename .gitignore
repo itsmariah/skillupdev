@@ -3,3 +3,4 @@ node_modules
 .claude/settings.local.json
 backend/data/db.json
 backend/data/backups/
+backend/data/pglite/

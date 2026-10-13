@@ -339,10 +339,9 @@ function deriveQualityTier(score, challengeType = "aberto") {
   return "low";
 }
 
-function getUserAttempts(userId, database) {
-  return database.challengeAttempts.filter(
-    (attempt) => attempt.userId === userId && VALID_CHALLENGE_IDS.has(attempt.challengeId)
-  );
+// Ignora tentativas de desafios que não existem mais no catálogo.
+function filterValidAttempts(attempts) {
+  return (attempts || []).filter((attempt) => VALID_CHALLENGE_IDS.has(attempt.challengeId));
 }
 
 function countAttemptsByCategory(attempts, category) {
@@ -398,8 +397,8 @@ function getProgress(xp) {
   };
 }
 
-function buildBadgeCatalog(user, database) {
-  const attempts = getUserAttempts(user.id, database);
+function buildBadgeCatalog(user, userAttempts) {
+  const attempts = filterValidAttempts(userAttempts);
   const level = getLevelDetails(user.xp).level;
   const savedBadges = new Map((user.badges || []).map((badge) => [badge.id, badge]));
   const context = { attempts, level, gamification: user.gamification || {} };
@@ -420,8 +419,8 @@ function buildBadgeCatalog(user, database) {
   });
 }
 
-function syncBadges(user, database) {
-  const attempts = getUserAttempts(user.id, database);
+function syncBadges(user, userAttempts) {
+  const attempts = filterValidAttempts(userAttempts);
   const level = getLevelDetails(user.xp).level;
   const existingIds = new Set((user.badges || []).map((badge) => badge.id));
   const unlockedNow = [];
@@ -581,7 +580,7 @@ module.exports = {
   normalizeAvatarConfig,
   createDefaultGamificationState,
   deriveQualityTier,
-  getUserAttempts,
+  filterValidAttempts,
   countAttemptsByCategory,
   hasIdealAttempt,
   countIdealAttempts,

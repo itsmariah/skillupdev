@@ -1,14 +1,15 @@
 const express = require("express");
 
-const { writeDatabase } = require("../db");
+const db = require("../db");
 const { authenticateRequest, requireAdmin } = require("../middleware/auth");
 const { calcSusScore, susClassification } = require("../services/study");
 
 const router = express.Router();
 
 router.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (req, res) => {
-  const responses = req.database.study_responses || [];
-  const users = req.database.users || [];
+  const responses = await db.listStudyResponses();
+  const users = await db.listUsers();
+  const attemptCounts = await db.countAttemptsByUser();
 
   const preResponses = responses.filter((r) => r.type === "pre");
   const postResponses = responses.filter((r) => r.type === "post");
@@ -76,7 +77,6 @@ router.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (re
     .map((u) => {
       const pre = preResponses.find((r) => r.userId === u.id);
       const post = postResponses.find((r) => r.userId === u.id);
-      const attempts = req.database.challengeAttempts.filter((a) => a.userId === u.id);
       return {
         id: u.id,
         nome: u.nome,
@@ -84,7 +84,7 @@ router.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (re
         studyVersion: u.studyVersion || 1,
         studyPreDone: Boolean(u.studyPreDone),
         studyPostDone: Boolean(u.studyPostDone),
-        challengesCompleted: attempts.length,
+        challengesCompleted: attemptCounts.get(u.id) || 0,
         preSubmittedAt: pre?.submittedAt || null,
         postSubmittedAt: post?.submittedAt || null,
         preData: pre?.data || null,
@@ -117,7 +117,7 @@ router.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (re
 });
 
 router.get("/api/admin/study-data/export", authenticateRequest, requireAdmin, async (req, res) => {
-  const responses = req.database.study_responses || [];
+  const responses = await db.listStudyResponses();
   const postResponses = responses.filter((r) => r.type === "post");
 
   const header = [
@@ -157,23 +157,18 @@ router.get("/api/admin/study-data/export", authenticateRequest, requireAdmin, as
 
 router.delete("/api/admin/users/:id", authenticateRequest, requireAdmin, async (req, res) => {
   const { id } = req.params;
-  const database = req.database;
+  const user = await db.findUserById(id);
 
-  const userIndex = database.users.findIndex((u) => u.id === id);
-  if (userIndex === -1) {
+  if (!user) {
     return res.status(404).json({ message: "Usuário não encontrado." });
   }
 
-  if (database.users[userIndex].isAdmin) {
+  if (user.isAdmin) {
     return res.status(403).json({ message: "Não é possível excluir um administrador." });
   }
 
-  database.users.splice(userIndex, 1);
-  database.sessions        = (database.sessions        || []).filter((s) => s.userId !== id);
-  database.challengeAttempts = (database.challengeAttempts || []).filter((a) => a.userId !== id);
-  database.study_responses = (database.study_responses || []).filter((r) => r.userId !== id);
-
-  await writeDatabase(database);
+  // Sessões, tentativas, badges, tokens e respostas do estudo saem junto (ON DELETE CASCADE).
+  await db.deleteUser(id);
   return res.json({ message: "Participante excluído com sucesso." });
 });
 

@@ -195,9 +195,7 @@ test.describe("normalizeAvatarConfig", () => {
 test.describe("badges", () => {
   test("primeira tentativa desbloqueia 'Primeira Missão' e soma o XP da raridade", () => {
     const user = createUser();
-    const database = { challengeAttempts: [createAttempt(closedChallenge)] };
-
-    const unlocked = syncBadges(user, database);
+    const unlocked = syncBadges(user, [createAttempt(closedChallenge)]);
 
     assert.deepEqual(unlocked.map((badge) => badge.id), ["first-mission"]);
     assert.equal(unlocked[0].xpBonus, BADGE_XP.comum);
@@ -207,25 +205,25 @@ test.describe("badges", () => {
 
   test("badge já conquistada não é concedida de novo", () => {
     const user = createUser();
-    const database = { challengeAttempts: [createAttempt(closedChallenge)] };
+    const attempts = [createAttempt(closedChallenge)];
 
-    syncBadges(user, database);
-    const secondRun = syncBadges(user, database);
+    syncBadges(user, attempts);
+    const secondRun = syncBadges(user, attempts);
 
     assert.deepEqual(secondRun, []);
     assert.equal(user.xp, BADGE_XP.comum);
   });
 
-  test("tentativas de outros usuários não contam", () => {
+  test("tentativas de desafios que não existem mais não contam", () => {
     const user = createUser();
-    const database = { challengeAttempts: [createAttempt(closedChallenge, { userId: "outro" })] };
+    const attempts = [{ ...createAttempt(closedChallenge), challengeId: "desafio-removido" }];
 
-    assert.deepEqual(syncBadges(user, database), []);
+    assert.deepEqual(syncBadges(user, attempts), []);
   });
 
   test("'Líder em Formação' é concedida ao alcançar o nível 3", () => {
     const user = createUser({ xp: LEVELS.find((level) => level.level === 3).minXp });
-    const unlocked = syncBadges(user, { challengeAttempts: [] });
+    const unlocked = syncBadges(user, []);
 
     assert.ok(unlocked.some((badge) => badge.id === "leader-in-formation"));
   });
@@ -235,22 +233,19 @@ test.describe("badges", () => {
     const closedConflict = CHALLENGES.find((challenge) => challenge.id === "teamwork-closed-2");
     const openConflict = CHALLENGES.find((challenge) => challenge.id === "teamwork-open-2");
 
-    const onlyOne = { challengeAttempts: [createAttempt(closedConflict, { wasIdeal: true })] };
+    const onlyOne = [createAttempt(closedConflict, { wasIdeal: true })];
     assert.ok(!syncBadges(user, onlyOne).some((badge) => badge.id === "conflict-mediator"));
 
-    const both = {
-      challengeAttempts: [
-        createAttempt(closedConflict, { wasIdeal: true }),
-        createAttempt(openConflict, { wasIdeal: true }),
-      ],
-    };
+    const both = [
+      createAttempt(closedConflict, { wasIdeal: true }),
+      createAttempt(openConflict, { wasIdeal: true }),
+    ];
     assert.ok(syncBadges(user, both).some((badge) => badge.id === "conflict-mediator"));
   });
 
   test("buildBadgeCatalog lista todas as badges e marca as desbloqueadas", () => {
     const user = createUser();
-    const database = { challengeAttempts: [createAttempt(closedChallenge)] };
-    const catalog = buildBadgeCatalog(user, database);
+    const catalog = buildBadgeCatalog(user, [createAttempt(closedChallenge)]);
 
     assert.ok(catalog.length > 0);
     assert.equal(catalog.find((badge) => badge.id === "first-mission").unlocked, true);

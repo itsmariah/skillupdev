@@ -1,10 +1,10 @@
-// Ponto de entrada: carrega o banco, garante o admin e inicia o servidor HTTP.
+// Ponto de entrada: prepara o banco (migrações), garante o admin e inicia o servidor HTTP.
 // A aplicação Express fica em src/app.js e as regras em src/services/.
 const crypto = require("crypto");
 
 const app = require("./src/app");
 const { PORT, ADMIN_EMAIL, ADMIN_PASSWORD } = require("./src/config");
-const { readDatabase, writeDatabase } = require("./src/db");
+const db = require("./src/db");
 const { normalizeEmail } = require("./src/lib/text");
 const { createPasswordHash } = require("./src/services/auth");
 const { DEFAULT_AVATAR, createDefaultGamificationState } = require("./src/services/gamification");
@@ -15,10 +15,7 @@ async function ensureAdminExists() {
     return;
   }
 
-  const database = await readDatabase();
-
-  const adminExists = database.users.some((u) => u.isAdmin);
-  if (adminExists) return;
+  if (await db.hasAdmin()) return;
 
   const admin = {
     id: crypto.randomUUID(),
@@ -36,17 +33,19 @@ async function ensureAdminExists() {
     createdAt: new Date().toISOString(),
   };
 
-  database.users.push(admin);
-  await writeDatabase(database);
+  await db.insertUser(admin);
   console.log("[Admin] Usuário administrador criado com sucesso.");
 }
 
 async function start() {
   try {
-    await readDatabase();
+    const client = await db.initDatabase();
+    console.log(`[Banco] Conectado (${client.kind === "postgres" ? "PostgreSQL" : "PGlite local"}).`);
     await ensureAdminExists();
+    await db.purgeExpiredSessions();
+    await db.purgeExpiredResetTokens();
   } catch (error) {
-    console.error("[Banco] Falha ao carregar o banco. Servidor não será iniciado para não sobrescrever dados.", error);
+    console.error("[Banco] Falha ao preparar o banco. Servidor não será iniciado.", error);
     process.exit(1);
   }
 

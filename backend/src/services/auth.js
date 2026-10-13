@@ -47,26 +47,10 @@ function createPasswordResetToken(userId) {
   };
 }
 
-function findPasswordResetToken(database, rawToken) {
-  const tokenHash = hashToken(rawToken);
-
-  return (database.passwordResetTokens || []).find((resetToken) => {
-    if (!resetToken?.tokenHash || resetToken.tokenHash.length !== tokenHash.length) {
-      return false;
-    }
-
-    return crypto.timingSafeEqual(
-      Buffer.from(resetToken.tokenHash, "hex"),
-      Buffer.from(tokenHash, "hex")
-    );
-  });
-}
-
 module.exports = {
   createPasswordHash,
   verifyPassword,
   createToken,
   hashToken,
   createPasswordResetToken,
-  findPasswordResetToken,
 };
