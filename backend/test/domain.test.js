@@ -4,8 +4,8 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 
+const { CHALLENGES } = require("../src/content/challenges");
 const {
-  CHALLENGES,
   LEVELS,
   BADGE_XP,
   DEFAULT_AVATAR,
@@ -17,19 +17,16 @@ const {
   calculateLevel,
   getProgress,
   normalizeAvatarConfig,
-  hydrateUser,
   deriveQualityTier,
   buildChallengeResult,
   syncBadges,
   buildBadgeCatalog,
   applyDailyLoginReward,
-  buildHeuristicFeedback,
-  extractJsonObject,
-  createPasswordHash,
-  verifyPassword,
-  calcSusScore,
-  susClassification,
-} = require("../server");
+} = require("../src/services/gamification");
+const { hydrateUser } = require("../src/services/users");
+const { buildHeuristicFeedback, extractJsonObject } = require("../src/services/evaluation");
+const { createPasswordHash, verifyPassword } = require("../src/services/auth");
+const { calcSusScore, susClassification } = require("../src/services/study");
 
 const closedChallenge = CHALLENGES.find((challenge) => challenge.tipo === "fechado");
 const openChallenge = CHALLENGES.find((challenge) => challenge.tipo === "aberto");

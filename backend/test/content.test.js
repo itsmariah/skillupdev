@@ -3,7 +3,8 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 
-const { CHALLENGES, ALL_CATEGORIES, BADGE_DEFINITIONS, BADGE_XP } = require("../server");
+const { CHALLENGES, ALL_CATEGORIES } = require("../src/content/challenges");
+const { BADGE_DEFINITIONS, BADGE_XP } = require("../src/services/gamification");
 
 test("há 30 desafios com ids únicos", () => {
   assert.equal(CHALLENGES.length, 30);

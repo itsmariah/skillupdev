@@ -123,7 +123,7 @@ Base técnica para o projeto crescer com segurança.
 
 - [x] Testes automatizados das regras atuais (XP, níveis, badges, sequências) antes de refatorar (`npm test`)
 - [ ] Testes de integração da API (cadastro, login, reset de senha, envio de desafios, admin)
-- [ ] Dividir o `server.js` em módulos (auth, desafios, avaliação, gamificação, estudo)
+- [x] Dividir o `server.js` em módulos (auth, desafios, avaliação, gamificação, estudo)
 - [ ] Migrar o banco para PostgreSQL com migrações e importação dos dados atuais
 - [ ] Validação das variáveis de ambiente na inicialização
 - [ ] Sessão em cookie seguro e limites de requisição por rota e por conta
