@@ -34,7 +34,7 @@ app.use(
         frameAncestors: ["'self'"],
       },
     },
-  })
+  }),
 );
 app.use(express.json());
 app.use(express.static(FRONTEND_DIR));

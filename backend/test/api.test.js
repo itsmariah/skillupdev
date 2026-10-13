@@ -122,7 +122,10 @@ test("desafio fechado ideal soma XP e desbloqueia a primeira badge", async () =>
   assert.equal(data.result.qualityTier, "ideal");
   assert.equal(data.result.xpGanho, 100);
   assert.equal(data.result.evaluator, "closed");
-  assert.deepEqual(data.result.unlockedBadges.map((badge) => badge.id), ["first-mission"]);
+  assert.deepEqual(
+    data.result.unlockedBadges.map((badge) => badge.id),
+    ["first-mission"],
+  );
   assert.equal(data.user.xp, 20 + 100 + 50);
   assert.equal(data.user.completedChallenges, 1);
 });
@@ -143,15 +146,18 @@ test("envios simultâneos do mesmo desafio contam uma vez só", async () => {
       api("POST", "/api/challenges/communication-closed-2/submit", {
         token: userToken,
         body: { respostaId: "b" },
-      })
-    )
+      }),
+    ),
   );
 
   assert.equal(responses.filter((response) => response.status === 200).length, 1);
   assert.equal(responses.filter((response) => response.status === 409).length, 2);
 
   const attempts = await db.listAttemptsByUser(userId);
-  assert.equal(attempts.filter((attempt) => attempt.challengeId === "communication-closed-2").length, 1);
+  assert.equal(
+    attempts.filter((attempt) => attempt.challengeId === "communication-closed-2").length,
+    1,
+  );
 });
 
 test("o banco recusa uma segunda tentativa do mesmo desafio (restrição única)", async () => {
@@ -159,7 +165,7 @@ test("o banco recusa uma segunda tentativa do mesmo desafio (restrição única)
 
   await assert.rejects(
     () => db.insertAttempt({ ...existing, id: crypto.randomUUID() }),
-    (error) => db.isUniqueViolation(error)
+    (error) => db.isUniqueViolation(error),
   );
 });
 
@@ -225,8 +231,12 @@ test("questionário do estudo: pré uma vez só; pós exige 10 desafios", async 
 });
 
 test("esqueci a senha responde igual para e-mail cadastrado ou não", async () => {
-  const existing = await api("POST", "/api/auth/forgot-password", { body: { email: "dev@teste.com" } });
-  const missing = await api("POST", "/api/auth/forgot-password", { body: { email: "nao@existe.com" } });
+  const existing = await api("POST", "/api/auth/forgot-password", {
+    body: { email: "dev@teste.com" },
+  });
+  const missing = await api("POST", "/api/auth/forgot-password", {
+    body: { email: "nao@existe.com" },
+  });
 
   assert.equal(existing.status, 200);
   assert.deepEqual(existing.data, missing.data);
@@ -234,7 +244,9 @@ test("esqueci a senha responde igual para e-mail cadastrado ou não", async () =
 
 test("redefinição de senha: link de uso único que derruba as sessões", async () => {
   process.env.ALLOW_RESET_PREVIEW = "true";
-  const forgot = await api("POST", "/api/auth/forgot-password", { body: { email: "dev@teste.com" } });
+  const forgot = await api("POST", "/api/auth/forgot-password", {
+    body: { email: "dev@teste.com" },
+  });
   process.env.ALLOW_RESET_PREVIEW = "false";
 
   const resetToken = new URL(forgot.data.previewResetUrl).searchParams.get("token");
@@ -285,7 +297,9 @@ test("painel admin: acesso restrito, dados do estudo, CSV e exclusão em cascata
   assert.equal(csv.status, 200);
   assert.match(csv.headers.get("content-type"), /text\/csv/);
 
-  const deleteAdmin = await api("DELETE", `/api/admin/users/${admin.data.user.id}`, { token: adminToken });
+  const deleteAdmin = await api("DELETE", `/api/admin/users/${admin.data.user.id}`, {
+    token: adminToken,
+  });
   assert.equal(deleteAdmin.status, 403);
 
   const deleteUser = await api("DELETE", `/api/admin/users/${userId}`, { token: adminToken });

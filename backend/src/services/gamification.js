@@ -3,7 +3,7 @@ const { CHALLENGES, VALID_CHALLENGE_IDS, ALL_CATEGORIES } = require("../content/
 // XP por conclusão de desafio (base, antes de qualidade e multiplicador)
 const CHALLENGE_COMPLETION_XP = 40;
 // Bônus por resposta ideal; penalidade por baixa qualidade
-const IDEAL_ANSWER_BONUS_XP = 60;   // ideal total: 100 XP (× multiplicador)
+const IDEAL_ANSWER_BONUS_XP = 60; // ideal total: 100 XP (× multiplicador)
 const LOW_QUALITY_ADJUSTMENT_XP = -10; // baixa total:  30 XP (× multiplicador)
 // Login diário — incentiva engajamento consistente
 const DAILY_LOGIN_XP = 20;
@@ -19,11 +19,11 @@ const OPEN_CHALLENGE_MEDIUM_SCORE = 60;
 // Nível 4: ~25–28 desafios + logins (3–5 semanas)
 // Nível 5: todos os 30 desafios + ~80–130 dias de login diário
 const LEVELS = [
-  { level: 1, title: "Trainee Soft Skills",       minXp: 0     },
-  { level: 2, title: "Colaborador",                minXp: 400   },
-  { level: 3, title: "Profissional Colaborativo",  minXp: 1100  },
-  { level: 4, title: "Dev Influente",              minXp: 2600  },
-  { level: 5, title: "Soft Skill Master",          minXp: 5200  },
+  { level: 1, title: "Trainee Soft Skills", minXp: 0 },
+  { level: 2, title: "Colaborador", minXp: 400 },
+  { level: 3, title: "Profissional Colaborativo", minXp: 1100 },
+  { level: 4, title: "Dev Influente", minXp: 2600 },
+  { level: 5, title: "Soft Skill Master", minXp: 5200 },
 ];
 
 const DEFAULT_AVATAR = {
@@ -38,16 +38,16 @@ const DEFAULT_AVATAR = {
 
 const AVATAR_CATALOG = {
   cabelo: [
-    { id: "short",       label: "Curto",          minLevel: 1 },
-    { id: "curly",       label: "Cacheado",       minLevel: 1 },
-    { id: "shortcurly",  label: "Curto Cacheado", minLevel: 1 },
-    { id: "long",     label: "Longo",           minLevel: 1 },
-    { id: "wavy",     label: "Ondulado",        minLevel: 2 },
-    { id: "braids",   label: "Tranças",         minLevel: 2 },
-    { id: "ponytail", label: "Rabo de cavalo",  minLevel: 3 },
-    { id: "bun",      label: "Coque",           minLevel: 3 },
-    { id: "spiky",    label: "Pontudo",         minLevel: 4 },
-    { id: "mohawk",   label: "Moicano",         minLevel: 5 },
+    { id: "short", label: "Curto", minLevel: 1 },
+    { id: "curly", label: "Cacheado", minLevel: 1 },
+    { id: "shortcurly", label: "Curto Cacheado", minLevel: 1 },
+    { id: "long", label: "Longo", minLevel: 1 },
+    { id: "wavy", label: "Ondulado", minLevel: 2 },
+    { id: "braids", label: "Tranças", minLevel: 2 },
+    { id: "ponytail", label: "Rabo de cavalo", minLevel: 3 },
+    { id: "bun", label: "Coque", minLevel: 3 },
+    { id: "spiky", label: "Pontudo", minLevel: 4 },
+    { id: "mohawk", label: "Moicano", minLevel: 5 },
   ],
   roupa: [
     { id: "hoodie", label: "Moletom", minLevel: 1 },
@@ -70,24 +70,24 @@ const AVATAR_CATALOG = {
     { id: "crown", label: "Coroa", minLevel: 5 },
   ],
   tom: [
-    { id: "warm",   label: "Quente",    skin: "#f2c7a5", neck: "#e6b792", minLevel: 1 },
-    { id: "light",  label: "Clara",     skin: "#f9e0c6", neck: "#f0c8a8", minLevel: 1 },
-    { id: "medium", label: "Média",     skin: "#d4a574", neck: "#bf9060", minLevel: 1 },
-    { id: "tan",    label: "Bronzeada", skin: "#b07850", neck: "#976640", minLevel: 1 },
-    { id: "dark",   label: "Escura",    skin: "#8d5524", neck: "#7a4a1e", minLevel: 1 },
+    { id: "warm", label: "Quente", skin: "#f2c7a5", neck: "#e6b792", minLevel: 1 },
+    { id: "light", label: "Clara", skin: "#f9e0c6", neck: "#f0c8a8", minLevel: 1 },
+    { id: "medium", label: "Média", skin: "#d4a574", neck: "#bf9060", minLevel: 1 },
+    { id: "tan", label: "Bronzeada", skin: "#b07850", neck: "#976640", minLevel: 1 },
+    { id: "dark", label: "Escura", skin: "#8d5524", neck: "#7a4a1e", minLevel: 1 },
   ],
   cabelo_cor: [
-    { id: "dark",   label: "Preto",    value: "#2d2842", minLevel: 1 },
-    { id: "brown",  label: "Castanho", value: "#6b4226", minLevel: 1 },
-    { id: "blonde", label: "Loiro",    value: "#d4a017", minLevel: 1 },
-    { id: "red",    label: "Ruivo",    value: "#b83221", minLevel: 2 },
-    { id: "blue",   label: "Azul",     value: "#5b6cff", minLevel: 3 },
-    { id: "pink",   label: "Rosa",     value: "#e11d48", minLevel: 4 },
+    { id: "dark", label: "Preto", value: "#2d2842", minLevel: 1 },
+    { id: "brown", label: "Castanho", value: "#6b4226", minLevel: 1 },
+    { id: "blonde", label: "Loiro", value: "#d4a017", minLevel: 1 },
+    { id: "red", label: "Ruivo", value: "#b83221", minLevel: 2 },
+    { id: "blue", label: "Azul", value: "#5b6cff", minLevel: 3 },
+    { id: "pink", label: "Rosa", value: "#e11d48", minLevel: 4 },
   ],
   expressao: [
-    { id: "happy",     label: "Alegre",   minLevel: 1 },
-    { id: "cool",      label: "Cool",     minLevel: 1 },
-    { id: "focused",   label: "Focado",   minLevel: 2 },
+    { id: "happy", label: "Alegre", minLevel: 1 },
+    { id: "cool", label: "Cool", minLevel: 1 },
+    { id: "focused", label: "Focado", minLevel: 2 },
     { id: "surprised", label: "Surpreso", minLevel: 3 },
   ],
 };
@@ -268,7 +268,7 @@ function buildAvatarCatalog(level) {
         ...option,
         unlocked: option.minLevel <= level,
       })),
-    ])
+    ]),
   );
 }
 
@@ -458,16 +458,18 @@ function syncBadges(user, userAttempts) {
 }
 
 function buildCategoryProgress(attempts) {
-  return Array.from(new Set(CHALLENGES.map((challenge) => challenge.categoria))).map((categoria) => {
-    const total = CHALLENGES.filter((challenge) => challenge.categoria === categoria).length;
-    const completed = countAttemptsByCategory(attempts, categoria);
+  return Array.from(new Set(CHALLENGES.map((challenge) => challenge.categoria))).map(
+    (categoria) => {
+      const total = CHALLENGES.filter((challenge) => challenge.categoria === categoria).length;
+      const completed = countAttemptsByCategory(attempts, categoria);
 
-    return {
-      categoria,
-      completed,
-      total,
-    };
-  });
+      return {
+        categoria,
+        completed,
+        total,
+      };
+    },
+  );
 }
 
 function applyDailyLoginReward(user) {
@@ -480,7 +482,10 @@ function applyDailyLoginReward(user) {
   user.xp += DAILY_LOGIN_XP;
   user.nivel = calculateLevel(user.xp);
   user.avatarConfig = normalizeAvatarConfig(user.avatarConfig, user.xp);
-  user.gamification.dailyLoginStreak = isYesterdayKey(user.gamification.lastDailyLoginDate, todayKey)
+  user.gamification.dailyLoginStreak = isYesterdayKey(
+    user.gamification.lastDailyLoginDate,
+    todayKey,
+  )
     ? (Number(user.gamification.dailyLoginStreak) || 0) + 1
     : 1;
   user.gamification.lastDailyLoginDate = todayKey;
@@ -506,14 +511,18 @@ function buildChallengeConsequence(qualityTier) {
 
 function buildXpBreakdown(qualityTier, streakBonusXp, xpMultiplier = 1) {
   const qualityAdjustmentXp =
-    qualityTier === "ideal" ? IDEAL_ANSWER_BONUS_XP : qualityTier === "low" ? LOW_QUALITY_ADJUSTMENT_XP : 0;
+    qualityTier === "ideal"
+      ? IDEAL_ANSWER_BONUS_XP
+      : qualityTier === "low"
+        ? LOW_QUALITY_ADJUSTMENT_XP
+        : 0;
 
   const completionXp = Math.round(CHALLENGE_COMPLETION_XP * xpMultiplier);
-  const qualityXp    = Math.round(qualityAdjustmentXp    * xpMultiplier);
+  const qualityXp = Math.round(qualityAdjustmentXp * xpMultiplier);
 
   const breakdown = [
-    { label: "Desafio concluído",    xp: completionXp },
-    { label: "Qualidade da resposta", xp: qualityXp   },
+    { label: "Desafio concluído", xp: completionXp },
+    { label: "Qualidade da resposta", xp: qualityXp },
   ];
 
   if (streakBonusXp > 0) {

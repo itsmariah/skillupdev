@@ -6,7 +6,7 @@ async function insertResetToken(record, db = getClient()) {
   await db.query(
     `INSERT INTO password_reset_tokens (id, user_id, token_hash, created_at, expires_at)
      VALUES ($1, $2, $3, $4, $5)`,
-    [record.id, record.userId, record.tokenHash, record.createdAt, record.expiresAt]
+    [record.id, record.userId, record.tokenHash, record.createdAt, record.expiresAt],
   );
 }
 
@@ -14,7 +14,7 @@ async function findActiveResetToken(tokenHash, db = getClient()) {
   const { rows } = await db.query(
     `SELECT id, user_id, expires_at FROM password_reset_tokens
      WHERE token_hash = $1 AND expires_at > now()`,
-    [tokenHash]
+    [tokenHash],
   );
 
   return rows[0]

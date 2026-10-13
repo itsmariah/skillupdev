@@ -24,8 +24,7 @@ function hydrateAttempt(attempt) {
     xpBreakdown: Array.isArray(attempt?.xpBreakdown) ? attempt.xpBreakdown : [],
     category: attempt?.category || challenge?.categoria || "",
     qualityTier,
-    wasIdeal:
-      typeof attempt?.wasIdeal === "boolean" ? attempt.wasIdeal : qualityTier === "ideal",
+    wasIdeal: typeof attempt?.wasIdeal === "boolean" ? attempt.wasIdeal : qualityTier === "ideal",
     unlockedBadges: Array.isArray(attempt?.unlockedBadges) ? attempt.unlockedBadges : [],
   };
 }
@@ -102,7 +101,7 @@ async function importLegacyDatabase(data, client) {
           createdAt: session.createdAt || new Date().toISOString(),
           expiresAt: session.expiresAt,
         },
-        tx
+        tx,
       );
       report.sessions += 1;
     }
@@ -128,7 +127,7 @@ async function importLegacyDatabase(data, client) {
           id: String(response.id || crypto.randomUUID()),
           submittedAt: response.submittedAt || new Date().toISOString(),
         },
-        tx
+        tx,
       );
       report.studyResponses += 1;
     }

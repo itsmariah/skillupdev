@@ -38,7 +38,14 @@ const legacy = {
   ],
   passwordResetTokens: [{ id: "r1", userId: "u1", tokenHash: "x", expiresAt: future }],
   study_responses: [
-    { id: "s1", userId: "u1", userName: "Pessoa Um", type: "pre", data: { curso: "CC" }, submittedAt: past },
+    {
+      id: "s1",
+      userId: "u1",
+      userName: "Pessoa Um",
+      type: "pre",
+      data: { curso: "CC" },
+      submittedAt: past,
+    },
   ],
 };
 

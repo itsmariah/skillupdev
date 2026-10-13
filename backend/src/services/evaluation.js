@@ -65,7 +65,7 @@ function buildHeuristicFeedback(answer, criteria = []) {
   ];
   const matchedCriteria = getCriteriaMatches(cleanAnswer, criteria);
   const missingCriteria = (criteria || []).filter(
-    (critérion) => !matchedCriteria.includes(normalizeTextValue(critérion))
+    (critérion) => !matchedCriteria.includes(normalizeTextValue(critérion)),
   );
 
   let score = 35;
@@ -81,14 +81,17 @@ function buildHeuristicFeedback(answer, criteria = []) {
   let feedback;
 
   if (words.length < 8) {
-    feedback = "A resposta está muito curta para ser avaliada com precisão. Desenvolva melhor sua linha de raciocínio, explique o contexto e detalhe como agiria na situação.";
+    feedback =
+      "A resposta está muito curta para ser avaliada com precisão. Desenvolva melhor sua linha de raciocínio, explique o contexto e detalhe como agiria na situação.";
   } else if (finalScore >= OPEN_CHALLENGE_IDEAL_SCORE) {
-    feedback = "Boa resposta. Você demonstrou maturidade, contexto e um encaminhamento claro para a situação.";
+    feedback =
+      "Boa resposta. Você demonstrou maturidade, contexto e um encaminhamento claro para a situação.";
     if (missingCriteria.length > 0) {
       feedback += ` Reforce especialmente ${missingCriteria.slice(0, 2).join(" e ")}.`;
     }
   } else if (finalScore >= OPEN_CHALLENGE_MEDIUM_SCORE) {
-    feedback = "A resposta mostra boa intenção e uma linha de raciocínio útil, mas ainda pode ficar mais forte.";
+    feedback =
+      "A resposta mostra boa intenção e uma linha de raciocínio útil, mas ainda pode ficar mais forte.";
     if (missingCriteria.length > 0) {
       feedback += ` Reforce especialmente ${missingCriteria.slice(0, 2).join(" e ")}.`;
     }
@@ -97,7 +100,8 @@ function buildHeuristicFeedback(answer, criteria = []) {
     if (missingCriteria.length > 0) {
       feedback += ` Trabalhe especialmente ${missingCriteria.slice(0, 2).join(" e ")}.`;
     } else {
-      feedback += " Estruture melhor suas ideias, seja mais específico e detalhe como agiria na situação.";
+      feedback +=
+        " Estruture melhor suas ideias, seja mais específico e detalhe como agiria na situação.";
     }
   }
 
@@ -147,12 +151,12 @@ const MANIPULATION_PATTERNS = [
   new RegExp(
     `${WORD_START}(ignore|ignora|desconsidere|esque[cç]a)${WORD_END}.{0,40}` +
       `${WORD_START}(instru[cç][oõ]es|regras|orienta[cç][oõ]es|prompt|crit[eé]rios)`,
-    "iu"
+    "iu",
   ),
   new RegExp(
     `${WORD_START}(d[eê]|atribua|coloque|quero|merece)${WORD_END}.{0,30}` +
       `${WORD_START}(nota|pontua[cç][aã]o|score)${WORD_END}.{0,20}(100|cem|m[aá]xima|10/10)`,
-    "iu"
+    "iu",
   ),
   /system prompt|prompt do sistema/i,
   new RegExp(`</?${ANSWER_TAG}`, "i"),
@@ -244,7 +248,7 @@ function interpretEvaluation(parsed, criteria) {
 
   const criteriaScores = criteria.map((criterion, index) => {
     const byName = parsed.criterios.find(
-      (item) => normalizeTextValue(item?.criterio) === normalizeTextValue(criterion)
+      (item) => normalizeTextValue(item?.criterio) === normalizeTextValue(criterion),
     );
     const item = byName || parsed.criterios[index];
     const nota = Number(item?.nota);
@@ -260,7 +264,8 @@ function interpretEvaluation(parsed, criteria) {
     };
   });
 
-  const average = criteriaScores.reduce((total, item) => total + item.nota, 0) / criteriaScores.length;
+  const average =
+    criteriaScores.reduce((total, item) => total + item.nota, 0) / criteriaScores.length;
   const parts = [
     ["O que foi bem", parsed.feedback.o_que_foi_bem],
     ["O que faltou", parsed.feedback.o_que_faltou],

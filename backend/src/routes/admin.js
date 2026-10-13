@@ -14,9 +14,7 @@ router.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (re
   const preResponses = responses.filter((r) => r.type === "pre");
   const postResponses = responses.filter((r) => r.type === "post");
 
-  const susScores = postResponses
-    .filter((r) => r.data?.sus)
-    .map((r) => calcSusScore(r.data.sus));
+  const susScores = postResponses.filter((r) => r.data?.sus).map((r) => calcSusScore(r.data.sus));
 
   const avgSus = susScores.length
     ? Math.round(susScores.reduce((a, b) => a + b, 0) / susScores.length)
@@ -46,11 +44,16 @@ router.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (re
     const avgSusV = sus.length ? Math.round(sus.reduce((a, b) => a + b, 0) / sus.length) : null;
     const lkAvg = {};
     for (const key of likertKeys) {
-      const vals = postResp.map((r) => Number(r.data?.likert?.[key])).filter((v) => v >= 1 && v <= 5);
-      lkAvg[key] = vals.length ? Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / 10 : null;
+      const vals = postResp
+        .map((r) => Number(r.data?.likert?.[key]))
+        .filter((v) => v >= 1 && v <= 5);
+      lkAvg[key] = vals.length
+        ? Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / 10
+        : null;
     }
     return {
-      participantCount: new Set([...preResp.map((r) => r.userId), ...postResp.map((r) => r.userId)]).size,
+      participantCount: new Set([...preResp.map((r) => r.userId), ...postResp.map((r) => r.userId)])
+        .size,
       preCompletedCount: preResp.length,
       postCompletedCount: postResp.length,
       avgSusScore: avgSusV,
@@ -59,12 +62,10 @@ router.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (re
     };
   }
 
-  const v2UserIds = new Set(
-    users.filter((u) => (u.studyVersion || 1) === 2).map((u) => u.id)
-  );
-  const v1Pre  = preResponses.filter((r) => !v2UserIds.has(r.userId));
+  const v2UserIds = new Set(users.filter((u) => (u.studyVersion || 1) === 2).map((u) => u.id));
+  const v1Pre = preResponses.filter((r) => !v2UserIds.has(r.userId));
   const v1Post = postResponses.filter((r) => !v2UserIds.has(r.userId));
-  const v2Pre  = preResponses.filter((r) => v2UserIds.has(r.userId));
+  const v2Pre = preResponses.filter((r) => v2UserIds.has(r.userId));
   const v2Post = postResponses.filter((r) => v2UserIds.has(r.userId));
 
   const participantCount = new Set([
@@ -121,13 +122,31 @@ router.get("/api/admin/study-data/export", authenticateRequest, requireAdmin, as
   const postResponses = responses.filter((r) => r.type === "post");
 
   const header = [
-    "Nome", "Email", "SubmitData",
-    "SUS_S1","SUS_S2","SUS_S3","SUS_S4","SUS_S5",
-    "SUS_S6","SUS_S7","SUS_S8","SUS_S9","SUS_S10","SUS_Score",
-    "Likert_Desafios","Likert_Feedback","Likert_Reflexao",
-    "Likert_Usaria","Likert_Coerencia","Likert_FeedbackVsGenerico",
-    "Aberta_Gostou","Aberta_Melhorar","Aberta_FeedbackCoerente",
-    "TempoEstudo_min","DesafiosConcluidos",
+    "Nome",
+    "Email",
+    "SubmitData",
+    "SUS_S1",
+    "SUS_S2",
+    "SUS_S3",
+    "SUS_S4",
+    "SUS_S5",
+    "SUS_S6",
+    "SUS_S7",
+    "SUS_S8",
+    "SUS_S9",
+    "SUS_S10",
+    "SUS_Score",
+    "Likert_Desafios",
+    "Likert_Feedback",
+    "Likert_Reflexao",
+    "Likert_Usaria",
+    "Likert_Coerencia",
+    "Likert_FeedbackVsGenerico",
+    "Aberta_Gostou",
+    "Aberta_Melhorar",
+    "Aberta_FeedbackCoerente",
+    "TempoEstudo_min",
+    "DesafiosConcluidos",
   ];
 
   const rows = postResponses.map((r) => {
@@ -138,13 +157,31 @@ router.get("/api/admin/study-data/export", authenticateRequest, requireAdmin, as
     const susScore = sus.s1 ? calcSusScore(sus) : "";
     const csvStr = (v) => `"${String(v || "").replace(/"/g, '""')}"`;
     return [
-      csvStr(r.userName), csvStr(r.userEmail), csvStr(r.submittedAt),
-      sus.s1||"", sus.s2||"", sus.s3||"", sus.s4||"", sus.s5||"",
-      sus.s6||"", sus.s7||"", sus.s8||"", sus.s9||"", sus.s10||"", susScore,
-      lik.desafiosInteressantes||"", lik.feedbackUtil||"", lik.reflexaoSoftSkills||"",
-      lik.usariaNovamente||"", lik.feedbackCoerente||"", lik.feedbackVsGenerico||"",
-      csvStr(ab.gostou), csvStr(ab.melhorar), csvStr(ab.feedbackCoerente),
-      stats.timeSpentMinutes||"", stats.challengesCompleted||"",
+      csvStr(r.userName),
+      csvStr(r.userEmail),
+      csvStr(r.submittedAt),
+      sus.s1 || "",
+      sus.s2 || "",
+      sus.s3 || "",
+      sus.s4 || "",
+      sus.s5 || "",
+      sus.s6 || "",
+      sus.s7 || "",
+      sus.s8 || "",
+      sus.s9 || "",
+      sus.s10 || "",
+      susScore,
+      lik.desafiosInteressantes || "",
+      lik.feedbackUtil || "",
+      lik.reflexaoSoftSkills || "",
+      lik.usariaNovamente || "",
+      lik.feedbackCoerente || "",
+      lik.feedbackVsGenerico || "",
+      csvStr(ab.gostou),
+      csvStr(ab.melhorar),
+      csvStr(ab.feedbackCoerente),
+      stats.timeSpentMinutes || "",
+      stats.challengesCompleted || "",
     ];
   });
 

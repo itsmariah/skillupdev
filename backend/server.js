@@ -40,7 +40,9 @@ async function ensureAdminExists() {
 async function start() {
   try {
     const client = await db.initDatabase();
-    console.log(`[Banco] Conectado (${client.kind === "postgres" ? "PostgreSQL" : "PGlite local"}).`);
+    console.log(
+      `[Banco] Conectado (${client.kind === "postgres" ? "PostgreSQL" : "PGlite local"}).`,
+    );
     await ensureAdminExists();
     await db.purgeExpiredSessions();
     await db.purgeExpiredResetTokens();

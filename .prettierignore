@@ -1,0 +1,9 @@
+node_modules/
+backend/data/
+package-lock.json
+
+# Fora do Prettier por enquanto: a formatação de HTML pode alterar espaços entre
+# elementos (e a renderização), e o README é texto editado à mão.
+*.html
+*.css
+*.md

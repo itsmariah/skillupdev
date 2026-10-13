@@ -61,8 +61,8 @@ router.get("/api/challenges", authenticateRequest, async (req, res) => {
     challenges: CHALLENGES.map((challenge) =>
       buildPublicChallenge(
         challenge,
-        userAttempts.find((attempt) => attempt.challengeId === challenge.id)
-      )
+        userAttempts.find((attempt) => attempt.challengeId === challenge.id),
+      ),
     ),
   });
 });
@@ -81,7 +81,9 @@ router.post("/api/challenges/:challengeId/submit", authenticateRequest, async (r
   const submissionKey = `${req.user.id}:${challenge.id}`;
 
   if (submissionsInFlight.has(submissionKey)) {
-    return res.status(409).json({ message: "Sua resposta para este desafio já está sendo avaliada." });
+    return res
+      .status(409)
+      .json({ message: "Sua resposta para este desafio já está sendo avaliada." });
   }
 
   submissionsInFlight.add(submissionKey);
@@ -143,11 +145,15 @@ async function handleChallengeSubmission(req, res, challenge) {
     }
 
     if (texto.length < MIN_OPEN_ANSWER_LENGTH) {
-      return res.status(400).json({ message: `Elabore melhor sua resposta. Mínimo de ${MIN_OPEN_ANSWER_LENGTH} caracteres.` });
+      return res.status(400).json({
+        message: `Elabore melhor sua resposta. Mínimo de ${MIN_OPEN_ANSWER_LENGTH} caracteres.`,
+      });
     }
 
     if (texto.length > MAX_OPEN_ANSWER_LENGTH) {
-      return res.status(400).json({ message: `A resposta pode ter no máximo ${MAX_OPEN_ANSWER_LENGTH} caracteres.` });
+      return res
+        .status(400)
+        .json({ message: `A resposta pode ter no máximo ${MAX_OPEN_ANSWER_LENGTH} caracteres.` });
     }
 
     answer = texto;

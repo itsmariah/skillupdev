@@ -1,5 +1,3 @@
-
-
 function normalizeTextValue(value) {
   return String(value || "")
     .trim()
@@ -9,7 +7,9 @@ function normalizeTextValue(value) {
 }
 
 function normalizeEmail(email) {
-  return String(email || "").trim().toLowerCase();
+  return String(email || "")
+    .trim()
+    .toLowerCase();
 }
 
 function escapeHtml(value) {

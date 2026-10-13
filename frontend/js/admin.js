@@ -1,11 +1,11 @@
 (function initAdmin() {
   const LIKERT_LABELS = {
     desafiosInteressantes: "Os desafios foram interessantes e motivadores",
-    feedbackUtil:          "O feedback da IA foi útil para o aprendizado",
-    reflexaoSoftSkills:    "Ajudou a refletir sobre habilidades interpessoais",
-    usariaNovamente:       "Usaria a plataforma novamente",
-    feedbackCoerente:      "Feedbacks da IA foram coerentes",
-    feedbackVsGenerico:    "Feedback IA vs feedback genérico",
+    feedbackUtil: "O feedback da IA foi útil para o aprendizado",
+    reflexaoSoftSkills: "Ajudou a refletir sobre habilidades interpessoais",
+    usariaNovamente: "Usaria a plataforma novamente",
+    feedbackCoerente: "Feedbacks da IA foram coerentes",
+    feedbackVsGenerico: "Feedback IA vs feedback genérico",
   };
 
   function susClass(score) {
@@ -21,8 +21,12 @@
       : '<span class="status-badge status-pending">Pendente</span>';
   }
 
-  function hide(id) { document.getElementById(id)?.classList.add("d-none"); }
-  function show(id) { document.getElementById(id)?.classList.remove("d-none"); }
+  function hide(id) {
+    document.getElementById(id)?.classList.add("d-none");
+  }
+  function show(id) {
+    document.getElementById(id)?.classList.remove("d-none");
+  }
 
   function versionBadge(v) {
     return v === 2
@@ -35,10 +39,18 @@
     if (!container) return;
 
     const cards = [
-      { value: summary.participantCount,   label: "Participantes",     helper: "Total no estudo" },
-      { value: summary.preCompletedCount,  label: "Questionários Pré", helper: "Etapa 1 concluída" },
-      { value: summary.postCompletedCount, label: "Questionários Pós", helper: "Etapa 2 concluída" },
-      { value: summary.avgSusScore !== null ? summary.avgSusScore : "—", label: "SUS Score Médio", helper: "Usabilidade (0–100)" },
+      { value: summary.participantCount, label: "Participantes", helper: "Total no estudo" },
+      { value: summary.preCompletedCount, label: "Questionários Pré", helper: "Etapa 1 concluída" },
+      {
+        value: summary.postCompletedCount,
+        label: "Questionários Pós",
+        helper: "Etapa 2 concluída",
+      },
+      {
+        value: summary.avgSusScore !== null ? summary.avgSusScore : "—",
+        label: "SUS Score Médio",
+        helper: "Usabilidade (0–100)",
+      },
     ];
 
     const vRows = [
@@ -46,7 +58,10 @@
       { label: "Versão 2", data: summary.v2, color: "#1e40af", bg: "#dbeafe" },
     ].filter((r) => r.data && r.data.participantCount > 0);
 
-    container.innerHTML = cards.map((c) => `
+    container.innerHTML =
+      cards
+        .map(
+          (c) => `
       <div class="col-6 col-md-3">
         <div class="dashboard-box stat-card">
           <p class="stat-label">${c.label}</p>
@@ -54,11 +69,17 @@
           <p class="stat-helper">${c.helper}</p>
         </div>
       </div>
-    `).join("") + (vRows.length ? `
+    `,
+        )
+        .join("") +
+      (vRows.length
+        ? `
       <div class="col-12 mt-2">
         <div class="dashboard-panel" style="padding:16px 20px;">
           <div style="display:flex;gap:32px;flex-wrap:wrap;">
-            ${vRows.map((r) => `
+            ${vRows
+              .map(
+                (r) => `
               <div>
                 <span style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${r.color};">${r.label}</span>
                 <div style="display:flex;gap:24px;margin-top:6px;flex-wrap:wrap;">
@@ -67,11 +88,14 @@
                   <span style="font-size:0.85rem;color:#374151;">SUS: <strong>${r.data.avgSusScore !== null ? r.data.avgSusScore : "—"}</strong></span>
                 </div>
               </div>
-            `).join('<div style="width:1px;background:#e5e7eb;"></div>')}
+            `,
+              )
+              .join('<div style="width:1px;background:#e5e7eb;"></div>')}
           </div>
         </div>
       </div>
-    ` : "");
+    `
+        : "");
   }
 
   function renderSusBlock(summary) {
@@ -95,11 +119,12 @@
     const el = document.getElementById("likertBlock");
     if (!el) return;
 
-    const rows = Object.entries(LIKERT_LABELS).map(([key, label]) => {
-      const avg = summary.likertAverages?.[key];
-      const display = avg !== null && avg !== undefined ? avg.toFixed(1) : "—";
-      const pct = avg !== null && avg !== undefined ? ((avg - 1) / 4) * 100 : 0;
-      return `
+    const rows = Object.entries(LIKERT_LABELS)
+      .map(([key, label]) => {
+        const avg = summary.likertAverages?.[key];
+        const display = avg !== null && avg !== undefined ? avg.toFixed(1) : "—";
+        const pct = avg !== null && avg !== undefined ? ((avg - 1) / 4) * 100 : 0;
+        return `
         <div class="mini-row" style="gap:12px; display:flex; align-items:center; border-radius:8px; margin-bottom:6px;">
           <span style="flex:1; font-size:0.85rem;">${label}</span>
           <div class="likert-bar-track" style="min-width:80px; max-width:140px;">
@@ -108,7 +133,8 @@
           <span class="likert-score">${display}<span style="font-size:0.7rem; color:#9ca3af;">/5</span></span>
         </div>
       `;
-    }).join("");
+      })
+      .join("");
 
     el.innerHTML = rows || '<p class="text-muted">Nenhum dado ainda</p>';
   }
@@ -118,22 +144,32 @@
     if (!el) return;
 
     if (!openAnswers.length) {
-      el.innerHTML = '<p class="text-muted text-center py-3 mb-0">Nenhuma resposta aberta ainda.</p>';
+      el.innerHTML =
+        '<p class="text-muted text-center py-3 mb-0">Nenhuma resposta aberta ainda.</p>';
       return;
     }
 
-    el.innerHTML = openAnswers.map((r) => `
+    el.innerHTML = openAnswers
+      .map(
+        (r) => `
       <div class="open-answer-card">
         <div class="open-answer-user">${escapeHtml(r.userName)} &mdash; ${new Date(r.submittedAt).toLocaleDateString("pt-BR")} ${versionBadge(r.studyVersion || 1)}</div>
         ${r.gostou ? `<div class="open-answer-label">O que mais gostou</div><div class="open-answer-text">"${escapeHtml(r.gostou)}"</div>` : ""}
         ${r.melhorar ? `<div class="open-answer-label">O que melhoraria</div><div class="open-answer-text">"${escapeHtml(r.melhorar)}"</div>` : ""}
         ${r.feedbackCoerente ? `<div class="open-answer-label">Sobre o feedback da IA</div><div class="open-answer-text">"${escapeHtml(r.feedbackCoerente)}"</div>` : ""}
       </div>
-    `).join("");
+    `,
+      )
+      .join("");
   }
 
   async function deleteParticipant(id, nome) {
-    if (!confirm(`Excluir "${nome}" do estudo? Esta ação remove todos os dados do participante e não pode ser desfeita.`)) return;
+    if (
+      !confirm(
+        `Excluir "${nome}" do estudo? Esta ação remove todos os dados do participante e não pode ser desfeita.`,
+      )
+    )
+      return;
 
     try {
       const token = window.skillUpApi.getToken();
@@ -164,7 +200,9 @@
     }
 
     noMsg?.classList.add("d-none");
-    tbody.innerHTML = participants.map((p) => `
+    tbody.innerHTML = participants
+      .map(
+        (p) => `
       <tr>
         <td><strong style="color:#2c2457">${escapeHtml(p.nome)}</strong></td>
         <td class="text-muted" style="font-size:0.82rem;">${escapeHtml(p.email)}</td>
@@ -179,7 +217,9 @@
           </button>
         </td>
       </tr>
-    `).join("");
+    `,
+      )
+      .join("");
 
     tbody.querySelectorAll(".btn-delete-participant").forEach((btn) => {
       btn.addEventListener("click", () => deleteParticipant(btn.dataset.id, btn.dataset.nome));

@@ -1,16 +1,6 @@
-
-
 const OPEN_CHALLENGE_XP_MULTIPLIER = 1.2;
 
-function createClosedChallenge({
-  id,
-  categoria,
-  titulo,
-  pergunta,
-  descricao,
-  dica,
-  respostas,
-}) {
+function createClosedChallenge({ id, categoria, titulo, pergunta, descricao, dica, respostas }) {
   return {
     id,
     tipo: "fechado",
@@ -56,8 +46,7 @@ const CHALLENGES = [
     pergunta:
       "Um cliente envia uma mensagem irritado dizendo que o sistema caiu e está inútil. Como você responde?",
     descricao: "Escolha a alternativa que melhor se adequa à situação.",
-    dica:
-      "Priorize cordialidade e transparência. Comunicação técnica sem empatia não resolve conflito.",
+    dica: "Priorize cordialidade e transparência. Comunicação técnica sem empatia não resolve conflito.",
     respostas: [
       {
         texto: "Não é problema nosso, deve ser sua rede.",
@@ -83,13 +72,13 @@ const CHALLENGES = [
     pergunta:
       "Você precisa explicar para um gestor não técnico por que o deploy foi adiado. Como faz isso?",
     descricao: "Escolha a opção que torna a mensagem mais clara para quem não é técnico.",
-    dica:
-      "Traduzir complexidade técnica para linguagem simples é uma habilidade essencial para dev sênior.",
+    dica: "Traduzir complexidade técnica para linguagem simples é uma habilidade essencial para dev sênior.",
     respostas: [
       {
         texto: "Usar jargões técnicos e detalhar a stack inteira.",
         xp: 40,
-        feedback: "A resposta pode ser correta tecnicamente, mas dificulta o entendimento do gestor.",
+        feedback:
+          "A resposta pode ser correta tecnicamente, mas dificulta o entendimento do gestor.",
       },
       {
         texto: "Usar uma analogia simples e explicar o impacto do adiamento.",
@@ -109,8 +98,7 @@ const CHALLENGES = [
     titulo: "Feedback Construtivo",
     pergunta: "Um colega entregou um código ruim. Como você reage?",
     descricao: "Escolha a postura com mais respeito e efetividade.",
-    dica:
-      "Feedback construtivo combina especificidade com respeito, sem soar rude ou humilhante.",
+    dica: "Feedback construtivo combina especificidade com respeito, sem soar rude ou humilhante.",
     respostas: [
       {
         texto: "Criticar o código no grupo para todo mundo ver.",
@@ -125,7 +113,8 @@ const CHALLENGES = [
       {
         texto: "Refazer tudo sem falar nada.",
         xp: 40,
-        feedback: "Resolve o curto prazo, mas perde a chance de desenvolver o colega e alinhar o time.",
+        feedback:
+          "Resolve o curto prazo, mas perde a chance de desenvolver o colega e alinhar o time.",
       },
     ],
   }),
@@ -145,7 +134,8 @@ const CHALLENGES = [
       {
         texto: "Reunir o time, priorizar junto e delegar com clareza.",
         xp: 100,
-        feedback: "Boa escolha. Essa postura fortalece alinhamento, foco e responsabilidade compartilhada.",
+        feedback:
+          "Boa escolha. Essa postura fortalece alinhamento, foco e responsabilidade compartilhada.",
       },
       {
         texto: "Fazer primeiro as tarefas mais fáceis.",
@@ -170,7 +160,8 @@ const CHALLENGES = [
       {
         texto: "Mediar a conversa e buscar critérios técnicos em comum.",
         xp: 100,
-        feedback: "Boa escolha. Você ajuda o time a sair da disputa e voltar para a análise do problema.",
+        feedback:
+          "Boa escolha. Você ajuda o time a sair da disputa e voltar para a análise do problema.",
       },
       {
         texto: "Tomar o lado de quem você acha melhor.",
@@ -195,7 +186,8 @@ const CHALLENGES = [
       {
         texto: "Analisar prós e contras juntos antes de decidir.",
         xp: 100,
-        feedback: "Boa escolha. O time decide com base em contexto, trade-offs e entendimento comum.",
+        feedback:
+          "Boa escolha. O time decide com base em contexto, trade-offs e entendimento comum.",
       },
       {
         texto: "Deixar para depois sem nenhum critério definido.",
@@ -220,12 +212,14 @@ const CHALLENGES = [
       {
         texto: "Diagnosticar, isolar o problema e agir com base no que foi observado.",
         xp: 100,
-        feedback: "Boa escolha. Essa abordagem reduz risco e aumenta a chance de resolver com assertividade.",
+        feedback:
+          "Boa escolha. Essa abordagem reduz risco e aumenta a chance de resolver com assertividade.",
       },
       {
         texto: "Esperar para ver se o sistema volta sozinho.",
         xp: 5,
-        feedback: "Essa postura abandona a responsabilidade num momento crítico para produto e usuários.",
+        feedback:
+          "Essa postura abandona a responsabilidade num momento crítico para produto e usuários.",
       },
     ],
   }),
@@ -240,7 +234,8 @@ const CHALLENGES = [
       {
         texto: "Entregar a feature nova primeiro.",
         xp: 5,
-        feedback: "Novidade sem estabilidade tende a piorar a experiência e a confiança do usuário.",
+        feedback:
+          "Novidade sem estabilidade tende a piorar a experiência e a confiança do usuário.",
       },
       {
         texto: "Atacar primeiro o bug crítico.",
@@ -270,7 +265,8 @@ const CHALLENGES = [
       {
         texto: "Usar logs, métricas e formular hipóteses antes de agir.",
         xp: 100,
-        feedback: "Boa escolha. Você transforma um problema difuso em uma investigação orientada por evidências.",
+        feedback:
+          "Boa escolha. Você transforma um problema difuso em uma investigação orientada por evidências.",
       },
       {
         texto: "Reiniciar o servidor sempre que o erro aparecer.",
@@ -300,7 +296,8 @@ const CHALLENGES = [
       {
         texto: "Fazer primeiro as tarefas mais rápidas.",
         xp: 40,
-        feedback: "Isso pode dar sensação de progresso, mas não garante que o principal foi tratado.",
+        feedback:
+          "Isso pode dar sensação de progresso, mas não garante que o principal foi tratado.",
       },
     ],
   }),
@@ -321,7 +318,8 @@ const CHALLENGES = [
       {
         texto: "Avaliar a urgência real, responder o crítico e proteger o foco.",
         xp: 100,
-        feedback: "Boa escolha. Você filtra sem ignorar e mantém o trabalho prioritário em andamento.",
+        feedback:
+          "Boa escolha. Você filtra sem ignorar e mantém o trabalho prioritário em andamento.",
       },
       {
         texto: "Ignorar todas as mensagens até terminar o que está fazendo.",
@@ -351,7 +349,8 @@ const CHALLENGES = [
       {
         texto: "Copiar uma estimativa antiga de outra demanda.",
         xp: 40,
-        feedback: "Pode servir como referência, mas sozinho isso ignora as particularidades da feature atual.",
+        feedback:
+          "Pode servir como referência, mas sozinho isso ignora as particularidades da feature atual.",
       },
     ],
   }),
@@ -386,8 +385,7 @@ const CHALLENGES = [
     titulo: "Pressão",
     pergunta: "Você recebeu um prazo praticamente impossível. Como reage?",
     descricao: "Escolha a resposta com mais controle emocional e responsabilidade.",
-    dica:
-      "Negociar escopo ou prazo costuma ser melhor do que prometer o impossível e comprometer a entrega.",
+    dica: "Negociar escopo ou prazo costuma ser melhor do que prometer o impossível e comprometer a entrega.",
     respostas: [
       {
         texto: "Entrar em pânico e tentar resolver depois.",
@@ -397,7 +395,8 @@ const CHALLENGES = [
       {
         texto: "Negociar escopo, prazo e riscos com transparência.",
         xp: 100,
-        feedback: "Boa escolha. Você equilibra responsabilidade, realismo e compromisso com o resultado.",
+        feedback:
+          "Boa escolha. Você equilibra responsabilidade, realismo e compromisso com o resultado.",
       },
       {
         texto: "Prometer que vai entregar mesmo sabendo que não dá.",
@@ -412,8 +411,7 @@ const CHALLENGES = [
     titulo: "Frustração de Projeto Falho",
     pergunta: "Uma entrega foi cancelada e o projeto falhou. Como lidar com isso?",
     descricao: "Escolha a atitude com mais resiliência e aprendizado.",
-    dica:
-      "Mesmo quando o projeto falha, ainda existe aprendizado sobre técnica, organização, prioridade e prazos.",
+    dica: "Mesmo quando o projeto falha, ainda existe aprendizado sobre técnica, organização, prioridade e prazos.",
     respostas: [
       {
         texto: "Se culpar ou culpar terceiros imediatamente.",
@@ -428,7 +426,8 @@ const CHALLENGES = [
       {
         texto: "Fingir que nada aconteceu e seguir como se estivesse tudo certo.",
         xp: 40,
-        feedback: "Evita o desconforto imediato, mas impede a equipe de amadurecer com a experiência.",
+        feedback:
+          "Evita o desconforto imediato, mas impede a equipe de amadurecer com a experiência.",
       },
     ],
   }),

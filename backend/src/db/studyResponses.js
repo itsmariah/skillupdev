@@ -18,7 +18,7 @@ function rowToStudyResponse(row) {
 async function findStudyResponse(userId, type, db = getClient()) {
   const { rows } = await db.query(
     "SELECT * FROM study_responses WHERE user_id = $1 AND type = $2",
-    [userId, type]
+    [userId, type],
   );
   return rows[0] ? rowToStudyResponse(rows[0]) : null;
 }
@@ -37,7 +37,7 @@ async function insertStudyResponse(record, db = getClient()) {
       record.studyVersion ?? null,
       record.submittedAt,
       JSON.stringify(record.data ?? {}),
-    ]
+    ],
   );
 }
 

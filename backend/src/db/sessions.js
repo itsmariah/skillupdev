@@ -3,14 +3,14 @@ const { getClient } = require("./client");
 async function insertSession(session, db = getClient()) {
   await db.query(
     "INSERT INTO sessions (token_hash, user_id, created_at, expires_at) VALUES ($1, $2, $3, $4)",
-    [session.tokenHash, session.userId, session.createdAt, session.expiresAt]
+    [session.tokenHash, session.userId, session.createdAt, session.expiresAt],
   );
 }
 
 async function findActiveSession(tokenHash, db = getClient()) {
   const { rows } = await db.query(
     "SELECT user_id FROM sessions WHERE token_hash = $1 AND expires_at > now()",
-    [tokenHash]
+    [tokenHash],
   );
   return rows[0] ? { tokenHash, userId: rows[0].user_id } : null;
 }

@@ -3,10 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (navbar) {
     const syncNavbarHeight = () => {
-      document.documentElement.style.setProperty(
-        "--navbar-height",
-        `${navbar.offsetHeight}px`
-      );
+      document.documentElement.style.setProperty("--navbar-height", `${navbar.offsetHeight}px`);
     };
 
     const handleNavbarScroll = () => {

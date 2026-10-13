@@ -85,7 +85,7 @@ test.describe("buildChallengeResult — XP", () => {
       assert.equal(result.xpGanho, xp);
       assert.equal(
         result.xpGanho,
-        result.xpBreakdown.reduce((total, item) => total + item.xp, 0)
+        result.xpBreakdown.reduce((total, item) => total + item.xp, 0),
       );
     });
   }
@@ -105,25 +105,50 @@ test.describe("buildChallengeResult — sequência perfeita", () => {
   });
 
   test("o bônus se repete a cada múltiplo de 5", () => {
-    const tenth = buildChallengeResult({ challenge: closedChallenge, score: 100, feedback: "", previousStreak: 9 });
-    const sixth = buildChallengeResult({ challenge: closedChallenge, score: 100, feedback: "", previousStreak: 5 });
+    const tenth = buildChallengeResult({
+      challenge: closedChallenge,
+      score: 100,
+      feedback: "",
+      previousStreak: 9,
+    });
+    const sixth = buildChallengeResult({
+      challenge: closedChallenge,
+      score: 100,
+      feedback: "",
+      previousStreak: 5,
+    });
 
     assert.equal(tenth.xpGanho, 100 + PERFECT_STREAK_BONUS_XP);
     assert.equal(sixth.xpGanho, 100);
   });
 
   test("resposta média em desafio fechado zera a sequência", () => {
-    const result = buildChallengeResult({ challenge: closedChallenge, score: 40, feedback: "", previousStreak: 3 });
+    const result = buildChallengeResult({
+      challenge: closedChallenge,
+      score: 40,
+      feedback: "",
+      previousStreak: 3,
+    });
     assert.equal(result.perfectStreak, 0);
   });
 
   test("resposta média em desafio aberto mantém a sequência", () => {
-    const result = buildChallengeResult({ challenge: openChallenge, score: 70, feedback: "", previousStreak: 3 });
+    const result = buildChallengeResult({
+      challenge: openChallenge,
+      score: 70,
+      feedback: "",
+      previousStreak: 3,
+    });
     assert.equal(result.perfectStreak, 3);
   });
 
   test("resposta baixa zera a sequência em qualquer tipo", () => {
-    const result = buildChallengeResult({ challenge: openChallenge, score: 10, feedback: "", previousStreak: 3 });
+    const result = buildChallengeResult({
+      challenge: openChallenge,
+      score: 10,
+      feedback: "",
+      previousStreak: 3,
+    });
     assert.equal(result.perfectStreak, 0);
   });
 });
@@ -197,7 +222,10 @@ test.describe("badges", () => {
     const user = createUser();
     const unlocked = syncBadges(user, [createAttempt(closedChallenge)]);
 
-    assert.deepEqual(unlocked.map((badge) => badge.id), ["first-mission"]);
+    assert.deepEqual(
+      unlocked.map((badge) => badge.id),
+      ["first-mission"],
+    );
     assert.equal(unlocked[0].xpBonus, BADGE_XP.comum);
     assert.equal(user.xp, BADGE_XP.comum);
     assert.equal(user.badges.length, 1);
@@ -269,7 +297,9 @@ test.describe("login diário", () => {
   });
 
   test("login no dia seguinte soma XP e aumenta a sequência", () => {
-    const user = createUser({ gamification: { lastDailyLoginDate: yesterday, dailyLoginStreak: 2 } });
+    const user = createUser({
+      gamification: { lastDailyLoginDate: yesterday, dailyLoginStreak: 2 },
+    });
     const reward = applyDailyLoginReward(user);
 
     assert.equal(reward.xp, DAILY_LOGIN_XP);
@@ -279,7 +309,9 @@ test.describe("login diário", () => {
   });
 
   test("depois de pular um dia a sequência recomeça em 1", () => {
-    const user = createUser({ gamification: { lastDailyLoginDate: "2020-01-01", dailyLoginStreak: 7 } });
+    const user = createUser({
+      gamification: { lastDailyLoginDate: "2020-01-01", dailyLoginStreak: 7 },
+    });
     applyDailyLoginReward(user);
 
     assert.equal(user.gamification.dailyLoginStreak, 1);
@@ -305,7 +337,9 @@ test.describe("avaliação heurística (fallback da IA)", () => {
   });
 
   test("a nota fica sempre entre 35 e 100", () => {
-    const longAnswer = Array.from({ length: 60 }, () => "entendo empatia clareza alinhar").join(" ");
+    const longAnswer = Array.from({ length: 60 }, () => "entendo empatia clareza alinhar").join(
+      " ",
+    );
     const result = buildHeuristicFeedback(longAnswer, ["empatia", "clareza", "comunicação"]);
 
     assert.ok(result.nota >= 35 && result.nota <= 100);
@@ -315,7 +349,7 @@ test.describe("avaliação heurística (fallback da IA)", () => {
     const short = buildHeuristicFeedback("Eu conversaria com a equipe sobre o problema.", []);
     const long = buildHeuristicFeedback(
       "Eu conversaria com a equipe sobre o problema, explicaria o impacto no prazo, ouviria as preocupações de cada pessoa e proporia um plano para priorizar as tarefas mais críticas da sprint.",
-      []
+      [],
     );
 
     assert.ok(long.nota >= short.nota);
@@ -324,7 +358,10 @@ test.describe("avaliação heurística (fallback da IA)", () => {
 
 test.describe("extractJsonObject", () => {
   test("lê JSON puro", () => {
-    assert.deepEqual(extractJsonObject('{"nota": 80, "feedback": "ok"}'), { nota: 80, feedback: "ok" });
+    assert.deepEqual(extractJsonObject('{"nota": 80, "feedback": "ok"}'), {
+      nota: 80,
+      feedback: "ok",
+    });
   });
 
   test("lê JSON cercado de texto ou bloco de código", () => {
@@ -360,7 +397,10 @@ test.describe("senha", () => {
 test.describe("SUS (estudo piloto)", () => {
   const answers = (odd, even) =>
     Object.fromEntries(
-      Array.from({ length: 10 }, (_, index) => [`s${index + 1}`, (index + 1) % 2 === 1 ? odd : even])
+      Array.from({ length: 10 }, (_, index) => [
+        `s${index + 1}`,
+        (index + 1) % 2 === 1 ? odd : even,
+      ]),
     );
 
   test("respostas extremas dão 0 e 100; neutras dão 50", () => {

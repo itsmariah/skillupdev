@@ -8,23 +8,29 @@
   }
 
   function getColorMeta(colorId) {
-    return getAvatarOptions("cor").find((color) => color.id === colorId) || {
-      value: "#5b6cff",
-      secondary: "#8994ff",
-    };
+    return (
+      getAvatarOptions("cor").find((color) => color.id === colorId) || {
+        value: "#5b6cff",
+        secondary: "#8994ff",
+      }
+    );
   }
 
   function getSkinMeta(skinId) {
-    return getAvatarOptions("tom").find((t) => t.id === skinId) || {
-      skin: "#f2c7a5",
-      neck: "#e6b792",
-    };
+    return (
+      getAvatarOptions("tom").find((t) => t.id === skinId) || {
+        skin: "#f2c7a5",
+        neck: "#e6b792",
+      }
+    );
   }
 
   function getHairColorMeta(hairColorId) {
-    return getAvatarOptions("cabelo_cor").find((c) => c.id === hairColorId) || {
-      value: "#2d2842",
-    };
+    return (
+      getAvatarOptions("cabelo_cor").find((c) => c.id === hairColorId) || {
+        value: "#2d2842",
+      }
+    );
   }
 
   function hexToRgba(hex, alpha) {
@@ -211,7 +217,11 @@
     populateAvatarSelect("avatarMood", getAvatarOptions("expressao"), avatarConfig.expressao);
     populateAvatarSelect("avatarSkin", getAvatarOptions("tom"), avatarConfig.tom);
     renderSkinSwatches(getAvatarOptions("tom"), avatarConfig.tom);
-    populateAvatarSelect("avatarHairColor", getAvatarOptions("cabelo_cor"), avatarConfig.cabelo_cor);
+    populateAvatarSelect(
+      "avatarHairColor",
+      getAvatarOptions("cabelo_cor"),
+      avatarConfig.cabelo_cor,
+    );
     renderHairColorSwatches(getAvatarOptions("cabelo_cor"), avatarConfig.cabelo_cor);
     renderAvatarPreview(avatarConfig);
   }
@@ -225,7 +235,15 @@
     form.dataset.bound = "true";
     form.addEventListener("submit", handleAvatarSubmit);
 
-    ["avatarHair", "avatarOutfit", "avatarColor", "avatarAccessory", "avatarSkin", "avatarHairColor", "avatarMood"].forEach((fieldId) => {
+    [
+      "avatarHair",
+      "avatarOutfit",
+      "avatarColor",
+      "avatarAccessory",
+      "avatarSkin",
+      "avatarHairColor",
+      "avatarMood",
+    ].forEach((fieldId) => {
       const field = document.getElementById(fieldId);
       if (!field) {
         return;
@@ -254,7 +272,11 @@
       renderProgressSummary(payload.user);
       renderBadgeCatalog(payload.user);
       renderCategoryProgress(payload.user);
-      window.skillUpAuth.setFeedback("avatarFeedback", payload.message || "Avatar salvo com sucesso.", "success");
+      window.skillUpAuth.setFeedback(
+        "avatarFeedback",
+        payload.message || "Avatar salvo com sucesso.",
+        "success",
+      );
     } catch (error) {
       window.skillUpAuth.setFeedback("avatarFeedback", error.message, "danger");
     } finally {
@@ -326,9 +348,9 @@
   }
 
   const RARITY_LABEL = {
-    comum:    "Comum",
-    raro:     "Raro",
-    epico:    "Épico",
+    comum: "Comum",
+    raro: "Raro",
+    epico: "Épico",
     lendario: "Lendário",
   };
 
@@ -347,7 +369,7 @@
 
     const rarityOrder = { comum: 0, raro: 1, epico: 2, lendario: 3 };
     const sorted = [...badgeCatalog].sort(
-      (a, b) => (rarityOrder[a.rarity] ?? 0) - (rarityOrder[b.rarity] ?? 0)
+      (a, b) => (rarityOrder[a.rarity] ?? 0) - (rarityOrder[b.rarity] ?? 0),
     );
 
     badgeGrid.innerHTML = sorted

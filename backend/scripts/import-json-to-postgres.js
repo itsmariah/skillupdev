@@ -11,11 +11,15 @@ async function main() {
   const sourcePath = process.argv[2];
 
   if (!sourcePath) {
-    throw new Error("Informe o arquivo de backup. Ex.: npm run db:import -- backend/data/backups/db-....json");
+    throw new Error(
+      "Informe o arquivo de backup. Ex.: npm run db:import -- backend/data/backups/db-....json",
+    );
   }
 
   if (!process.env.DATABASE_URL) {
-    throw new Error("Defina DATABASE_URL (no backend/.env) com a conexão do PostgreSQL de destino.");
+    throw new Error(
+      "Defina DATABASE_URL (no backend/.env) com a conexão do PostgreSQL de destino.",
+    );
   }
 
   const data = JSON.parse(fs.readFileSync(path.resolve(sourcePath), "utf8"));
@@ -28,7 +32,7 @@ async function main() {
   if (report.duplicateAttempts || report.duplicateStudyResponses || report.orphans) {
     console.log(
       "Registros duplicados ou sem usuário foram ignorados (ver contagens acima). " +
-        "Duplicatas vêm da antiga condição de corrida no envio de desafios."
+        "Duplicatas vêm da antiga condição de corrida no envio de desafios.",
     );
   }
 }

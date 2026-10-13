@@ -43,9 +43,10 @@ function createPgliteClient() {
   let PGlite;
   try {
     ({ PGlite } = require("@electric-sql/pglite"));
-  } catch (_error) {
+  } catch (error) {
     throw new Error(
-      "DATABASE_URL não definida e PGlite não instalado. Rode npm install ou defina DATABASE_URL."
+      "DATABASE_URL não definida e PGlite não instalado. Rode npm install ou defina DATABASE_URL.",
+      { cause: error },
     );
   }
 

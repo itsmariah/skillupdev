@@ -18,7 +18,10 @@ test("cada categoria tem 6 desafios", () => {
   }
 
   for (const challenge of CHALLENGES) {
-    assert.ok(ALL_CATEGORIES.includes(challenge.categoria), `${challenge.id}: categoria desconhecida`);
+    assert.ok(
+      ALL_CATEGORIES.includes(challenge.categoria),
+      `${challenge.id}: categoria desconhecida`,
+    );
   }
 });
 
@@ -30,7 +33,10 @@ test("desafios fechados têm uma alternativa de cada nível (5, 40 e 100 XP)", (
     assert.equal(new Set(challenge.respostas.map((answer) => answer.id)).size, 3, challenge.id);
 
     for (const answer of challenge.respostas) {
-      assert.ok(answer.texto && answer.feedback, `${challenge.id}/${answer.id}: texto ou feedback vazio`);
+      assert.ok(
+        answer.texto && answer.feedback,
+        `${challenge.id}/${answer.id}: texto ou feedback vazio`,
+      );
     }
   }
 });
@@ -52,7 +58,8 @@ test("badges citam apenas desafios que existem", () => {
   const ids = new Set(CHALLENGES.map((challenge) => challenge.id));
 
   for (const definition of BADGE_DEFINITIONS) {
-    const referencedIds = definition.predicate.toString().match(/[a-z]+(?:-[a-z]+)*-(?:open|closed)-\d+/g) || [];
+    const referencedIds =
+      definition.predicate.toString().match(/[a-z]+(?:-[a-z]+)*-(?:open|closed)-\d+/g) || [];
 
     for (const referencedId of referencedIds) {
       assert.ok(ids.has(referencedId), `${definition.id} cita ${referencedId}`);

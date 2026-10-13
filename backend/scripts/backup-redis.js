@@ -10,7 +10,7 @@ require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 async function main() {
   if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
     throw new Error(
-      "Defina UPSTASH_REDIS_REST_URL e UPSTASH_REDIS_REST_TOKEN (no backend/.env) antes do backup."
+      "Defina UPSTASH_REDIS_REST_URL e UPSTASH_REDIS_REST_TOKEN (no backend/.env) antes do backup.",
     );
   }
 
@@ -37,7 +37,7 @@ async function main() {
   console.log(
     `Backup salvo: Redis[${key}] -> ${outputPath} ` +
       `(${data.users?.length || 0} usuários, ${data.challengeAttempts?.length || 0} tentativas, ` +
-      `${data.study_responses?.length || 0} respostas do estudo)`
+      `${data.study_responses?.length || 0} respostas do estudo)`,
   );
 }
 

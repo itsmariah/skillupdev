@@ -9,7 +9,10 @@
     "check": "node --check backend/server.js",
     "backup": "node backend/scripts/backup-redis.js",
     "db:import": "node backend/scripts/import-json-to-postgres.js",
-    "test": "node --test"
+    "test": "node --test",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "repository": {
     "type": "git",
@@ -37,6 +40,10 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",
-    "nodemon": "^3.1.14"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.11.0",
+    "globals": "^17.12.0",
+    "nodemon": "^3.1.14",
+    "prettier": "^3.9.9"
   }
 }

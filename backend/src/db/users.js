@@ -57,7 +57,7 @@ function toMutableColumns(user) {
 async function findBadges(userId, db) {
   const { rows } = await db.query(
     "SELECT badge_id, earned_at FROM user_badges WHERE user_id = $1 ORDER BY earned_at, badge_id",
-    [userId]
+    [userId],
   );
 
   return rows.map((row) => ({ id: row.badge_id, earnedAt: toIso(row.earned_at) }));
@@ -68,7 +68,7 @@ async function saveBadges(user, db) {
     await db.query(
       `INSERT INTO user_badges (user_id, badge_id, earned_at) VALUES ($1, $2, $3)
        ON CONFLICT (user_id, badge_id) DO NOTHING`,
-      [user.id, badge.id, badge.earnedAt || new Date().toISOString()]
+      [user.id, badge.id, badge.earnedAt || new Date().toISOString()],
     );
   }
 }
@@ -76,7 +76,7 @@ async function saveBadges(user, db) {
 async function findUserBy(column, value, db, { forUpdate = false } = {}) {
   const { rows } = await db.query(
     `SELECT * FROM users WHERE ${column} = $1${forUpdate ? " FOR UPDATE" : ""}`,
-    [value]
+    [value],
   );
 
   if (!rows[0]) {
@@ -116,7 +116,7 @@ async function insertUser(user, db = getClient()) {
   await db.query(
     `INSERT INTO users (${names.join(", ")})
      VALUES (${names.map((_, index) => `$${index + 1}`).join(", ")})`,
-    Object.values(columns)
+    Object.values(columns),
   );
   await saveBadges(user, db);
 }
@@ -129,7 +129,7 @@ async function saveUser(user, db = getClient()) {
   await db.query(
     `UPDATE users SET ${names.map((name, index) => `${name} = $${index + 1}`).join(", ")}
      WHERE id = $${names.length + 1}`,
-    [...Object.values(columns), user.id]
+    [...Object.values(columns), user.id],
   );
   await saveBadges(user, db);
 }

@@ -15,9 +15,7 @@ function getAppBaseUrl() {
 }
 
 function buildPasswordResetUrl(req, rawToken) {
-  return `${getAppBaseUrl()}/pages/reset_password.html?token=${encodeURIComponent(
-    rawToken
-  )}`;
+  return `${getAppBaseUrl()}/pages/reset_password.html?token=${encodeURIComponent(rawToken)}`;
 }
 
 function maskEmail(email) {
@@ -89,7 +87,7 @@ function buildPasswordResetEmail({ user, req, rawToken, expiresAt }) {
           </p>
           <p style="margin:0 0 24px;font-size:16px;line-height:1.6;color:#4b4f70;">
             Clique no botão abaixo para criar uma nova senha. Esse link expira em <strong>${escapeHtml(
-              expirationLabel
+              expirationLabel,
             )}</strong>.
           </p>
           <p style="margin:0 0 28px;">

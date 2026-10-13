@@ -27,7 +27,7 @@ function rowToAttempt(row) {
 async function listAttemptsByUser(userId, db = getClient()) {
   const { rows } = await db.query(
     "SELECT * FROM challenge_attempts WHERE user_id = $1 ORDER BY created_at, id",
-    [userId]
+    [userId],
   );
   return rows.map(rowToAttempt);
 }
@@ -35,7 +35,7 @@ async function listAttemptsByUser(userId, db = getClient()) {
 async function findAttempt(userId, challengeId, db = getClient()) {
   const { rows } = await db.query(
     "SELECT * FROM challenge_attempts WHERE user_id = $1 AND challenge_id = $2",
-    [userId, challengeId]
+    [userId, challengeId],
   );
   return rows[0] ? rowToAttempt(rows[0]) : null;
 }
@@ -66,14 +66,14 @@ async function insertAttempt(attempt, db = getClient()) {
       attempt.createdAt || new Date().toISOString(),
       attempt.evaluator || null,
       attempt.evaluation ? JSON.stringify(attempt.evaluation) : null,
-    ]
+    ],
   );
 }
 
 // Total de tentativas por usuário (inclui desafios que não existem mais, como antes).
 async function countAttemptsByUser(db = getClient()) {
   const { rows } = await db.query(
-    "SELECT user_id, COUNT(*)::int AS total FROM challenge_attempts GROUP BY user_id"
+    "SELECT user_id, COUNT(*)::int AS total FROM challenge_attempts GROUP BY user_id",
   );
   return new Map(rows.map((row) => [row.user_id, row.total]));
 }

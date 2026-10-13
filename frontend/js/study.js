@@ -1,24 +1,30 @@
 (function initStudy() {
   const STUDY_OPTED_OUT_KEY = "skillup_study_opted_out";
   const SUS_QUESTIONS = [
-    { id: "s1",  text: "Eu usaria essa plataforma com frequência." },
-    { id: "s2",  text: "Achei a plataforma desnecessariamente complexa." },
-    { id: "s3",  text: "A plataforma foi fácil de usar." },
-    { id: "s4",  text: "Eu precisaria de suporte técnico para usar esta plataforma." },
-    { id: "s5",  text: "As funcionalidades estavam bem integradas." },
-    { id: "s6",  text: "Havia muita inconsistência na plataforma." },
-    { id: "s7",  text: "A maioria das pessoas aprenderia a usar rapidamente." },
-    { id: "s8",  text: "A plataforma foi muito difícil de usar." },
-    { id: "s9",  text: "Me senti confiante usando a plataforma." },
+    { id: "s1", text: "Eu usaria essa plataforma com frequência." },
+    { id: "s2", text: "Achei a plataforma desnecessariamente complexa." },
+    { id: "s3", text: "A plataforma foi fácil de usar." },
+    { id: "s4", text: "Eu precisaria de suporte técnico para usar esta plataforma." },
+    { id: "s5", text: "As funcionalidades estavam bem integradas." },
+    { id: "s6", text: "Havia muita inconsistência na plataforma." },
+    { id: "s7", text: "A maioria das pessoas aprenderia a usar rapidamente." },
+    { id: "s8", text: "A plataforma foi muito difícil de usar." },
+    { id: "s9", text: "Me senti confiante usando a plataforma." },
     { id: "s10", text: "Precisei aprender muitas coisas antes de conseguir usar." },
   ];
 
   const LIKERT_QUESTIONS = [
-    { id: "desafiosInteressantes",  text: "Os desafios foram interessantes e motivadores." },
-    { id: "feedbackUtil",           text: "O feedback da IA foi útil para o meu aprendizado." },
-    { id: "reflexaoSoftSkills",     text: "A plataforma me ajudou a refletir sobre habilidades interpessoais." },
-    { id: "usariaNovamente",        text: "Eu utilizaria essa plataforma novamente." },
-    { id: "feedbackCoerente",       text: "Os feedbacks da IA foram coerentes com as respostas que dei." },
+    { id: "desafiosInteressantes", text: "Os desafios foram interessantes e motivadores." },
+    { id: "feedbackUtil", text: "O feedback da IA foi útil para o meu aprendizado." },
+    {
+      id: "reflexaoSoftSkills",
+      text: "A plataforma me ajudou a refletir sobre habilidades interpessoais.",
+    },
+    { id: "usariaNovamente", text: "Eu utilizaria essa plataforma novamente." },
+    {
+      id: "feedbackCoerente",
+      text: "Os feedbacks da IA foram coerentes com as respostas que dei.",
+    },
   ];
 
   function setFeedback(id, message, type) {
@@ -46,11 +52,14 @@
     const token = window.skillUpApi.getToken();
     if (!token) return;
 
-    window.skillUpApi.getMe().then((resp) => {
-      if (resp.user?.studyPreDone) {
-        window.location.href = "dashboard.html";
-      }
-    }).catch(() => {});
+    window.skillUpApi
+      .getMe()
+      .then((resp) => {
+        if (resp.user?.studyPreDone) {
+          window.location.href = "dashboard.html";
+        }
+      })
+      .catch(() => {});
 
     window.sessionStorage.setItem("studyStartedAt", new Date().toISOString());
 
@@ -59,7 +68,7 @@
       setBtn("preSubmitBtn", true, "Salvando...", "Começar o experimento →");
 
       const conhecimento = document.querySelector('input[name="conhecimento"]:checked')?.value;
-      const expectativa   = document.querySelector('input[name="expectativa"]:checked')?.value;
+      const expectativa = document.querySelector('input[name="expectativa"]:checked')?.value;
 
       if (!conhecimento || !expectativa) {
         setFeedback("preFeedback", "Responda todas as perguntas antes de continuar.", "danger");
@@ -68,13 +77,13 @@
       }
 
       const data = {
-        curso:                    document.getElementById("curso").value.trim(),
-        semestre:                 document.getElementById("semestre").value,
-        atuacao:                  document.getElementById("atuacao").value,
+        curso: document.getElementById("curso").value.trim(),
+        semestre: document.getElementById("semestre").value,
+        atuacao: document.getElementById("atuacao").value,
         usouPlataformaEducacional: document.getElementById("usouPlataforma").value,
-        treinamentoSoftSkill:     document.getElementById("treinamentoSoftSkill").value,
-        conhecimentoSoftSkills:   Number(conhecimento),
-        expectativa:              Number(expectativa),
+        treinamentoSoftSkill: document.getElementById("treinamentoSoftSkill").value,
+        conhecimentoSoftSkills: Number(conhecimento),
+        expectativa: Number(expectativa),
       };
 
       try {
@@ -94,36 +103,48 @@
     const tbody = document.getElementById("susBody");
     if (!tbody) return;
 
-    tbody.innerHTML = SUS_QUESTIONS.map((q) => `
+    tbody.innerHTML = SUS_QUESTIONS.map(
+      (q) => `
       <tr>
         <td class="label-col">${q.text}</td>
-        ${[1,2,3,4,5].map((v) => `
+        ${[1, 2, 3, 4, 5]
+          .map(
+            (v) => `
           <td style="text-align:center">
             <input type="radio" name="${q.id}" value="${v}" required>
           </td>
-        `).join("")}
+        `,
+          )
+          .join("")}
       </tr>
-    `).join("");
+    `,
+    ).join("");
   }
 
   function buildLikertQuestions() {
     const container = document.getElementById("likertQuestions");
     if (!container) return;
 
-    container.innerHTML = LIKERT_QUESTIONS.map((q) => `
+    container.innerHTML = LIKERT_QUESTIONS.map(
+      (q) => `
       <div class="mb-4">
         <label class="form-label">${q.text}</label>
         <div class="likert-group mt-2">
-          ${[1,2,3,4,5].map((v) => `
+          ${[1, 2, 3, 4, 5]
+            .map(
+              (v) => `
             <div class="form-check">
               <input type="radio" name="${q.id}" id="${q.id}_${v}" value="${v}" required>
               <label class="form-check-label" for="${q.id}_${v}"><span>${v}</span></label>
             </div>
-          `).join("")}
+          `,
+            )
+            .join("")}
         </div>
         <div class="likert-labels"><span>Discordo totalmente</span><span>Concordo totalmente</span></div>
       </div>
-    `).join("");
+    `,
+    ).join("");
   }
 
   function buildPostForm() {
@@ -146,7 +167,11 @@
 
       const allSusFilled = Object.values(sus).every((v) => v !== null);
       if (!allSusFilled) {
-        setFeedback("postFeedback", "Responda todas as questões do SUS antes de continuar.", "danger");
+        setFeedback(
+          "postFeedback",
+          "Responda todas as questões do SUS antes de continuar.",
+          "danger",
+        );
         setBtn("postSubmitBtn", false, "", "Enviar avaliação e concluir experimento");
         return;
       }
@@ -164,7 +189,9 @@
         return;
       }
 
-      const feedbackVsGenerico = document.querySelector('input[name="feedbackVsGenerico"]:checked')?.value;
+      const feedbackVsGenerico = document.querySelector(
+        'input[name="feedbackVsGenerico"]:checked',
+      )?.value;
       if (!feedbackVsGenerico) {
         setFeedback("postFeedback", "Responda a pergunta sobre comparação do feedback.", "danger");
         setBtn("postSubmitBtn", false, "", "Enviar avaliação e concluir experimento");
@@ -184,9 +211,9 @@
         sus,
         likert,
         abertas: {
-          gostou:              document.getElementById("gostou").value.trim(),
-          melhorar:            document.getElementById("melhorar").value.trim(),
-          feedbackCoerente:    document.getElementById("feedbackCoerenteAberto").value.trim(),
+          gostou: document.getElementById("gostou").value.trim(),
+          melhorar: document.getElementById("melhorar").value.trim(),
+          feedbackCoerente: document.getElementById("feedbackCoerenteAberto").value.trim(),
         },
         sessionStats: {
           timeSpentMinutes,
@@ -198,10 +225,16 @@
       try {
         const resp = await window.skillUpApi.submitQuestionnaire("post", data);
         window.skillUpApi.setSession({ user: resp.user });
-        setFeedback("postFeedback", "Obrigado! Sua avaliação foi registrada com sucesso.", "success");
+        setFeedback(
+          "postFeedback",
+          "Obrigado! Sua avaliação foi registrada com sucesso.",
+          "success",
+        );
         document.getElementById("postSubmitBtn").disabled = true;
         window.sessionStorage.removeItem("studyStartedAt");
-        setTimeout(() => { window.location.href = "dashboard.html"; }, 2000);
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 2000);
       } catch (err) {
         setFeedback("postFeedback", err.message || "Erro ao salvar questionário.", "danger");
         setBtn("postSubmitBtn", false, "", "Enviar avaliação e concluir experimento");
@@ -256,8 +289,12 @@
     `;
 
     document.body.appendChild(banner);
-    document.getElementById("studyPostBannerClose")?.addEventListener("click", () => banner.remove());
-    document.getElementById("studyPostBannerDismiss")?.addEventListener("click", () => banner.remove());
+    document
+      .getElementById("studyPostBannerClose")
+      ?.addEventListener("click", () => banner.remove());
+    document
+      .getElementById("studyPostBannerDismiss")
+      ?.addEventListener("click", () => banner.remove());
   }
 
   // ─── MODAL DE OPT-IN PÓS-ESTUDO ───────────────────────────────────────────
@@ -348,9 +385,12 @@
     const token = window.skillUpApi?.getToken();
     if (!token) return;
 
-    window.skillUpApi.getMe().then((resp) => {
-      if (resp?.user) injectPostQuestionnaireBanner(resp.user);
-    }).catch(() => {});
+    window.skillUpApi
+      .getMe()
+      .then((resp) => {
+        if (resp?.user) injectPostQuestionnaireBanner(resp.user);
+      })
+      .catch(() => {});
   }
 
   window.skillUpStudy = { checkAndShowPostBanner };

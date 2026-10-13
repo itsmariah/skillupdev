@@ -41,7 +41,7 @@ router.post("/api/study/questionnaire", authenticateRequest, async (req, res) =>
     userName: req.user.nome,
     userEmail: req.user.email,
     type,
-    studyVersion: type === "pre" ? STUDY_VERSION : (req.user.studyVersion || 1),
+    studyVersion: type === "pre" ? STUDY_VERSION : req.user.studyVersion || 1,
     submittedAt: new Date().toISOString(),
     data,
   };

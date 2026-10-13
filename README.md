@@ -4,6 +4,8 @@ Plataforma web gamificada voltada ao apromoramento de soft skills para desenvolv
 
 ![HTML5](https://img.shields.io/badge/HTML-E34F26?style=for-the-badge&logo=html5) ![CSS3](https://img.shields.io/badge/CSS-1572B6?style=for-the-badge&logo=css3) ![JavaScript](https://img.shields.io/badge/JavaScript-black?style=for-the-badge&logo=javascript) ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) ![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white) ![OpenAI API](https://img.shields.io/badge/OpenAI_API-412991?style=for-the-badge&logo=openai&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL_(Neon)-4169E1?style=for-the-badge&logo=postgresql&logoColor=white) ![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
 
+[![CI](https://github.com/itsmariah/skillupdev/actions/workflows/ci.yml/badge.svg)](https://github.com/itsmariah/skillupdev/actions/workflows/ci.yml)
+
 ## 📌 Sobre o projeto
 
 O **SkillUp Dev** foi idealizado como um projeto acadêmico (TCC) no Centro Universitário de João Pessoa (UNIPÊ), com o objetivo de ajudar desenvolvedores a aprimorarem habilidades interpessoais essenciais para o mercado de trabalho.
@@ -129,7 +131,7 @@ Base técnica para o projeto crescer com segurança.
 - [ ] Sessão em cookie seguro e limites de requisição por rota e por conta
 - [ ] Papéis de usuário no lugar do `isAdmin`
 - [x] Avaliação da IA mais robusta: saída estruturada, proteção contra manipulação da nota e registro de quem avaliou (IA ou heurística)
-- [ ] Lint, formatação e CI
+- [x] Lint, formatação e CI (ESLint, Prettier e GitHub Actions)
 
 ### Fase 2 — Experiência `P1/P2`
 

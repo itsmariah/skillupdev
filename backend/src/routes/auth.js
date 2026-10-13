@@ -44,7 +44,8 @@ function createSession(userId) {
   };
 }
 
-const REGISTER_CONFLICT_MESSAGE = "Não foi possível criar a conta. Verifique os dados e tente novamente.";
+const REGISTER_CONFLICT_MESSAGE =
+  "Não foi possível criar a conta. Verifique os dados e tente novamente.";
 
 router.post("/api/auth/register", authRateLimiter, async (req, res) => {
   const nome = String(req.body.nome || "").trim();
@@ -56,7 +57,9 @@ router.post("/api/auth/register", authRateLimiter, async (req, res) => {
   }
 
   if (nome.length > MAX_NAME_LENGTH) {
-    return res.status(400).json({ message: `O nome pode ter no máximo ${MAX_NAME_LENGTH} caracteres.` });
+    return res
+      .status(400)
+      .json({ message: `O nome pode ter no máximo ${MAX_NAME_LENGTH} caracteres.` });
   }
 
   if (senha.length < 6) {
@@ -182,7 +185,7 @@ router.post("/api/auth/forgot-password", authRateLimiter, async (req, res) => {
       return res.json(response);
     } else {
       console.error(
-        "Envio de e-mail não configurado. Defina EMAIL_PROVIDER, EMAIL_FROM e RESEND_API_KEY."
+        "Envio de e-mail não configurado. Defina EMAIL_PROVIDER, EMAIL_FROM e RESEND_API_KEY.",
       );
     }
   }

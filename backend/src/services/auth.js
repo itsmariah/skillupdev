@@ -28,7 +28,10 @@ function createToken() {
 }
 
 function hashToken(token) {
-  return crypto.createHash("sha256").update(String(token || "")).digest("hex");
+  return crypto
+    .createHash("sha256")
+    .update(String(token || ""))
+    .digest("hex");
 }
 
 function createPasswordResetToken(userId) {
