@@ -8,7 +8,7 @@
     "dev": "node backend/server.js",
     "check": "node --check backend/server.js",
     "backup": "node backend/scripts/backup-redis.js",
-    "test": "echo \"Sem testes automatizados configurados\""
+    "test": "node --test"
   },
   "repository": {
     "type": "git",

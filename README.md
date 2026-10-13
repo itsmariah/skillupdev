@@ -121,7 +121,8 @@ Correções pequenas e pontuais antes de qualquer funcionalidade nova.
 
 Base técnica para o projeto crescer com segurança.
 
-- [ ] Testes automatizados das regras atuais (XP, níveis, badges, sequências) antes de refatorar
+- [x] Testes automatizados das regras atuais (XP, níveis, badges, sequências) antes de refatorar (`npm test`)
+- [ ] Testes de integração da API (cadastro, login, reset de senha, envio de desafios, admin)
 - [ ] Dividir o `server.js` em módulos (auth, desafios, avaliação, gamificação, estudo)
 - [ ] Migrar o banco para PostgreSQL com migrações e importação dos dados atuais
 - [ ] Validação das variáveis de ambiente na inicialização
@@ -177,12 +178,6 @@ IA como coach auditável.
 - [ ] Logs estruturados, monitoramento de erros e alertas
 - [ ] Login com Google/Microsoft
 - [ ] Planos e cobrança
-
-
-## 👩‍💻 Autores
-
-* Maria Mariah Queiroga Fernandes Soares
-* Weslley Batista Vasconcelos
 
 
 ## 🎓 Instituição

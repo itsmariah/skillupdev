@@ -2652,4 +2652,40 @@ async function start() {
   });
 }
 
-start();
+// Só inicia quando executado diretamente (node backend/server.js); os testes importam o módulo.
+if (require.main === module) {
+  start();
+}
+
+module.exports = {
+  app,
+  CHALLENGES,
+  LEVELS,
+  BADGE_DEFINITIONS,
+  BADGE_XP,
+  ALL_CATEGORIES,
+  DEFAULT_AVATAR,
+  AVATAR_CATALOG,
+  DAILY_LOGIN_XP,
+  PERFECT_STREAK_TARGET,
+  PERFECT_STREAK_BONUS_XP,
+  getTodayKey,
+  isYesterdayKey,
+  getLevelDetails,
+  calculateLevel,
+  getProgress,
+  normalizeAvatarConfig,
+  hydrateUser,
+  deriveQualityTier,
+  buildXpBreakdown,
+  buildChallengeResult,
+  syncBadges,
+  buildBadgeCatalog,
+  applyDailyLoginReward,
+  buildHeuristicFeedback,
+  extractJsonObject,
+  createPasswordHash,
+  verifyPassword,
+  calcSusScore,
+  susClassification,
+};
