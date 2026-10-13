@@ -10,7 +10,7 @@ O **SkillUp Dev** foi idealizado como um projeto acadêmico (TCC) no Centro Univ
 
 A proposta da plataforma é proporcionar um ambiente interativo onde o usuário pode enfrentar situações do cotidiano profissional e receber feedbacks construtivos, promovendo aprendizado contínuo.
 
-💡 Atualmente, segue com planos de evolução e expansão de funcionalidades após a conclusão da graduação.
+💡 O TCC foi apresentado e aprovado, e o projeto segue em evolução depois da graduação. Veja a [linha do tempo](#️-linha-do-tempo) e o [roadmap pós-TCC](#-roadmap-pós-tcc).
 
 
 ## 🎯 Objetivo
@@ -82,13 +82,101 @@ Desenvolver uma solução digital que auxilie desenvolvedores a aprimorarem soft
 
 ## 📈 Status do projeto
 
-✅ Publicado e em desenvolvimento contínuo
+✅ TCC apresentado e aprovado · 🔧 Publicado e em evolução contínua após a graduação
 
-Este projeto continuará sendo aprimorado após a conclusão do TCC, com foco em:
+## 🗓️ Linha do tempo
 
-* Estudo empírico ampliado — amostras maiores, controle formal, acompanhamento longitudinal;
-* Modelos de IA mais avançados para feedback ainda mais preciso;
-* Expansão: trilhas de aprendizagem, histórico de feedbacks, novos módulos, integração com ambientes educacionais formais.
+### 🎓 Durante o TCC (mar–jun/2026)
+
+* **Mar/2026:** início do projeto e estrutura do front-end.
+* **Abr/2026:** back-end em Node.js/Express, primeiros desafios, gamificação (XP, níveis, badges) e avatar.
+* **Mai/2026:** recuperação de senha com envio de e-mail.
+* **Jun/2026:** rebalanceamento de XP, níveis e badges; reescrita dos desafios abertos com cenários únicos; estudo piloto (V1 e V2) com painel administrativo; publicação da plataforma.
+
+### 🔧 Depois do TCC
+
+* **Jul/2026:** persistência migrada de arquivo JSON para Upstash Redis; deploy movido para o Render.
+* **Out/2026:** auditoria técnica completa (arquitetura, segurança, performance, testes e produto), que deu origem ao roadmap abaixo.
+
+## 🧭 Roadmap pós-TCC
+
+A auditoria concluiu que o núcleo do produto — cenário realista + resposta aberta + feedback da IA — está validado e deve ser preservado. O que precisa evoluir é a base técnica, feita para um estudo piloto: a camada de dados, a organização do código e o modelo de "responder cada desafio uma única vez".
+
+A ordem das fases segue a prioridade: primeiro estabilizar, depois criar a base para crescer e só então expandir o produto.
+
+### Fase 0 — Estabilização `P0`
+
+Correções pequenas e pontuais antes de qualquer funcionalidade nova.
+
+- [ ] Rotacionar credenciais de serviços externos
+- [x] Script de backup do banco (`npm run backup`)
+- [x] Impedir que uma falha de leitura do banco sobrescreva os dados existentes
+- [x] Impedir pontuação duplicada em envios simultâneos do mesmo desafio
+- [x] Endurecer o fluxo de recuperação de senha (link de teste só em desenvolvimento, URL fixa por configuração, resposta sem revelar contas cadastradas)
+- [x] Timeouts nas chamadas à OpenAI e ao Resend
+- [x] Política de segurança de conteúdo (CSP) mais restrita e escape do feedback exibido na tela
+- [ ] Revisar dados antigos presentes no histórico do repositório
+
+### Fase 1 — Fundação `P1`
+
+Base técnica para o projeto crescer com segurança.
+
+- [ ] Testes automatizados das regras atuais (XP, níveis, badges, sequências) antes de refatorar
+- [ ] Dividir o `server.js` em módulos (auth, desafios, avaliação, gamificação, estudo)
+- [ ] Migrar o banco para PostgreSQL com migrações e importação dos dados atuais
+- [ ] Validação das variáveis de ambiente na inicialização
+- [ ] Sessão em cookie seguro e limites de requisição por rota e por conta
+- [ ] Papéis de usuário no lugar do `isAdmin`
+- [ ] Avaliação da IA mais robusta: saída estruturada, proteção contra manipulação da nota e registro de quem avaliou (IA ou heurística)
+- [ ] Lint, formatação e CI
+
+### Fase 2 — Experiência `P1/P2`
+
+Fazer a plataforma parecer um produto, não um projeto acadêmico.
+
+- [ ] Tirar o fluxo do estudo piloto da jornada principal (vira configuração)
+- [ ] Histórico de feedbacks e dashboard focado na evolução
+- [ ] Design system com tokens e ícones SVG
+- [ ] Acessibilidade (teclado, leitores de tela, formulários)
+- [ ] Imagens otimizadas e suporte a `prefers-reduced-motion`
+- [ ] Página de conta: perfil, troca de senha, exclusão e exportação dos dados
+- [ ] Política de privacidade, termos de uso e aviso sobre o uso de IA (LGPD)
+- [ ] Ajustes de regras e textos (dica do desafio, login diário, textos alinhados ao código)
+
+### Fase 3 — Soft skills `P2`
+
+Passar de "responder uma vez" para "praticar e evoluir".
+
+- [ ] Taxonomia de competências ligada aos critérios de avaliação
+- [ ] Várias tentativas por desafio e nota por critério
+- [ ] Trilhas por competência com dificuldade progressiva
+- [ ] Diário de reflexão após o feedback
+- [ ] Conteúdo gerenciado pelo painel admin, sem precisar de deploy
+- [ ] Badges por regras configuráveis
+
+### Fase 4 — IA `P2`
+
+IA como coach auditável.
+
+- [ ] Conjunto fixo de respostas para avaliar o avaliador a cada mudança de prompt ou modelo
+- [ ] Feedback que considera tentativas anteriores
+- [ ] Recomendação da próxima trilha e resumo de evolução
+- [ ] Geração de cenários com revisão humana
+- [ ] Monitoramento de custo e latência; remoção de dados pessoais antes do envio
+
+### Fase 5 — Empresas `P2/P3`
+
+- [ ] Organizações, times e convites
+- [ ] Papéis: colaborador, gestor, admin da organização e admin da plataforma
+- [ ] Dashboards agregados e anonimizados para gestores
+- [ ] Trilhas por empresa, relatórios e log de auditoria
+
+### Fase 6 — Operação `P3`
+
+- [ ] Hospedagem sem hibernação, ambiente de staging e backups testados
+- [ ] Logs estruturados, monitoramento de erros e alertas
+- [ ] Login com Google/Microsoft
+- [ ] Planos e cobrança
 
 
 ## 👩‍💻 Autores
