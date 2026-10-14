@@ -13,12 +13,14 @@
   --color-primary-deep: #4a59e8;
   --color-primary-bright: #6d7cff;
   --color-primary-rgb: 91, 108, 255;
+  /* Fundo de botões com texto branco: contraste de 4,7:1 ou mais (WCAG AA). */
+  --color-primary-action: #5563f0;
 
   /* Texto */
   --color-ink: #2c2457;
   --color-ink-soft: #3b3566;
   --color-text-muted: #5d647d;
-  --color-label: #6c78bd;
+  --color-label: #5662a8; /* 4,5:1 ou mais em todas as superfícies claras */
   --color-on-dark: #ffffff;
   --color-on-dark-soft: #d6d6ff;
 
@@ -47,6 +49,11 @@
   --color-rarity-rare: #3b82f6;
   --color-rarity-epic: #8b5cf6;
   --color-rarity-legendary: #d97706;
+  /* Texto sobre o fundo claro da raridade (4,5:1 ou mais). */
+  --color-rarity-common-text: #4b5563;
+  --color-rarity-rare-text: #1d4ed8;
+  --color-rarity-epic-text: #6d28d9;
+  --color-rarity-legendary-text: #92400e;
 
   /* Gradientes */
   --gradient-primary: linear-gradient(135deg, var(--color-primary), var(--color-primary-soft));
@@ -54,6 +61,13 @@
     135deg,
     var(--color-primary-deep),
     var(--color-primary-bright)
+  );
+  /* Botões e outros elementos com texto branco por cima. */
+  --gradient-action: linear-gradient(135deg, var(--color-primary-deep), var(--color-primary-action));
+  --gradient-action-hover: linear-gradient(
+    135deg,
+    var(--color-primary-strong),
+    var(--color-primary-deep)
   );
   --gradient-surface: linear-gradient(
     135deg,

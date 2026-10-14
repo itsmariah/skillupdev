@@ -65,7 +65,7 @@
       <div class="col-6 col-md-3">
         <div class="dashboard-box stat-card">
           <p class="stat-label">${c.label}</p>
-          <h3>${c.value}</h3>
+          <p class="stat-value">${c.value}</p>
           <p class="stat-helper">${c.helper}</p>
         </div>
       </div>
@@ -130,7 +130,7 @@
           <div class="likert-bar-track" style="min-width:80px; max-width:140px;">
             <div class="likert-bar-fill" style="width:${pct}%;"></div>
           </div>
-          <span class="likert-score">${display}<span style="font-size:0.7rem; color:#9ca3af;">/5</span></span>
+          <span class="likert-score">${display}<span style="font-size:0.7rem; color:var(--color-text-muted);">/5</span></span>
         </div>
       `;
       })
@@ -211,7 +211,7 @@
         <td>${statusBadge(p.studyPostDone)}</td>
         <td>${p.susScore !== null ? `<strong style="color:#2c2457">${p.susScore}</strong>` : '<span class="text-muted">—</span>'}</td>
         <td>
-          <button class="btn-delete-participant" data-id="${escapeHtml(p.id)}" data-nome="${escapeHtml(p.nome)}">
+          <button class="btn-delete-participant" data-id="${escapeHtml(p.id)}" data-nome="${escapeHtml(p.nome)}" aria-label="Excluir ${escapeHtml(p.nome)}">
             Excluir
           </button>
         </td>

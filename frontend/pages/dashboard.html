@@ -19,12 +19,13 @@
   <script src="../js/study.js" defer></script>
 </head>
 <body data-page="dashboard">
-  <div id="code-particles"></div>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div id="code-particles" aria-hidden="true"></div>
 
   <nav class="navbar fixed-top navbar-expand-lg navbar-dark navbar-custom">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center" href="../index.html">
-        <img src="../assets/images/SkillUpDevLogoSemNome.png" height="35" class="me-2" alt="Logo SkillUp Dev">
+        <img src="../assets/images/SkillUpDevLogoSemNome.png" height="35" class="me-2" alt="">
         <span>SkillUp Dev</span>
       </a>
 
@@ -36,14 +37,16 @@
     </div>
   </nav>
 
+  <main id="conteudo" tabindex="-1">
+
   <section class="dashboard-section">
     <div class="container">
-      <div id="rewardBanner" class="dashboard-banner d-none"></div>
+      <div id="rewardBanner" class="dashboard-banner d-none" role="status"></div>
 
       <div class="dashboard-header">
         <div>
           <p class="dashboard-kicker">Seu hub gamificado</p>
-          <h2>Olá, <span id="userName">Dev</span></h2>
+          <h1 class="h2">Olá, <span id="userName">Dev</span></h1>
           <p id="levelDescription">Continue evoluindo suas soft skills.</p>
         </div>
 
@@ -56,7 +59,7 @@
         <div class="progress-card-header">
           <div>
             <p class="progress-label">Nível atual</p>
-            <h4 id="userLevel">Nível 1</h4>
+            <p id="userLevel" class="h4">Nível 1</p>
           </div>
 
           <div class="progress-copy">
@@ -68,6 +71,7 @@
         <div class="progress mt-3">
           <div
             id="progressBar"
+            aria-label="Progresso até o próximo nível"
             class="progress-bar"
             style="width: 0%"
             role="progressbar"
@@ -82,7 +86,7 @@
         <div class="col-md-6 col-xl-3">
           <div class="dashboard-box stat-card">
             <p class="stat-label">Desafios concluídos</p>
-            <h3 id="challengeCount">0/0</h3>
+            <p id="challengeCount" class="stat-value">0/0</p>
             <p class="stat-helper">Cada conclusão soma progresso no nível.</p>
           </div>
         </div>
@@ -90,7 +94,7 @@
         <div class="col-md-6 col-xl-3">
           <div class="dashboard-box stat-card">
             <p class="stat-label">Pendentes</p>
-            <h3 id="pendingCount">0</h3>
+            <p id="pendingCount" class="stat-value">0</p>
             <p class="stat-helper">Desafios restantes para fechar a trilha.</p>
           </div>
         </div>
@@ -98,7 +102,7 @@
         <div class="col-md-6 col-xl-3">
           <div class="dashboard-box stat-card">
             <p class="stat-label">Badges</p>
-            <h3 id="badgeCount">0</h3>
+            <p id="badgeCount" class="stat-value">0</p>
             <p class="stat-helper">Conquistas desbloqueadas até aqui.</p>
           </div>
         </div>
@@ -106,7 +110,7 @@
         <div class="col-md-6 col-xl-3">
           <div class="dashboard-box stat-card">
             <p class="stat-label">Sequência perfeita</p>
-            <h3 id="perfectStreakCount">0</h3>
+            <p id="perfectStreakCount" class="stat-value">0</p>
             <p class="stat-helper">A cada 3 respostas ideais, bônus extra.</p>
           </div>
         </div>
@@ -117,7 +121,7 @@
           <div class="dashboard-panel h-100">
             <div class="dashboard-panel-header">
               <div>
-                <h3>Evolução por categoria</h3>
+                <h2 class="h3">Evolução por categoria</h2>
                 <p>Quantos desafios você concluiu e sua nota média em cada soft skill.</p>
               </div>
             </div>
@@ -130,7 +134,7 @@
           <div class="dashboard-panel h-100">
             <div class="dashboard-panel-header">
               <div>
-                <h3>Últimos feedbacks</h3>
+                <h2 class="h3">Últimos feedbacks</h2>
                 <p>O retorno mais recente dos seus desafios.</p>
               </div>
             </div>
@@ -149,7 +153,7 @@
           <div class="dashboard-panel">
             <div class="dashboard-panel-header">
               <div>
-                <h3>Badges</h3>
+                <h2 class="h3">Badges</h2>
                 <p>Suas conquistas aparecem aqui conforme você avança.</p>
               </div>
             </div>
@@ -163,7 +167,7 @@
           <div class="dashboard-panel">
             <div class="dashboard-panel-header">
               <div>
-                <h3>Avatar</h3>
+                <h2 class="h3">Avatar</h2>
                 <p>Itens novos são liberados conforme seu nível sobe.</p>
               </div>
             </div>
@@ -204,9 +208,9 @@
                   </div>
 
                   <div class="col-sm-6">
-                    <label class="form-label">Cor</label>
+                    <p id="avatarColorLabel" class="form-label mb-2">Cor</p>
                     <select id="avatarColor" class="d-none" aria-hidden="true"></select>
-                    <div id="avatarColorSwatches" class="avatar-color-swatches"></div>
+                    <div id="avatarColorSwatches" class="avatar-color-swatches" role="group" aria-labelledby="avatarColorLabel"></div>
                   </div>
 
                   <div class="col-sm-6">
@@ -215,15 +219,15 @@
                   </div>
 
                   <div class="col-sm-6">
-                    <label class="form-label">Tom de Pele</label>
+                    <p id="avatarSkinLabel" class="form-label mb-2">Tom de Pele</p>
                     <select id="avatarSkin" class="d-none" aria-hidden="true"></select>
-                    <div id="avatarSkinSwatches" class="avatar-color-swatches"></div>
+                    <div id="avatarSkinSwatches" class="avatar-color-swatches" role="group" aria-labelledby="avatarSkinLabel"></div>
                   </div>
 
                   <div class="col-sm-6">
-                    <label class="form-label">Cor do Cabelo</label>
+                    <p id="avatarHairColorLabel" class="form-label mb-2">Cor do Cabelo</p>
                     <select id="avatarHairColor" class="d-none" aria-hidden="true"></select>
-                    <div id="avatarHairColorSwatches" class="avatar-color-swatches"></div>
+                    <div id="avatarHairColorSwatches" class="avatar-color-swatches" role="group" aria-labelledby="avatarHairColorLabel"></div>
                   </div>
 
                   <div class="col-sm-6">
@@ -244,7 +248,7 @@
           <div class="dashboard-panel mt-4">
             <div class="dashboard-panel-header">
               <div>
-                <h3>Ritmo</h3>
+                <h2 class="h3">Ritmo</h2>
                 <p>Pequenos sinais para manter consistência na trilha.</p>
               </div>
             </div>
@@ -270,5 +274,7 @@
       </div>
     </div>
   </section>
+  </main>
+
 </body>
 </html>

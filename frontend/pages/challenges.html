@@ -18,16 +18,17 @@
   <script src="../js/study.js" defer></script>
 </head>
 <body data-page="challenges">
-  <div id="code-particles"></div>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div id="code-particles" aria-hidden="true"></div>
 
   <nav class="navbar fixed-top navbar-expand-lg navbar-dark navbar-custom">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center" href="../index.html">
-        <img src="../assets/images/SkillUpDevLogoSemNome.png" height="35" class="me-2" alt="Logo SkillUp Dev">
+        <img src="../assets/images/SkillUpDevLogoSemNome.png" height="35" class="me-2" alt="">
         <span>SkillUp Dev</span>
       </a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Abrir menu">
         <span class="navbar-toggler-icon"></span>
       </button>
 
@@ -56,20 +57,22 @@
     </div>
   </nav>
 
+  <main id="conteudo" tabindex="-1">
+
   <section class="challenge-section">
     <div class="container">
       <div class="challenge-card">
         <div class="challenge-header text-center mb-4">
           <p id="challengeProgress" class="text-muted small mb-1"></p>
           <p id="categoria" class="challenge-category mb-2">Categoria</p>
-          <h2 id="pergunta">Carregando desafio...</h2>
+          <h1 id="pergunta" class="h2">Carregando desafio...</h1>
           <p id="descricao" class="challenge-description">
             Aguarde enquanto preparamos sua próxima missão.
           </p>
         </div>
 
         <div id="respostas" class="challenge-content"></div>
-        <div id="feedback" class="mt-4"></div>
+        <div id="feedback" class="mt-4" aria-live="polite"></div>
 
         <div class="text-center">
           <button id="nextBtn" class="btn btn-primary mt-4 d-none" type="button">
@@ -79,6 +82,8 @@
       </div>
     </div>
   </section>
+
+  </main>
 
   <footer>
     <div class="container text-center">

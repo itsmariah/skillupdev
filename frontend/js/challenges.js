@@ -108,13 +108,15 @@
 
   function renderOpenChallenge(_challenge, container) {
     container.innerHTML = `
+    <label for="respostaUsuario" class="visually-hidden">Sua resposta</label>
     <textarea
       id="respostaUsuario"
+      aria-describedby="answerCounter"
       class="form-control challenge-textarea"
       placeholder="Digite sua resposta aqui..."
       maxlength="3000"
     ></textarea>
-    <div id="answerCounter" style="font-size:0.78rem;color:#9ca3af;text-align:right;margin-top:4px;">
+    <div id="answerCounter" class="answer-counter">
       0 / ${MIN_ANSWER_LENGTH} caracteres mínimos
     </div>
     <button
@@ -135,7 +137,7 @@
       counter.textContent = ok
         ? `${len} caracteres`
         : `${len} / ${MIN_ANSWER_LENGTH} caracteres mínimos`;
-      counter.style.color = ok ? "#10b981" : "#9ca3af";
+      counter.classList.toggle("is-ok", ok);
     });
 
     document.getElementById("submitOpenChallenge")?.addEventListener("click", async (e) => {

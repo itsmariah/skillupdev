@@ -18,12 +18,13 @@
   <script src="../js/history.js" defer></script>
 </head>
 <body data-page="history">
-  <div id="code-particles"></div>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div id="code-particles" aria-hidden="true"></div>
 
   <nav class="navbar fixed-top navbar-expand-lg navbar-dark navbar-custom">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center" href="../index.html">
-        <img src="../assets/images/SkillUpDevLogoSemNome.png" height="35" class="me-2" alt="Logo SkillUp Dev">
+        <img src="../assets/images/SkillUpDevLogoSemNome.png" height="35" class="me-2" alt="">
         <span>SkillUp Dev</span>
       </a>
 
@@ -51,12 +52,12 @@
     </div>
   </nav>
 
-  <main class="dashboard-section">
+  <main id="conteudo" class="dashboard-section" tabindex="-1">
     <div class="container">
       <div class="dashboard-header">
         <div>
           <p class="dashboard-kicker">Sua evolução</p>
-          <h2>Histórico de feedbacks</h2>
+          <h1 class="h2">Histórico de feedbacks</h1>
           <p>Reveja suas respostas e o retorno de cada desafio para enxergar onde você evoluiu.</p>
         </div>
 
@@ -67,7 +68,7 @@
         <div class="col-md-4">
           <div class="dashboard-box stat-card">
             <p class="stat-label">Desafios concluídos</p>
-            <h3 id="historyCompleted">0/0</h3>
+            <p id="historyCompleted" class="stat-value">0/0</p>
             <p class="stat-helper">Cada desafio fica registrado aqui.</p>
           </div>
         </div>
@@ -75,7 +76,7 @@
         <div class="col-md-4">
           <div class="dashboard-box stat-card">
             <p class="stat-label">Nota média</p>
-            <h3 id="historyAverage">—</h3>
+            <p id="historyAverage" class="stat-value">—</p>
             <p class="stat-helper">Média de todas as suas respostas.</p>
           </div>
         </div>
@@ -83,7 +84,7 @@
         <div class="col-md-4">
           <div class="dashboard-box stat-card">
             <p class="stat-label">Tendência</p>
-            <h3 id="historyTrend">—</h3>
+            <p id="historyTrend" class="stat-value">—</p>
             <p id="historyTrendHelper" class="stat-helper">Aparece a partir de 4 desafios.</p>
           </div>
         </div>
@@ -118,6 +119,7 @@
           </div>
         </form>
 
+        <h2 class="visually-hidden">Feedbacks</h2>
         <p id="historyCount" class="history-count" aria-live="polite"></p>
         <div id="historyLoading" class="dashboard-empty">Carregando histórico...</div>
         <div id="historyList" class="history-list"></div>

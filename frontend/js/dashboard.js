@@ -117,6 +117,8 @@
           data-color-id="${color.id}"
           style="--swatch-color: ${color.value};"
           title="${title}"
+          aria-label="${title}"
+          aria-pressed="${isSelected ? "true" : "false"}"
           ${disabledAttr}
         ></button>`;
       })
@@ -126,8 +128,12 @@
       btn.addEventListener("click", () => {
         select.value = btn.dataset.colorId;
         select.dispatchEvent(new Event("change"));
-        container.querySelectorAll(".avatar-swatch").forEach((s) => s.classList.remove("selected"));
+        container.querySelectorAll(".avatar-swatch").forEach((s) => {
+          s.classList.remove("selected");
+          s.setAttribute("aria-pressed", "false");
+        });
         btn.classList.add("selected");
+        btn.setAttribute("aria-pressed", "true");
       });
     });
   }
@@ -150,6 +156,8 @@
           data-skin-id="${tone.id}"
           style="--swatch-color: ${tone.skin};"
           title="${title}"
+          aria-label="${title}"
+          aria-pressed="${isSelected ? "true" : "false"}"
           ${disabledAttr}
         ></button>`;
       })
@@ -159,8 +167,12 @@
       btn.addEventListener("click", () => {
         select.value = btn.dataset.skinId;
         select.dispatchEvent(new Event("change"));
-        container.querySelectorAll(".avatar-swatch").forEach((s) => s.classList.remove("selected"));
+        container.querySelectorAll(".avatar-swatch").forEach((s) => {
+          s.classList.remove("selected");
+          s.setAttribute("aria-pressed", "false");
+        });
         btn.classList.add("selected");
+        btn.setAttribute("aria-pressed", "true");
       });
     });
   }
@@ -183,6 +195,8 @@
           data-hair-color-id="${color.id}"
           style="--swatch-color: ${color.value};"
           title="${title}"
+          aria-label="${title}"
+          aria-pressed="${isSelected ? "true" : "false"}"
           ${disabledAttr}
         ></button>`;
       })
@@ -192,8 +206,12 @@
       btn.addEventListener("click", () => {
         select.value = btn.dataset.hairColorId;
         select.dispatchEvent(new Event("change"));
-        container.querySelectorAll(".avatar-swatch").forEach((s) => s.classList.remove("selected"));
+        container.querySelectorAll(".avatar-swatch").forEach((s) => {
+          s.classList.remove("selected");
+          s.setAttribute("aria-pressed", "false");
+        });
         btn.classList.add("selected");
+        btn.setAttribute("aria-pressed", "true");
       });
     });
   }
@@ -380,7 +398,7 @@
           <article class="badge-card ${badge.unlocked ? "unlocked" : "locked"} rarity-${rarity}">
             <div class="badge-mark">${badge.name.charAt(0)}</div>
             <div class="badge-body">
-              <h4>${badge.name}</h4>
+              <h3 class="h4">${badge.name}</h3>
               <p>${badge.description}</p>
               <div class="badge-footer">
                 <span class="badge-rarity rarity-${rarity}">${rarityLabel}</span>

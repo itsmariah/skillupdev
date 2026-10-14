@@ -74,7 +74,7 @@
       .join("");
 
     return `
-      <h4 class="history-subtitle">Nota por critério</h4>
+      <h3 class="history-subtitle">Nota por critério</h3>
       <ul class="history-criteria">${rows}</ul>
     `;
   }
@@ -101,13 +101,13 @@
         </summary>
 
         <div class="history-item-body">
-          <h4 class="history-subtitle">Cenário</h4>
+          <h3 class="history-subtitle">Cenário</h3>
           <p>${escapeHtml(item.pergunta)}</p>
 
-          <h4 class="history-subtitle">Sua resposta</h4>
+          <h3 class="history-subtitle">Sua resposta</h3>
           <p class="history-answer">${escapeHtml(item.resposta)}</p>
 
-          <h4 class="history-subtitle">Feedback</h4>
+          <h3 class="history-subtitle">Feedback</h3>
           ${renderFeedback(item.feedback)}
 
           ${renderCriteria(item.criteriaScores)}

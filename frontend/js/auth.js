@@ -61,9 +61,13 @@
       return;
     }
 
+    // O "ícone" é um botão (acessível por teclado); a imagem fica dentro dele.
     const shouldShowPassword = input.type === "password";
+    const image = icon.querySelector("img") || icon;
     input.type = shouldShowPassword ? "text" : "password";
-    icon.src = shouldShowPassword ? "../assets/icons/eye.svg" : "../assets/icons/eye-slash.svg";
+    image.src = shouldShowPassword ? "../assets/icons/eye.svg" : "../assets/icons/eye-slash.svg";
+    icon.setAttribute("aria-pressed", String(shouldShowPassword));
+    icon.setAttribute("aria-label", shouldShowPassword ? "Ocultar senha" : "Mostrar senha");
   }
 
   function getQueryParam(name) {

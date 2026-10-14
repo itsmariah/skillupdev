@@ -60,7 +60,7 @@
     }
     .open-answer-user {
       font-size: 0.78rem;
-      color: #6c78bd;
+      color: var(--color-label);
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -78,7 +78,7 @@
       margin-bottom: 8px;
     }
     .admin-table th {
-      color: #6c78bd;
+      color: var(--color-label);
       font-size: 0.78rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -114,12 +114,13 @@
   </style>
 </head>
 <body data-page="admin">
-  <div id="code-particles"></div>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div id="code-particles" aria-hidden="true"></div>
 
   <nav class="navbar fixed-top navbar-expand-lg navbar-dark navbar-custom">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center" href="../index.html">
-        <img src="../assets/images/SkillUpDevLogoSemNome.png" height="35" class="me-2" alt="Logo SkillUp Dev">
+        <img src="../assets/images/SkillUpDevLogoSemNome.png" height="35" class="me-2" alt="">
         <span>SkillUp Dev</span>
       </a>
       <div class="ms-auto">
@@ -128,6 +129,8 @@
     </div>
   </nav>
 
+  <main id="conteudo" tabindex="-1">
+
   <section class="dashboard-section">
     <div class="container">
 
@@ -135,7 +138,7 @@
       <div class="dashboard-header">
         <div>
           <p class="dashboard-kicker">Estudo Piloto</p>
-          <h2>Painel do Administrador</h2>
+          <h1 class="h2">Painel do Administrador</h1>
           <p>Dados coletados dos participantes da pesquisa.</p>
         </div>
         <div class="d-flex gap-2 align-items-center">
@@ -168,7 +171,7 @@
             <div class="dashboard-panel h-100">
               <div class="dashboard-panel-header">
                 <div>
-                  <h3>SUS Score</h3>
+                  <h2 class="h3">SUS Score</h2>
                   <p>System Usability Scale (0–100)</p>
                 </div>
               </div>
@@ -186,7 +189,7 @@
             <div class="dashboard-panel h-100">
               <div class="dashboard-panel-header">
                 <div>
-                  <h3>Médias Likert</h3>
+                  <h2 class="h3">Médias Likert</h2>
                   <p>Escala de 1 a 5 por questão</p>
                 </div>
               </div>
@@ -201,7 +204,7 @@
             <div class="dashboard-panel">
               <div class="dashboard-panel-header">
                 <div>
-                  <h3>Respostas Abertas</h3>
+                  <h2 class="h3">Respostas Abertas</h2>
                   <p>O que os participantes disseram sobre a plataforma</p>
                 </div>
               </div>
@@ -216,7 +219,7 @@
             <div class="dashboard-panel">
               <div class="dashboard-panel-header">
                 <div>
-                  <h3>Participantes</h3>
+                  <h2 class="h3">Participantes</h2>
                   <p>Status individual de cada participante no estudo</p>
                 </div>
               </div>
@@ -231,7 +234,7 @@
                       <th>Questionário Pré</th>
                       <th>Questionário Pós</th>
                       <th>SUS Score</th>
-                      <th></th>
+                      <th><span class="visually-hidden">Ações</span></th>
                     </tr>
                   </thead>
                   <tbody id="participantsTable"></tbody>
@@ -247,5 +250,7 @@
       </div>
     </div>
   </section>
+  </main>
+
 </body>
 </html>

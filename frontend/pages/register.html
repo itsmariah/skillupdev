@@ -16,16 +16,17 @@
   <script src="../js/auth.js" defer></script>
 </head>
 <body data-page="register">
-  <div id="code-particles"></div>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div id="code-particles" aria-hidden="true"></div>
 
   <nav class="navbar fixed-top navbar-expand-lg navbar-dark navbar-custom">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center" href="../index.html">
-        <img src="../assets/images/SkillUpDevLogoSemNome.png" height="35" class="me-2" alt="Logo SkillUp Dev">
+        <img src="../assets/images/SkillUpDevLogoSemNome.png" height="35" class="me-2" alt="">
         <span>SkillUp Dev</span>
       </a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarRegister">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarRegister" aria-controls="navbarRegister" aria-expanded="false" aria-label="Abrir menu">
         <span class="navbar-toggler-icon"></span>
       </button>
 
@@ -45,12 +46,14 @@
     </div>
   </nav>
 
+  <main id="conteudo" tabindex="-1">
+
   <section class="auth-section d-flex align-items-center justify-content-center">
     <div class="auth-container">
       <div class="auth-card text-center">
         <img src="../assets/images/SkillUpDevLogoSemNome.png" height="60" class="mb-3" alt="Logo SkillUp Dev">
 
-        <h2>Criar conta</h2>
+        <h1 class="h2">Criar conta</h1>
         <p class="auth-subtitle">Comece sua jornada nas soft skills com nível, badges e avatar.</p>
 
         <div id="registerFeedback" class="alert d-none" role="alert"></div>
@@ -63,6 +66,7 @@
               <input
                 type="text"
                 id="nome"
+                autocomplete="name"
                 class="form-control input-with-icon-right"
                 placeholder="Seu nome completo"
                 required
@@ -79,6 +83,7 @@
               <input
                 type="email"
                 id="email"
+                autocomplete="email"
                 class="form-control input-with-icon-right"
                 placeholder="Digite seu email"
                 required
@@ -95,19 +100,17 @@
               <input
                 type="password"
                 id="senha"
+                autocomplete="new-password"
                 class="form-control input-with-icon-right"
                 placeholder="Crie uma senha"
                 required
                 minlength="6"
               >
 
-              <img
-                src="../assets/icons/eye-slash.svg"
-                id="toggleSenhaIcon"
-                class="input-icon-right"
-                style="cursor:pointer"
-                alt=""
-              >
+              <button type="button" id="toggleSenhaIcon" class="input-icon-right password-toggle"
+                aria-label="Mostrar senha" aria-pressed="false" aria-controls="senha">
+                <img src="../assets/icons/eye-slash.svg" alt="">
+              </button>
             </div>
           </div>
 
@@ -118,18 +121,16 @@
               <input
                 type="password"
                 id="confirmarSenha"
+                autocomplete="new-password"
                 class="form-control input-with-icon-right"
                 placeholder="Confirme sua senha"
                 required
               >
 
-              <img
-                src="../assets/icons/eye-slash.svg"
-                id="toggleConfirmarSenhaIcon"
-                class="input-icon-right"
-                style="cursor:pointer"
-                alt=""
-              >
+              <button type="button" id="toggleConfirmarSenhaIcon" class="input-icon-right password-toggle"
+                aria-label="Mostrar senha" aria-pressed="false" aria-controls="confirmarSenha">
+                <img src="../assets/icons/eye-slash.svg" alt="">
+              </button>
             </div>
           </div>
 
@@ -151,6 +152,8 @@
       </div>
     </div>
   </section>
+
+  </main>
 
   <footer>
     <div class="container text-center">

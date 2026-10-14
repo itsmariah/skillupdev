@@ -194,7 +194,7 @@
 
       .btn-primary{
 
-      background:var(--gradient-primary);
+      background:var(--gradient-action);
       border:none;
 
       padding:12px 28px;
@@ -221,7 +221,7 @@
       0 10px 25px rgba(91,108,255,0.5),
       0 0 15px rgba(122,136,255,0.6);
 
-      background:var(--gradient-primary-hover);
+      background:var(--gradient-action-hover);
 
       }
 
@@ -250,7 +250,7 @@
       align-items:center;
       justify-content:center;
 
-      background:var(--gradient-primary);
+      background:var(--gradient-action);
       border:none;
       border-radius:50%;
 
@@ -285,7 +285,7 @@
       0 10px 25px rgba(91,108,255,0.5),
       0 0 15px rgba(122,136,255,0.6);
 
-      background:var(--gradient-primary-hover);
+      background:var(--gradient-action-hover);
 
       }
 
@@ -375,6 +375,7 @@
       box-shadow:var(--shadow-xl);
       }
 
+      .feature-card h3,
       .feature-card h4{
 
       margin-top:15px;
@@ -512,6 +513,7 @@
       }
 
       /* TÍTULO */
+      .auth-card h1,
       .auth-card h2 {
          color: var(--color-ink);
          font-weight: 800;
@@ -670,6 +672,8 @@
          box-shadow: var(--shadow-xl);
       }
 
+      .feature-box h2,
+      .feature-box h3,
       .feature-box h4 {
          margin-top: 15px;
          color: var(--color-ink);
@@ -708,6 +712,7 @@
       }
 
       /* HEADER */
+      .dashboard-header h1,
       .dashboard-header h2,
       .dashboard-header p {
          font-weight: 800;
@@ -779,6 +784,7 @@
       color: var(--color-primary);
    }
 
+   .challenge-header h1,
    .challenge-header h2 {
       color: var(--color-ink);
       font-weight: 800;
@@ -844,13 +850,13 @@
 
    /* TEXTO DO FEEDBACK */
    .feedback-box p {
-      color: var(--color-primary) !important;
+      color: var(--color-primary-strong) !important;
       margin: 0;
    }
 
    /* XP */
    .feedback-score {
-      color: var(--color-primary) !important;
+      color: var(--color-primary-strong) !important;
       font-weight: 700;
       margin-bottom: 8px;
    }
@@ -861,6 +867,7 @@
          padding: 24px;
       }
 
+      .challenge-header h1,
       .challenge-header h2 {
          font-size: 24px;
       }
@@ -960,6 +967,7 @@
       }
 
       .progress-card h4,
+      .progress-card .h4,
       .progress-copy p,
       .progress-copy small {
          color: var(--color-ink);
@@ -974,7 +982,9 @@
          text-align: left;
       }
 
-      .stat-card h3 {
+      .stat-card h3,
+      .stat-card .stat-value {
+         line-height: 1.2;
          color: var(--color-ink);
          font-size: 34px;
          font-weight: 800;
@@ -1011,6 +1021,7 @@
          margin-bottom: 18px;
       }
 
+      .dashboard-panel-header h2,
       .dashboard-panel-header h3 {
          color: var(--color-ink);
          font-weight: 800;
@@ -1043,9 +1054,14 @@
          box-shadow: 0 12px 24px rgba(91,108,255,0.12);
       }
 
+      /* Bloqueada: só a marca fica apagada; o texto mantém o contraste para ser lido. */
       .badge-card.locked {
          background: var(--color-surface-soft);
-         opacity: 0.75;
+      }
+
+      .badge-card.locked .badge-mark {
+         opacity: 0.5;
+         filter: grayscale(1);
       }
 
       .badge-card:hover {
@@ -1065,6 +1081,7 @@
          flex-shrink: 0;
       }
 
+      .badge-card h3,
       .badge-card h4 {
          color: var(--color-ink);
          font-size: 18px;
@@ -1098,7 +1115,7 @@
          padding: 5px 10px;
          border-radius: var(--radius-pill);
          background: rgba(91,108,255,0.1);
-         color: var(--color-primary);
+         color: var(--color-primary-strong);
          font-size: 12px;
          font-weight: 700;
       }
@@ -1114,10 +1131,10 @@
          letter-spacing: 0.05em;
       }
 
-      .badge-rarity.rarity-comum   { background: rgba(107,114,128,0.12); color: var(--color-rarity-common); }
-      .badge-rarity.rarity-raro    { background: rgba(59,130,246,0.12);  color: var(--color-rarity-rare); }
-      .badge-rarity.rarity-epico   { background: rgba(139,92,246,0.12);  color: var(--color-rarity-epic); }
-      .badge-rarity.rarity-lendario{ background: rgba(217,119,6,0.12);   color: var(--color-rarity-legendary); }
+      .badge-rarity.rarity-comum   { background: rgba(107,114,128,0.12); color: var(--color-rarity-common-text); }
+      .badge-rarity.rarity-raro    { background: rgba(59,130,246,0.12);  color: var(--color-rarity-rare-text); }
+      .badge-rarity.rarity-epico   { background: rgba(139,92,246,0.12);  color: var(--color-rarity-epic-text); }
+      .badge-rarity.rarity-lendario{ background: rgba(217,119,6,0.12);   color: var(--color-rarity-legendary-text); }
 
       /* bordas sutis por raridade */
       .badge-card.unlocked.rarity-raro    { box-shadow: 0 12px 24px rgba(59,130,246,0.10); }
@@ -1988,7 +2005,7 @@
       .feedback-evaluator-note {
          margin-top: 8px !important;
          font-size: 0.85rem;
-         opacity: 0.75;
+         color: var(--color-text-muted) !important;
       }
 
       .result-badges {
@@ -2283,3 +2300,80 @@
          }
       }
 /* FIM HISTÓRICO */
+
+/* ACESSIBILIDADE */
+      /* Link para pular a navegação: fica fora da tela até receber foco pelo teclado. */
+      .skip-link {
+         position: fixed;
+         top: var(--space-3);
+         left: var(--space-3);
+         z-index: 2000;
+         padding: var(--space-3) var(--space-4);
+         border-radius: var(--radius-sm);
+         background: var(--color-surface);
+         color: var(--color-ink);
+         font-weight: var(--font-weight-bold);
+         text-decoration: none;
+         transform: translateY(-200%);
+      }
+
+      .skip-link:focus {
+         transform: none;
+         outline: 3px solid var(--color-primary);
+         outline-offset: 2px;
+      }
+
+      /* O <main> recebe foco pelo link acima, sem mostrar contorno. */
+      main:focus {
+         outline: none;
+      }
+
+      /* Foco visível para quem navega pelo teclado (o mouse não mostra o contorno). */
+      a:focus-visible,
+      button:focus-visible,
+      summary:focus-visible,
+      [tabindex]:not([tabindex="-1"]):focus-visible {
+         outline: 3px solid var(--color-primary);
+         outline-offset: 2px;
+      }
+
+      .navbar a:focus-visible,
+      .navbar button:focus-visible,
+      footer a:focus-visible {
+         outline-color: var(--color-on-dark);
+      }
+
+      .avatar-swatch:focus-visible {
+         outline: 3px solid var(--color-ink);
+         outline-offset: 3px;
+      }
+
+      /* Botão de mostrar/ocultar senha, posicionado dentro do campo. */
+      .password-toggle {
+         height: 18px;
+         background: none;
+         border: none;
+         padding: 0;
+         cursor: pointer;
+         line-height: 0;
+      }
+
+      .password-toggle:focus-visible {
+         opacity: 1;
+      }
+
+      .password-toggle img {
+         width: 100%;
+         height: 100%;
+      }
+      .answer-counter {
+         font-size: 0.78rem;
+         color: var(--color-text-muted);
+         text-align: right;
+         margin-top: var(--space-1);
+      }
+
+      .answer-counter.is-ok {
+         color: var(--color-success);
+      }
+/* FIM ACESSIBILIDADE */

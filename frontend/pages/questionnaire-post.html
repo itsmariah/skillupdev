@@ -77,16 +77,19 @@
   </style>
 </head>
 <body data-page="questionnaire-post">
-  <div id="code-particles"></div>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div id="code-particles" aria-hidden="true"></div>
 
   <nav class="navbar fixed-top navbar-expand-lg navbar-dark navbar-custom">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center" href="../index.html">
-        <img src="../assets/images/SkillUpDevLogoSemNome.png" height="35" class="me-2" alt="Logo SkillUp Dev">
+        <img src="../assets/images/SkillUpDevLogoSemNome.png" height="35" class="me-2" alt="">
         <span>SkillUp Dev</span>
       </a>
     </div>
   </nav>
+
+  <main id="conteudo" tabindex="-1">
 
   <section class="auth-section d-flex align-items-start justify-content-center" style="padding-bottom:60px;">
     <div class="auth-container">
@@ -94,7 +97,7 @@
         <img src="../assets/images/SkillUpDevLogoSemNome.png" height="55" class="mb-3" alt="Logo SkillUp Dev">
 
         <div class="step-badge">Etapa 2 de 2 — Questionário Final</div>
-        <h2>Avaliação da Experiência</h2>
+        <h1 class="h2">Avaliação da Experiência</h1>
         <p class="auth-subtitle">Obrigado por usar a plataforma! Suas respostas são essenciais para nossa pesquisa.</p>
 
         <div id="postFeedback" class="alert d-none" role="alert"></div>
@@ -172,6 +175,8 @@
       </div>
     </div>
   </section>
+
+  </main>
 
   <footer>
     <div class="container text-center">
