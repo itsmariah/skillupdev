@@ -8,6 +8,7 @@
 
   const state = {
     taxonomy: [],
+    difficulties: [],
     challenges: [],
     current: null, // detalhe do desafio em edição (null = novo)
   };
@@ -25,6 +26,10 @@
 
   function setFeedback(message, type = "success") {
     window.skillUpAuth.setFeedback("contentFeedback", message, type);
+  }
+
+  function difficultyName(id) {
+    return state.difficulties.find((difficulty) => difficulty.id === id)?.nome || "—";
   }
 
   function skillName(id) {
@@ -48,11 +53,13 @@
   function matchesFilters(item) {
     const status = $("filterStatus").value;
     const category = $("filterCategory").value;
+    const difficulty = $("filterDifficulty").value;
     const search = $("filterSearch").value.trim().toLowerCase();
 
     if (status === "pendente" && !(item.status === "publicado" && item.hasDraft)) return false;
     if (status && status !== "pendente" && item.status !== status) return false;
     if (category && item.categoria !== category) return false;
+    if (difficulty && item.dificuldade !== difficulty) return false;
     if (search && !String(item.titulo).toLowerCase().includes(search)) return false;
     return true;
   }
@@ -67,6 +74,7 @@
         <tr>
           <td><strong>${escapeHtml(item.titulo)}</strong></td>
           <td>${escapeHtml(item.categoria)}</td>
+          <td>${escapeHtml(difficultyName(item.dificuldade))}</td>
           <td>${item.tipo === "aberto" ? "Aberto" : "Múltipla escolha"}</td>
           <td><span class="content-status status-${escapeHtml(item.status)}">${escapeHtml(statusLabel(item))}</span></td>
           <td>${item.attempts}</td>
@@ -77,7 +85,7 @@
         </tr>`,
           )
           .join("")
-      : '<tr><td colspan="6">Nenhum desafio com esses filtros.</td></tr>';
+      : '<tr><td colspan="7">Nenhum desafio com esses filtros.</td></tr>';
 
     $("challengeRows")
       .querySelectorAll("[data-edit]")
@@ -88,6 +96,7 @@
     const data = await window.skillUpApi.request("/api/admin/challenges");
     state.challenges = data.challenges;
     state.taxonomy = data.competencias;
+    state.difficulties = data.dificuldades;
     renderList();
   }
 
@@ -168,6 +177,7 @@
   function readForm() {
     const content = {
       categoria: $("fieldCategoria").value,
+      dificuldade: $("fieldDificuldade").value,
       titulo: $("fieldTitulo").value,
       pergunta: $("fieldPergunta").value,
       descricao: $("fieldDescricao").value,
@@ -189,6 +199,7 @@
   function fillForm(tipo, content) {
     document.querySelector(`input[name="tipo"][value="${tipo}"]`).checked = true;
     $("fieldCategoria").value = content?.categoria || state.taxonomy[0]?.nome || "";
+    $("fieldDificuldade").value = content?.dificuldade || "basico";
     $("fieldTitulo").value = content?.titulo || "";
     $("fieldPergunta").value = content?.pergunta || "";
     $("fieldDescricao").value = content?.descricao || "";
@@ -215,6 +226,7 @@
 
     $("preview").innerHTML = `
       <p class="challenge-category mb-1">${escapeHtml(content.categoria)}${content.titulo ? ` | ${escapeHtml(content.titulo)}` : ""}</p>
+      <p class="form-hint mb-2">Nível: ${escapeHtml(difficultyName(content.dificuldade))}</p>
       <p class="content-preview-question">${escapeHtml(content.pergunta) || "<em>(cenário)</em>"}</p>
       ${content.descricao ? `<p>${escapeHtml(content.descricao)}</p>` : ""}
       ${skills.length ? `<p class="form-hint">${tipo === "aberto" ? "A IA avalia cada habilidade" : "Habilidades trabalhadas"}: ${escapeHtml(skills.join(", "))}.</p>` : ""}
@@ -436,6 +448,14 @@
       $("fieldCategoria").innerHTML = categories
         .map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
         .join("");
+      const difficultyOptions = state.difficulties
+        .map(
+          (difficulty) =>
+            `<option value="${escapeHtml(difficulty.id)}">${escapeHtml(difficulty.nome)}</option>`,
+        )
+        .join("");
+      $("fieldDificuldade").innerHTML = difficultyOptions;
+      $("filterDifficulty").innerHTML += difficultyOptions;
       $("filterCategory").innerHTML += categories
         .map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
         .join("");

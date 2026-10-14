@@ -86,6 +86,7 @@ async function listChallengesForAdmin(db = getClient()) {
     hasDraft: row.has_draft,
     titulo: row.latest_content.titulo,
     categoria: row.latest_content.categoria,
+    dificuldade: row.latest_content.dificuldade || null,
     attempts: row.attempts,
     updatedAt: toIso(row.updated_at),
   }));

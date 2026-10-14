@@ -368,6 +368,17 @@ const COMPETENCIES = [
   },
 ];
 
+// Níveis de dificuldade dos desafios (base das trilhas).
+// Básico: situação clara, um interlocutor, uma resposta claramente melhor.
+// Intermediário: interesses em conflito, duas habilidades em jogo, um trade-off a explicar.
+// Avançado: ambiguidade, várias partes, pressão e nenhuma resposta óbvia (quase sempre aberto).
+const DIFFICULTIES = [
+  { id: "basico", nome: "Básico" },
+  { id: "intermediario", nome: "Intermediário" },
+  { id: "avancado", nome: "Avançado" },
+];
+const DIFFICULTY_IDS = DIFFICULTIES.map((difficulty) => difficulty.id);
+
 const SKILLS = COMPETENCIES.flatMap((competency) =>
   competency.habilidades.map((skill) => ({ ...skill, competencia: competency.id })),
 );
@@ -398,6 +409,8 @@ function buildPublicTaxonomy() {
 }
 
 module.exports = {
+  DIFFICULTIES,
+  DIFFICULTY_IDS,
   COMPETENCIES,
   SKILLS,
   getSkillById,

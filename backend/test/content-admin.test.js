@@ -42,6 +42,7 @@ const sessionOf = (response) =>
 
 const openContent = (overrides = {}) => ({
   categoria: "Comunicação",
+  dificuldade: "intermediario",
   habilidades: ["clareza-objetividade", "empatia"],
   titulo: "Reunião Atrasada",
   pergunta: "A reunião com o cliente começou e o time ainda não chegou. O que você diz?",
@@ -126,6 +127,13 @@ test("conteúdo inválido é recusado com a lista de erros", async () => {
   assert.equal(status, 400);
   assert.ok(data.errors.some((error) => error.startsWith("Alternativas")));
   assert.ok(data.errors.some((error) => error.includes("nao-existe")));
+  assert.ok(data.errors.some((error) => error.startsWith("Dificuldade")) === false);
+
+  const noLevel = await api("POST", "/api/admin/challenges", {
+    session: admin,
+    body: { tipo: "aberto", content: { ...openContent(), dificuldade: "facil" } },
+  });
+  assert.ok(noLevel.data.errors.some((error) => error.startsWith("Dificuldade")));
 });
 
 let createdId;
@@ -149,6 +157,7 @@ test("desafio novo nasce como rascunho e só aparece depois de publicado", async
 
   const listed = (await userChallenges()).find((item) => item.id === createdId);
   assert.equal(listed.titulo, "Reunião Atrasada");
+  assert.equal(listed.dificuldade, "intermediario");
   assert.deepEqual(
     listed.habilidades.map((skill) => skill.id),
     ["clareza-objetividade", "empatia"],

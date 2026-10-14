@@ -56,3 +56,43 @@ test("migração 003 converte is_admin em role e recusa papéis desconhecidos", 
     await database.close();
   }
 });
+
+test("migração 008 classifica os desafios que já estavam no banco, sem criar versões", async () => {
+  const database = new PGlite("memory://");
+
+  try {
+    for (const name of [
+      "001_initial.sql",
+      "002_attempt_evaluation.sql",
+      "003_user_roles.sql",
+      "004_terms_acceptance.sql",
+      "005_challenge_catalog.sql",
+      "006_multiple_attempts.sql",
+      "007_reflections.sql",
+    ]) {
+      await database.exec(migration(name));
+    }
+    await database.exec(`
+      INSERT INTO challenges (id, tipo, status, published_version) VALUES
+        ('communication-closed-1', 'fechado', 'publicado', 1),
+        ('communication-open-1', 'aberto', 'publicado', 1),
+        ('communication-open-2', 'aberto', 'publicado', 1);
+      INSERT INTO challenge_versions (challenge_id, version, content) VALUES
+        ('communication-closed-1', 1, '{"titulo": "A"}'),
+        ('communication-open-1', 1, '{"titulo": "B"}'),
+        ('communication-open-2', 1, '{"titulo": "C"}');
+    `);
+    await database.exec(migration("008_challenge_difficulty.sql"));
+
+    const { rows } = await database.query(
+      "SELECT challenge_id, version, content->>'dificuldade' AS level, content->>'titulo' AS titulo FROM challenge_versions ORDER BY challenge_id",
+    );
+    assert.deepEqual(rows, [
+      { challenge_id: "communication-closed-1", version: 1, level: "basico", titulo: "A" },
+      { challenge_id: "communication-open-1", version: 1, level: "intermediario", titulo: "B" },
+      { challenge_id: "communication-open-2", version: 1, level: "avancado", titulo: "C" },
+    ]);
+  } finally {
+    await database.close();
+  }
+});

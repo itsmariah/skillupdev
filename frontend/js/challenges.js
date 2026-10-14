@@ -4,6 +4,12 @@
   // ?desafio=ID abre um desafio específico (inclusive já respondido) para refazer.
   let retryMode = false;
 
+  const DIFFICULTY_LABEL = {
+    basico: "Básico",
+    intermediario: "Intermediário",
+    avancado: "Avançado",
+  };
+
   document.addEventListener("DOMContentLoaded", async () => {
     if (!window.skillUpAuth?.requireSession()) {
       return;
@@ -82,9 +88,10 @@
       return;
     }
 
-    categoryElement.textContent = challenge.titulo
-      ? `${challenge.categoria} | ${challenge.titulo}`
-      : challenge.categoria;
+    const level = DIFFICULTY_LABEL[challenge.dificuldade];
+    categoryElement.textContent = [challenge.categoria, challenge.titulo, level]
+      .filter(Boolean)
+      .join(" | ");
     questionElement.textContent = challenge.pergunta;
     descriptionElement.textContent = buildChallengeDescription(challenge);
     answersContainer.innerHTML = "";

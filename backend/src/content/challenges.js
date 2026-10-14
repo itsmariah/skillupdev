@@ -8,6 +8,7 @@ const OPEN_CHALLENGE_XP_MULTIPLIER = 1.2;
 function createClosedChallenge({
   id,
   categoria,
+  dificuldade,
   habilidades,
   titulo,
   pergunta,
@@ -19,6 +20,7 @@ function createClosedChallenge({
     id,
     tipo: "fechado",
     categoria,
+    dificuldade,
     habilidades,
     titulo,
     pergunta,
@@ -32,11 +34,21 @@ function createClosedChallenge({
 }
 
 // Nos abertos, as habilidades são os critérios da avaliação: a IA dá uma nota para cada uma.
-function createOpenChallenge({ id, categoria, habilidades, titulo, pergunta, descricao, dica }) {
+function createOpenChallenge({
+  id,
+  categoria,
+  dificuldade,
+  habilidades,
+  titulo,
+  pergunta,
+  descricao,
+  dica,
+}) {
   return {
     id,
     tipo: "aberto",
     categoria,
+    dificuldade,
     habilidades,
     titulo,
     pergunta,
@@ -51,6 +63,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "communication-closed-1",
     categoria: "Comunicação",
+    dificuldade: "basico",
     habilidades: ["empatia", "transparencia"],
     titulo: "Cliente Difícil",
     pergunta:
@@ -78,6 +91,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "communication-closed-2",
     categoria: "Comunicação",
+    dificuldade: "basico",
     habilidades: ["adaptacao-publico", "transparencia"],
     titulo: "Explicando Problema Técnico",
     pergunta:
@@ -106,6 +120,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "communication-closed-3",
     categoria: "Comunicação",
+    dificuldade: "basico",
     habilidades: ["assertividade", "empatia"],
     titulo: "Feedback Construtivo",
     pergunta: "Um colega entregou um código ruim. Como você reage?",
@@ -133,6 +148,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "teamwork-closed-1",
     categoria: "Trabalho em Equipe",
+    dificuldade: "basico",
     habilidades: ["colaboracao", "priorizacao"],
     titulo: "Priorizar Tarefas com a Equipe",
     pergunta: "Sua equipe tem 6 tarefas e um prazo curto. Como organizar isso?",
@@ -160,6 +176,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "teamwork-closed-2",
     categoria: "Trabalho em Equipe",
+    dificuldade: "basico",
     habilidades: ["colaboracao", "empatia"],
     titulo: "Conflito entre Colegas",
     pergunta: "Dois devs discordam fortemente sobre uma decisão técnica. O que você faz?",
@@ -187,6 +204,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "teamwork-closed-3",
     categoria: "Trabalho em Equipe",
+    dificuldade: "basico",
     habilidades: ["colaboracao", "metodo-raciocinio"],
     titulo: "Decisão Coletiva",
     pergunta: "O time precisa escolher entre duas arquiteturas possíveis. Como conduzir a decisão?",
@@ -214,6 +232,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "problem-solving-closed-1",
     categoria: "Resolução de Problemas",
+    dificuldade: "basico",
     habilidades: ["investigacao", "controle-emocional-resiliencia"],
     titulo: "Produção Caiu",
     pergunta: "O sistema caiu em produção. Qual é sua primeira postura?",
@@ -242,6 +261,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "problem-solving-closed-2",
     categoria: "Resolução de Problemas",
+    dificuldade: "basico",
     habilidades: ["priorizacao", "visao-tecnica"],
     titulo: "Bug Urgente vs Feature Nova",
     pergunta: "Um bug crítico e uma feature nova disputam seu tempo. O que você prioriza?",
@@ -269,6 +289,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "problem-solving-closed-3",
     categoria: "Resolução de Problemas",
+    dificuldade: "basico",
     habilidades: ["investigacao", "metodo-raciocinio"],
     titulo: "Estratégia de Solução",
     pergunta: "Você está lidando com um erro intermitente difícil. Como aborda a solução?",
@@ -296,6 +317,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "time-management-closed-1",
     categoria: "Gestão de Tempo",
+    dificuldade: "basico",
     habilidades: ["priorizacao", "planejamento-organizacao"],
     titulo: "Sprint Conflitante",
     pergunta: "Você recebeu 3 tasks urgentes ao mesmo tempo. Como decide o que fazer primeiro?",
@@ -323,6 +345,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "time-management-closed-2",
     categoria: "Gestão de Tempo",
+    dificuldade: "basico",
     habilidades: ["foco", "priorizacao"],
     titulo: "Interrupções",
     pergunta:
@@ -351,6 +374,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "time-management-closed-3",
     categoria: "Gestão de Tempo",
+    dificuldade: "basico",
     habilidades: ["planejamento-organizacao", "metodo-raciocinio"],
     titulo: "Estimar Esforço",
     pergunta: "Uma nova feature é desconhecida para o time. Como você estima o esforço?",
@@ -378,6 +402,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "emotional-intelligence-closed-1",
     categoria: "Inteligência Emocional",
+    dificuldade: "basico",
     habilidades: ["responsabilidade-maturidade", "controle-emocional-resiliencia"],
     titulo: "Receber Crítica",
     pergunta: "Você recebeu um code review duro. Como reage?",
@@ -404,6 +429,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "emotional-intelligence-closed-2",
     categoria: "Inteligência Emocional",
+    dificuldade: "basico",
     habilidades: ["negociacao-prazos", "controle-emocional-resiliencia", "transparencia"],
     titulo: "Pressão",
     pergunta: "Você recebeu um prazo praticamente impossível. Como reage?",
@@ -431,6 +457,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "emotional-intelligence-closed-3",
     categoria: "Inteligência Emocional",
+    dificuldade: "basico",
     habilidades: ["controle-emocional-resiliencia", "responsabilidade-maturidade"],
     titulo: "Frustração de Projeto Falho",
     pergunta: "Uma entrega foi cancelada e o projeto falhou. Como lidar com isso?",
@@ -458,6 +485,7 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "communication-open-1",
     categoria: "Comunicação",
+    dificuldade: "intermediario",
     titulo: "Alinhando Expectativas",
     pergunta:
       "Você percebe que o que o cliente pediu foi interpretado de formas diferentes pelos membros do time. Como comunicaria isso antes de continuar o desenvolvimento?",
@@ -467,6 +495,7 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "communication-open-2",
     categoria: "Comunicação",
+    dificuldade: "avancado",
     titulo: "Má Notícia",
     pergunta:
       "Um prazo importante não vai ser cumprido. Como você comunicaria isso ao gestor e ao cliente?",
@@ -476,6 +505,7 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "communication-open-3",
     categoria: "Comunicação",
+    dificuldade: "intermediario",
     titulo: "Apresentação Técnica",
     pergunta:
       "Você precisa apresentar o progresso do projeto para um grupo de executivos sem background técnico. Como estruturaria essa comunicação?",
@@ -485,6 +515,7 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "teamwork-open-1",
     categoria: "Trabalho em Equipe",
+    dificuldade: "intermediario",
     titulo: "Novo no Time",
     pergunta:
       "Um desenvolvedor júnior acabou de entrar no time no meio de uma sprint. Como você o integraria sem prejudicar as entregas?",
@@ -494,6 +525,7 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "teamwork-open-2",
     categoria: "Trabalho em Equipe",
+    dificuldade: "avancado",
     titulo: "Colega que Não Entrega",
     pergunta:
       "Um membro do time repetidamente não entrega o que prometeu nas sprints. Como você abordaria essa situação?",
@@ -503,6 +535,7 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "teamwork-open-3",
     categoria: "Trabalho em Equipe",
+    dificuldade: "intermediario",
     titulo: "Time Remoto",
     pergunta:
       "O time está distribuído em fusos horários diferentes e tem dificuldade de se alinhar nas entregas. Como você melhoraria a colaboração?",
@@ -512,6 +545,7 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "problem-solving-open-1",
     categoria: "Resolução de Problemas",
+    dificuldade: "avancado",
     titulo: "Dívida Técnica",
     pergunta:
       "O código do projeto acumulou muita dívida técnica e está comprometendo a velocidade do time. Como você abordaria esse problema?",
@@ -521,6 +555,7 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "problem-solving-open-2",
     categoria: "Resolução de Problemas",
+    dificuldade: "intermediario",
     titulo: "Sistema Lento",
     pergunta:
       "Após um deploy, usuários começam a reclamar que o sistema ficou lento. Como você investigaria a causa?",
@@ -530,6 +565,7 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "problem-solving-open-3",
     categoria: "Resolução de Problemas",
+    dificuldade: "intermediario",
     titulo: "Requisito Ambíguo",
     pergunta:
       "Você recebeu uma especificação confusa que pode ser interpretada de formas muito diferentes. O que você faz antes de começar a desenvolver?",
@@ -539,6 +575,7 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "time-management-open-1",
     categoria: "Gestão de Tempo",
+    dificuldade: "intermediario",
     titulo: "Planejamento da Semana",
     pergunta:
       "Você tem uma semana com muitas entregas e reuniões previstas. Como planeja para garantir que o essencial seja feito?",
@@ -548,6 +585,7 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "time-management-open-2",
     categoria: "Gestão de Tempo",
+    dificuldade: "avancado",
     titulo: "Dizer Não",
     pergunta:
       "Seu gestor pede que você encaixe mais uma tarefa numa semana já lotada. Como você responderia?",
@@ -557,6 +595,7 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "time-management-open-3",
     categoria: "Gestão de Tempo",
+    dificuldade: "intermediario",
     titulo: "Tarefa Difícil",
     pergunta:
       "Você está evitando uma tarefa complexa e desconfortável há dias, mesmo sabendo que ela é importante. Como encararia isso?",
@@ -566,6 +605,7 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "emotional-intelligence-open-1",
     categoria: "Inteligência Emocional",
+    dificuldade: "intermediario",
     titulo: "Síndrome do Impostor",
     pergunta:
       "Você foi promovido mas sente que não é bom o suficiente para o novo cargo. Como lida com esse sentimento?",
@@ -579,6 +619,7 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "emotional-intelligence-open-2",
     categoria: "Inteligência Emocional",
+    dificuldade: "avancado",
     titulo: "Discordância com Gestor",
     pergunta:
       "Seu gestor descartou publicamente uma solução técnica sua sem justificar. Como você lidaria com isso?",
@@ -588,6 +629,7 @@ const CHALLENGES = [
   createOpenChallenge({
     id: "emotional-intelligence-open-3",
     categoria: "Inteligência Emocional",
+    dificuldade: "intermediario",
     titulo: "Colega em Burnout",
     pergunta:
       "Você percebe que um colega está sobrecarregado e mostrando sinais claros de esgotamento. O que você faz?",

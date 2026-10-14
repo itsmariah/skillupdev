@@ -127,3 +127,23 @@ test("toda habilidade é exercitada por pelo menos um desafio", () => {
     assert.ok(used.has(skill.id), `${skill.id}: nenhum desafio usa`);
   }
 });
+
+test("semente: por competência, 3 básicos (fechados), 2 intermediários e 1 avançado", () => {
+  for (const category of ALL_CATEGORIES) {
+    const inCategory = CHALLENGES.filter((challenge) => challenge.categoria === category);
+    const count = (level) =>
+      inCategory.filter((challenge) => challenge.dificuldade === level).length;
+
+    assert.deepEqual(
+      [count("basico"), count("intermediario"), count("avancado")],
+      [3, 2, 1],
+      category,
+    );
+    assert.ok(
+      inCategory
+        .filter((challenge) => challenge.dificuldade === "basico")
+        .every((challenge) => challenge.tipo === "fechado"),
+      category,
+    );
+  }
+});

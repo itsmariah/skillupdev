@@ -21,6 +21,7 @@ const versionKey = (id, version) => `${id}@${version}`;
 function contentOf(challenge) {
   const content = {
     categoria: challenge.categoria,
+    dificuldade: challenge.dificuldade,
     habilidades: [...challenge.habilidades],
     titulo: challenge.titulo,
     pergunta: challenge.pergunta,

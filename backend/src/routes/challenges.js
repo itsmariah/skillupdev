@@ -33,6 +33,7 @@ function buildPublicChallenge(challenge, attempts) {
     id: challenge.id,
     tipo: challenge.tipo,
     categoria: challenge.categoria,
+    dificuldade: challenge.dificuldade,
     habilidades: challenge.habilidades.map((skillId) => {
       const skill = getSkillById(skillId);
       return { id: skill.id, nome: skill.nome, competencia: skill.competencia };

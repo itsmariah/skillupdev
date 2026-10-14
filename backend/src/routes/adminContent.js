@@ -3,7 +3,7 @@
 const express = require("express");
 
 const db = require("../db");
-const { buildPublicTaxonomy } = require("../content/competencies");
+const { DIFFICULTIES, buildPublicTaxonomy } = require("../content/competencies");
 const { authenticateRequest, requireRole } = require("../middleware/auth");
 const { validateChallengeContent, createChallengeId } = require("../services/content");
 const { findBadgesRequiringChallenge } = require("../services/gamification");
@@ -28,6 +28,7 @@ router.get("/api/admin/challenges", adminOnly, async (_req, res) => {
   res.json({
     challenges: await db.listChallengesForAdmin(),
     competencias: buildPublicTaxonomy(),
+    dificuldades: DIFFICULTIES,
   });
 });
 

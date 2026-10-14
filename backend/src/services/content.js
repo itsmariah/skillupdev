@@ -1,7 +1,7 @@
 // Validação do conteúdo de desafios editado pelo admin. São as mesmas regras que os testes
 // de conteúdo garantiam quando os desafios ficavam no código: um desafio inválido quebraria
 // o XP, as badges ou a avaliação, então ele não é salvo.
-const { getSkillById } = require("../content/competencies");
+const { DIFFICULTY_IDS, getSkillById } = require("../content/competencies");
 const { getCategories } = require("../content/catalog");
 
 const TYPES = ["aberto", "fechado"];
@@ -30,6 +30,7 @@ function validateChallengeContent(tipo, input = {}) {
 
   const content = {
     categoria: clean(input.categoria),
+    dificuldade: clean(input.dificuldade),
     habilidades: Array.isArray(input.habilidades) ? input.habilidades.map(clean) : [],
     titulo: clean(input.titulo),
     pergunta: clean(input.pergunta),
@@ -39,6 +40,10 @@ function validateChallengeContent(tipo, input = {}) {
 
   if (!getCategories().includes(content.categoria)) {
     errors.push("Categoria: escolha uma das competências existentes.");
+  }
+
+  if (!DIFFICULTY_IDS.includes(content.dificuldade)) {
+    errors.push("Dificuldade: escolha básico, intermediário ou avançado.");
   }
 
   checkText(errors, "Título", content.titulo, LIMITS.titulo);

@@ -68,6 +68,12 @@
             </select>
           </div>
           <div>
+            <label for="filterDifficulty" class="form-label">Dificuldade</label>
+            <select id="filterDifficulty" class="form-select">
+              <option value="">Todas</option>
+            </select>
+          </div>
+          <div>
             <label for="filterSearch" class="form-label">Buscar pelo título</label>
             <input id="filterSearch" type="search" class="form-control" autocomplete="off">
           </div>
@@ -80,6 +86,7 @@
               <tr>
                 <th scope="col">Título</th>
                 <th scope="col">Competência</th>
+                <th scope="col">Dificuldade</th>
                 <th scope="col">Tipo</th>
                 <th scope="col">Status</th>
                 <th scope="col">Tentativas</th>
@@ -87,7 +94,7 @@
               </tr>
             </thead>
             <tbody id="challengeRows">
-              <tr><td colspan="6">Carregando...</td></tr>
+              <tr><td colspan="7">Carregando...</td></tr>
             </tbody>
           </table>
         </div>
@@ -127,6 +134,16 @@
                 <div class="mb-3">
                   <label for="fieldCategoria" class="form-label">Competência</label>
                   <select id="fieldCategoria" class="form-select" required></select>
+                </div>
+
+                <div class="mb-3">
+                  <label for="fieldDificuldade" class="form-label">Dificuldade</label>
+                  <select id="fieldDificuldade" class="form-select" required aria-describedby="dificuldadeHint"></select>
+                  <p id="dificuldadeHint" class="form-hint">
+                    Básico: situação clara e uma resposta claramente melhor. Intermediário: interesses em
+                    conflito e um trade-off. Avançado: ambiguidade, várias partes e nenhuma resposta óbvia
+                    (de preferência aberto).
+                  </p>
                 </div>
 
                 <div class="mb-3">
