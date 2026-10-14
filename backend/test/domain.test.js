@@ -283,10 +283,11 @@ test.describe("badges", () => {
 
 test.describe("login diário", () => {
   const today = getTodayKey();
+  // Aritmética só sobre a data (AAAA-MM-DD), sem passar pelo fuso.
   const yesterday = (() => {
     const date = new Date(`${today}T00:00:00.000Z`);
     date.setUTCDate(date.getUTCDate() - 1);
-    return getTodayKey(date);
+    return date.toISOString().slice(0, 10);
   })();
 
   test("não dá XP duas vezes no mesmo dia", () => {
@@ -323,8 +324,14 @@ test.describe("login diário", () => {
     assert.equal(isYesterdayKey(null, "2026-03-01"), false);
   });
 
-  test("problema conhecido (auditoria, item 17): o dia vira em UTC, às 21h no Brasil", () => {
-    assert.equal(getTodayKey(new Date("2026-10-13T22:00:00-03:00")), "2026-10-14");
+  test("o dia vira à meia-noite de Brasília, não em UTC (auditoria, item 17)", () => {
+    assert.equal(getTodayKey(new Date("2026-10-13T22:00:00-03:00")), "2026-10-13");
+    assert.equal(getTodayKey(new Date("2026-10-13T23:59:59-03:00")), "2026-10-13");
+    assert.equal(getTodayKey(new Date("2026-10-14T00:00:00-03:00")), "2026-10-14");
+  });
+
+  test("o fuso pode ser outro (APP_TIMEZONE)", () => {
+    assert.equal(getTodayKey(new Date("2026-10-13T22:00:00-03:00"), "UTC"), "2026-10-14");
   });
 });
 

@@ -2,6 +2,9 @@ const { CHALLENGES } = require("../content/challenges");
 const { normalizeEmail } = require("../lib/text");
 const {
   getTodayKey,
+  PERFECT_STREAK_TARGET,
+  PERFECT_STREAK_BONUS_XP,
+  DAILY_LOGIN_XP,
   calculateLevel,
   buildAvatarCatalog,
   normalizeAvatarConfig,
@@ -64,6 +67,9 @@ function buildUserResponse(user, userAttempts) {
       idealAnswers: Number(user.gamification?.idealAnswers) || 0,
       dailyLoginAwardedToday: user.gamification?.lastDailyLoginDate === getTodayKey(),
       totalBadges: unlockedBadges.length,
+      perfectStreakTarget: PERFECT_STREAK_TARGET,
+      perfectStreakBonusXp: PERFECT_STREAK_BONUS_XP,
+      dailyLoginXp: DAILY_LOGIN_XP,
     },
     role: resolveRole(user),
     createdAt: user.createdAt || null,

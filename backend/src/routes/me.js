@@ -6,7 +6,12 @@ const { authenticateRequest, clearSessionCookie } = require("../middleware/auth"
 const { accountSecurityLimiter } = require("../middleware/rateLimits");
 const { buildAccountExport, exportFileName } = require("../services/account");
 const { createPasswordHash, verifyPassword } = require("../services/auth");
-const { normalizeAvatarConfig } = require("../services/gamification");
+const {
+  normalizeAvatarConfig,
+  getTodayKey,
+  applyDailyLoginReward,
+  syncBadges,
+} = require("../services/gamification");
 const { buildHistory } = require("../services/history");
 const { ROLES, hasRole } = require("../services/roles");
 const { buildUserResponse } = require("../services/users");
@@ -17,11 +22,34 @@ const router = express.Router();
 // Senha errada responde 403 (não 401): a sessão é válida e o frontend trata 401 como logout.
 const passwordProtected = [authenticateRequest, accountSecurityLimiter];
 
+// Bônus de acesso diário para quem continua logado (a sessão dura até 30 dias, então
+// contar só o POST /login deixaria de fora quem não sai da conta). O usuário é relido com
+// FOR UPDATE: duas abas abertas ao mesmo tempo não ganham o bônus duas vezes.
+async function grantDailyVisitReward(user) {
+  if (user.gamification?.lastDailyLoginDate === getTodayKey()) {
+    return { user, attempts: await db.listAttemptsByUser(user.id), dailyLoginReward: null };
+  }
+
+  return db.getClient().transaction(async (tx) => {
+    const fresh = await db.findUserById(user.id, tx, { forUpdate: true });
+    const attempts = await db.listAttemptsByUser(user.id, tx);
+    const dailyLoginReward = applyDailyLoginReward(fresh);
+
+    if (dailyLoginReward) {
+      syncBadges(fresh, attempts);
+      await db.saveUser(fresh, tx);
+    }
+
+    return { user: fresh, attempts, dailyLoginReward };
+  });
+}
+
 router.get("/api/me", authenticateRequest, async (req, res) => {
-  const attempts = await db.listAttemptsByUser(req.user.id);
+  const { user, attempts, dailyLoginReward } = await grantDailyVisitReward(req.user);
 
   res.json({
-    user: buildUserResponse(req.user, attempts),
+    user: buildUserResponse(user, attempts),
+    dailyLoginReward,
   });
 });
 

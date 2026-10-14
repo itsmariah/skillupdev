@@ -303,13 +303,15 @@
 
   // --- Renderização do dashboard ---
 
-  function renderRewardBanner(user) {
+  // O bônus pode vir do login (guardado na sessão do navegador) ou da abertura do dashboard
+  // por quem continuou logado (resposta do /api/me).
+  function renderRewardBanner(user, visitReward) {
     const banner = document.getElementById("rewardBanner");
     if (!banner) {
       return;
     }
 
-    const reward = window.skillUpAuth.readAndClearDailyReward();
+    const reward = window.skillUpAuth.readAndClearDailyReward() || visitReward;
 
     if (reward) {
       banner.textContent = `${reward.label}: +${reward.xp} XP recebidos hoje.`;
@@ -319,7 +321,8 @@
     }
 
     if (user?.gamification?.dailyLoginAwardedToday) {
-      banner.textContent = "Bônus diário já contabilizado hoje. Continue a sequência.";
+      banner.textContent =
+        "Bônus de acesso diário já recebido hoje. Volte amanhã para manter a sequência.";
       banner.className = "dashboard-banner dashboard-banner-muted";
       banner.classList.remove("d-none");
       return;
@@ -345,6 +348,9 @@
       pendingCount: String(user.pendingChallenges),
       badgeCount: String(user.gamification?.totalBadges || 0),
       perfectStreakCount: String(user.gamification?.perfectStreak || 0),
+      perfectStreakHelper: user.gamification?.perfectStreakTarget
+        ? `A cada ${user.gamification.perfectStreakTarget} respostas ideais seguidas, +${user.gamification.perfectStreakBonusXp} XP.`
+        : "Respostas ideais seguidas rendem bônus de XP.",
       dailyLoginStreakCount: String(user.gamification?.dailyLoginStreak || 0),
       idealAnswerCount: String(user.gamification?.idealAnswers || 0),
       userLevelMirror: user.levelLabel || `Nível ${user.level}`,
@@ -502,9 +508,9 @@
       .join("");
   }
 
-  function renderDashboard(user, history) {
+  function renderDashboard(user, history, visitReward) {
     dashboardUser = user;
-    renderRewardBanner(user);
+    renderRewardBanner(user, visitReward);
     renderProgressSummary(user);
     renderBadgeCatalog(user);
     renderCategoryProgress(user, history?.evolution);
@@ -531,7 +537,7 @@
         window.skillUpApi.getHistory().catch(() => null),
       ]);
       window.skillUpAuth.updateStoredUser(payload.user);
-      renderDashboard(payload.user, history);
+      renderDashboard(payload.user, history, payload.dailyLoginReward);
       window.skillUpStudy?.checkAndShowPostBanner(payload.user);
     } catch (_error) {
       window.skillUpApi.clearSession();

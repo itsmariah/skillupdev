@@ -311,13 +311,12 @@
       parts.push(challenge.descricao);
     }
 
-    if (challenge.tipo === "fechado") {
+    // Valores calculados no servidor com as mesmas regras do XP (inclui o multiplicador dos abertos).
+    const rewards = challenge.recompensas;
+    if (rewards) {
       parts.push(
-        "Recompensas: +40 XP por concluir. Resposta ideal: +100 XP total. Bônus de +80 XP a cada 5 respostas ideais seguidas.",
-      );
-    } else {
-      parts.push(
-        "Recompensas: +48 XP por concluir. Resposta ideal: +120 XP total. Bônus de +80 XP a cada 5 respostas ideais seguidas.",
+        `Recompensas: +${rewards.conclusionXp} XP por concluir. Resposta ideal: +${rewards.idealTotalXp} XP no total. ` +
+          `Bônus de +${rewards.perfectStreakBonusXp} XP a cada ${rewards.perfectStreakTarget} respostas ideais seguidas.`,
       );
     }
 
@@ -326,10 +325,6 @@
       if (criteria.length > 0) {
         parts.push(`IA avalia: ${criteria.join(", ")}.`);
       }
-    }
-
-    if (challenge.tipo === "fechado" && challenge.dica) {
-      parts.push(`Dica: ${challenge.dica}`);
     }
 
     return parts.join(" ");

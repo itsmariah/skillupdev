@@ -8,9 +8,7 @@ const { authenticateRequest } = require("../middleware/auth");
 const { challengeSubmitLimiter } = require("../middleware/rateLimits");
 const { evaluateOpenChallengeWithAI } = require("../services/evaluation");
 const {
-  CHALLENGE_COMPLETION_XP,
-  IDEAL_ANSWER_BONUS_XP,
-  PERFECT_STREAK_BONUS_XP,
+  buildRewardSummary,
   calculateLevel,
   normalizeAvatarConfig,
   syncBadges,
@@ -28,13 +26,10 @@ function buildPublicChallenge(challenge, completedAttempt) {
     titulo: challenge.titulo,
     pergunta: challenge.pergunta,
     descricao: challenge.descricao,
-    dica: challenge.dica || null,
     criteriosAvaliacao: challenge.criteriosAvaliacao || [],
-    recompensas: {
-      conclusionXp: CHALLENGE_COMPLETION_XP,
-      idealBonusXp: IDEAL_ANSWER_BONUS_XP,
-      perfectStreakBonusXp: PERFECT_STREAK_BONUS_XP,
-    },
+    // A dica não vai antes da resposta: nos desafios fechados ela aponta a alternativa ideal.
+    // Ela aparece no feedback, depois de responder.
+    recompensas: buildRewardSummary(challenge),
     respostas:
       challenge.tipo === "fechado"
         ? challenge.respostas.map((resposta) => ({

@@ -14,6 +14,9 @@ const FRONTEND_DIR = path.join(__dirname, "..", "..", "frontend");
 const DATABASE_URL = String(process.env.DATABASE_URL || "").trim();
 const PGLITE_DATA_DIR = process.env.PGLITE_DATA_DIR || path.join(__dirname, "..", "data", "pglite");
 
+// Fuso que define a virada do dia para o bônus de acesso diário (padrão: horário de Brasília).
+const APP_TIMEZONE = String(process.env.APP_TIMEZONE || "").trim() || "America/Sao_Paulo";
+
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
 const PASSWORD_RESET_TTL_MINUTES = 30;
@@ -45,6 +48,7 @@ module.exports = {
   FRONTEND_DIR,
   DATABASE_URL,
   PGLITE_DATA_DIR,
+  APP_TIMEZONE,
   OPENAI_MODEL,
   PASSWORD_RESET_TTL_MINUTES,
   PASSWORD_RESET_TTL_MS,

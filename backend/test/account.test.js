@@ -210,3 +210,53 @@ test("senha errada repetida bloqueia as ações protegidas da conta", async () =
   }
   assert.equal((await attempt()).status, 429);
 });
+
+test("lista de desafios não traz a dica e informa as recompensas reais", async () => {
+  const response = await api("POST", "/api/auth/register", {
+    body: { nome: "Regras", email: "regras@conta.com", senha: "senha123", aceiteTermos: true },
+  });
+  const { data } = await api("GET", "/api/challenges", { session: sessionOf(response) });
+
+  assert.ok(data.challenges.every((challenge) => !("dica" in challenge)));
+
+  const closed = data.challenges.find((challenge) => challenge.tipo === "fechado");
+  const open = data.challenges.find((challenge) => challenge.tipo === "aberto");
+  assert.deepEqual(closed.recompensas, {
+    conclusionXp: 40,
+    idealTotalXp: 100,
+    perfectStreakTarget: 5,
+    perfectStreakBonusXp: 80,
+  });
+  assert.equal(open.recompensas.conclusionXp, 48);
+  assert.equal(open.recompensas.idealTotalXp, 120);
+});
+
+test("quem continua logado recebe o bônus diário ao abrir a plataforma, uma vez por dia", async () => {
+  const response = await api("POST", "/api/auth/register", {
+    body: {
+      nome: "Volta Amanhã",
+      email: "amanha@conta.com",
+      senha: "senha123",
+      aceiteTermos: true,
+    },
+  });
+  const visitor = sessionOf(response);
+  const id = response.data.user.id;
+
+  // Mesmo dia do cadastro: o bônus já foi dado.
+  assert.equal((await api("GET", "/api/me", { session: visitor })).data.dailyLoginReward, null);
+
+  // Simula a volta no dia seguinte, com a mesma sessão.
+  const user = await db.findUserById(id);
+  user.gamification.lastDailyLoginDate = "2020-01-01";
+  await db.saveUser(user);
+
+  const [first, second] = await Promise.all([
+    api("GET", "/api/me", { session: visitor }),
+    api("GET", "/api/me", { session: visitor }),
+  ]);
+  const rewards = [first, second].map((r) => r.data.dailyLoginReward).filter(Boolean);
+  assert.equal(rewards.length, 1);
+  assert.equal(rewards[0].xp, 20);
+  assert.equal((await db.findUserById(id)).xp, response.data.user.xp + 20);
+});

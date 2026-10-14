@@ -1,3 +1,4 @@
+const { APP_TIMEZONE } = require("../config");
 const { CHALLENGES, VALID_CHALLENGE_IDS, ALL_CATEGORIES } = require("../content/challenges");
 
 // XP por conclusão de desafio (base, antes de qualidade e multiplicador)
@@ -224,8 +225,15 @@ const BADGE_DEFINITIONS = [
   },
 ];
 
-function getTodayKey(date = new Date()) {
-  return date.toISOString().slice(0, 10);
+// Data (AAAA-MM-DD) no fuso da aplicação: o "dia" do bônus diário vira à meia-noite local,
+// não à meia-noite UTC (21h em Brasília).
+function getTodayKey(date = new Date(), timeZone = APP_TIMEZONE) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
 }
 
 function isYesterdayKey(dateKey, todayKey = getTodayKey()) {
@@ -492,8 +500,23 @@ function applyDailyLoginReward(user) {
   user.gamification.lastRewardAt = new Date().toISOString();
 
   return {
-    label: "Login diário",
+    label: "Bônus de acesso diário",
     xp: DAILY_LOGIN_XP,
+  };
+}
+
+// O que cada desafio vale, calculado pelas mesmas regras do XP de verdade
+// (inclui o multiplicador dos desafios abertos). Usado nos textos da interface.
+function buildRewardSummary(challenge) {
+  const xpMultiplier = Number(challenge?.xpMultiplier) || 1;
+  const total = (qualityTier) =>
+    buildXpBreakdown(qualityTier, 0, xpMultiplier).reduce((sum, item) => sum + item.xp, 0);
+
+  return {
+    conclusionXp: total("medium"),
+    idealTotalXp: total("ideal"),
+    perfectStreakTarget: PERFECT_STREAK_TARGET,
+    perfectStreakBonusXp: PERFECT_STREAK_BONUS_XP,
   };
 }
 
@@ -600,6 +623,7 @@ module.exports = {
   syncBadges,
   buildCategoryProgress,
   applyDailyLoginReward,
+  buildRewardSummary,
   buildChallengeConsequence,
   buildXpBreakdown,
   buildChallengeResult,

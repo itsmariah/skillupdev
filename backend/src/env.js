@@ -86,6 +86,17 @@ function validateEnv(env = process.env) {
     warnings.push("ALLOW_RESET_PREVIEW=true é ignorado em produção. Remova a variável.");
   }
 
+  const timeZone = read(env, "APP_TIMEZONE");
+  if (timeZone) {
+    try {
+      new Intl.DateTimeFormat("en-CA", { timeZone });
+    } catch (_error) {
+      errors.push(
+        `APP_TIMEZONE inválido ("${timeZone}"): use um fuso IANA, como America/Sao_Paulo.`,
+      );
+    }
+  }
+
   const studyEnabled = read(env, "STUDY_ENABLED");
   if (studyEnabled && !["true", "false"].includes(studyEnabled)) {
     errors.push(`STUDY_ENABLED inválido ("${studyEnabled}"): use true ou false.`);
