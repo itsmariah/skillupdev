@@ -26,6 +26,9 @@ const EMAIL_TIMEOUT_MS = 10 * 1000;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@skillupdev.com";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const FRONTEND_URL = process.env.FRONTEND_URL;
+// Estudo piloto do TCC (questionários pré e pós). Desligado por padrão desde o fim do estudo;
+// com STUDY_ENABLED=true os convites e questionários voltam para a jornada.
+const STUDY_ENABLED = String(process.env.STUDY_ENABLED || "").trim() === "true";
 const STUDY_MIN_CHALLENGES = 10;
 const STUDY_VERSION = 2;
 const MAX_NAME_LENGTH = 200;
@@ -49,6 +52,7 @@ module.exports = {
   ADMIN_EMAIL,
   ADMIN_PASSWORD,
   FRONTEND_URL,
+  STUDY_ENABLED,
   STUDY_MIN_CHALLENGES,
   STUDY_VERSION,
   MAX_NAME_LENGTH,

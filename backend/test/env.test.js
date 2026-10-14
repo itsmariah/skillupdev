@@ -51,6 +51,7 @@ test("valores mal formatados são recusados", () => {
     FRONTEND_URL: "ftp://exemplo.com",
     EMAIL_PROVIDER: "sendgrid",
     ADMIN_EMAIL: "admin",
+    STUDY_ENABLED: "sim",
   });
 
   for (const name of [
@@ -61,6 +62,7 @@ test("valores mal formatados são recusados", () => {
     "FRONTEND_URL",
     "EMAIL_PROVIDER",
     "ADMIN_EMAIL",
+    "STUDY_ENABLED",
   ]) {
     assert.ok(
       errors.some((e) => e.startsWith(name)),

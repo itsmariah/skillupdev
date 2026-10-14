@@ -9,6 +9,9 @@ Object.assign(process.env, {
   EMAIL_PROVIDER: "",
   RESEND_API_KEY: "",
   ALLOW_RESET_PREVIEW: "false",
+  // Liga o estudo piloto para exercitar os questionários (o padrão é desligado,
+  // coberto em study-disabled.test.js).
+  STUDY_ENABLED: "true",
 });
 
 const test = require("node:test");
@@ -108,6 +111,12 @@ test("cadastro com e-mail já usado é recusado", async () => {
     body: { nome: "Outro", email: "dev@teste.com", senha: "senha123" },
   });
   assert.equal(status, 409);
+});
+
+test("configuração pública reflete o estudo ligado", async () => {
+  const { status, data } = await api("GET", "/api/config");
+  assert.equal(status, 200);
+  assert.deepEqual(data, { features: { study: true } });
 });
 
 test("rotas autenticadas exigem sessão válida", async () => {

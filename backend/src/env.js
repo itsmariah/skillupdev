@@ -86,6 +86,11 @@ function validateEnv(env = process.env) {
     warnings.push("ALLOW_RESET_PREVIEW=true é ignorado em produção. Remova a variável.");
   }
 
+  const studyEnabled = read(env, "STUDY_ENABLED");
+  if (studyEnabled && !["true", "false"].includes(studyEnabled)) {
+    errors.push(`STUDY_ENABLED inválido ("${studyEnabled}"): use true ou false.`);
+  }
+
   // IA
   if (!read(env, "OPENAI_API_KEY")) {
     warnings.push("OPENAI_API_KEY não definida. Respostas abertas usarão a avaliação heurística.");

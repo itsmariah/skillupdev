@@ -82,6 +82,9 @@
     hasSession,
     request,
     setSession,
+    getConfig() {
+      return request("/api/config");
+    },
     getMe() {
       return request("/api/me");
     },

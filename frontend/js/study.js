@@ -1,5 +1,12 @@
 (function initStudy() {
   const STUDY_OPTED_OUT_KEY = "skillup_study_opted_out";
+
+  // O estudo piloto é ligado ou desligado no servidor (STUDY_ENABLED). Na dúvida (erro de
+  // rede), fica desligado: o estudo não deve atrapalhar a jornada principal.
+  const studyEnabled = window.skillUpApi
+    .getConfig()
+    .then((config) => Boolean(config?.features?.study))
+    .catch(() => false);
   const SUS_QUESTIONS = [
     { id: "s1", text: "Eu usaria essa plataforma com frequência." },
     { id: "s2", text: "Achei a plataforma desnecessariamente complexa." },
@@ -369,7 +376,9 @@
     injectStudyOptInModal();
   }
 
-  function checkAndShowPostBanner(user) {
+  async function checkAndShowPostBanner(user) {
+    if (!(await studyEnabled)) return;
+
     const page = document.body.dataset.page;
     if (!["challenges", "dashboard"].includes(page)) return;
     if (localStorage.getItem(STUDY_OPTED_OUT_KEY)) return;
@@ -391,7 +400,16 @@
 
   window.skillUpStudy = { checkAndShowPostBanner };
 
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", async () => {
+    // Estudo desligado: nada de convite nem banner, e as páginas de questionário
+    // mandam para o dashboard.
+    if (!(await studyEnabled)) {
+      if (document.body.dataset.page.startsWith("questionnaire-")) {
+        window.location.replace("dashboard.html");
+      }
+      return;
+    }
+
     buildPreForm();
     buildPostForm();
     checkAndShowStudyOptIn();

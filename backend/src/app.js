@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 
-const { IS_PRODUCTION, PORT, FRONTEND_DIR, FRONTEND_URL } = require("./config");
+const { IS_PRODUCTION, PORT, FRONTEND_DIR, FRONTEND_URL, STUDY_ENABLED } = require("./config");
 const { createSameOriginCheck } = require("./middleware/origin");
 const { apiLimiter } = require("./middleware/rateLimits");
 const authRoutes = require("./routes/auth");
@@ -48,6 +48,11 @@ app.get("/api/health", (_req, res) => {
     service: "skillupdev-backend",
     timestamp: new Date().toISOString(),
   });
+});
+
+// Configuração pública que o frontend precisa conhecer (nada sensível).
+app.get("/api/config", (_req, res) => {
+  res.json({ features: { study: STUDY_ENABLED } });
 });
 
 app.use(authRoutes);
