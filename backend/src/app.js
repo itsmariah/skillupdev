@@ -3,6 +3,8 @@ const cors = require("cors");
 const helmet = require("helmet");
 
 const { IS_PRODUCTION, PORT, FRONTEND_DIR, FRONTEND_URL } = require("./config");
+const { createSameOriginCheck } = require("./middleware/origin");
+const { apiLimiter } = require("./middleware/rateLimits");
 const authRoutes = require("./routes/auth");
 const meRoutes = require("./routes/me");
 const challengeRoutes = require("./routes/challenges");
@@ -38,6 +40,7 @@ app.use(
 );
 app.use(express.json());
 app.use(express.static(FRONTEND_DIR));
+app.use("/api", apiLimiter, createSameOriginCheck(allowedOrigins));
 
 app.get("/api/health", (_req, res) => {
   res.json({

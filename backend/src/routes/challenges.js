@@ -5,6 +5,7 @@ const { MIN_OPEN_ANSWER_LENGTH, MAX_OPEN_ANSWER_LENGTH } = require("../config");
 const { CHALLENGES, getChallengeById } = require("../content/challenges");
 const db = require("../db");
 const { authenticateRequest } = require("../middleware/auth");
+const { challengeSubmitLimiter } = require("../middleware/rateLimits");
 const { evaluateOpenChallengeWithAI } = require("../services/evaluation");
 const {
   CHALLENGE_COMPLETION_XP,
@@ -71,7 +72,10 @@ router.get("/api/challenges", authenticateRequest, async (req, res) => {
 // isto evita avaliar com a IA (e pagar por) duas respostas simultâneas do mesmo desafio.
 const submissionsInFlight = new Set();
 
-router.post("/api/challenges/:challengeId/submit", authenticateRequest, async (req, res) => {
+// O limite vem depois da autenticação porque conta por usuário.
+const submitGuards = [authenticateRequest, challengeSubmitLimiter];
+
+router.post("/api/challenges/:challengeId/submit", submitGuards, async (req, res) => {
   const challenge = getChallengeById(req.params.challengeId);
 
   if (!challenge) {

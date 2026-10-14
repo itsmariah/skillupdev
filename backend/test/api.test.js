@@ -17,6 +17,7 @@ const crypto = require("crypto");
 
 const app = require("../src/app");
 const db = require("../src/db");
+const { SESSION_COOKIE } = require("../src/middleware/auth");
 const { createPasswordHash } = require("../src/services/auth");
 const { DEFAULT_AVATAR, createDefaultGamificationState } = require("../src/services/gamification");
 
@@ -47,12 +48,14 @@ test.after(async () => {
   await db.closeClient();
 });
 
-async function api(method, url, { body, token } = {}) {
+// `session` é o cookie de sessão ("nome=valor") devolvido por login/cadastro.
+async function api(method, url, { body, session, headers = {} } = {}) {
   const response = await fetch(baseUrl + url, {
     method,
     headers: {
       ...(body ? { "Content-Type": "application/json" } : {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(session ? { Cookie: session } : {}),
+      ...headers,
     },
     body: body ? JSON.stringify(body) : undefined,
   });
@@ -66,23 +69,35 @@ async function api(method, url, { body, token } = {}) {
   return { status: response.status, data, headers: response.headers };
 }
 
-// Atenção: as rotas de autenticação têm limite de 10 requisições por IP a cada 15 minutos,
-// e todos os testes deste arquivo compartilham esse limite.
-let userToken;
+function sessionCookieOf(response) {
+  const header = response.headers.getSetCookie().find((c) => c.startsWith(`${SESSION_COOKIE}=`));
+  return header ? header.split(";")[0] : null;
+}
+
+// Atenção: as rotas de autenticação têm limites por IP e por conta (ver
+// src/middleware/rateLimits.js), e todos os testes deste arquivo compartilham esses contadores.
+let userSession;
 let userId;
 
 test("cadastro cria conta, sessão e bônus de login diário", async () => {
-  const { status, data } = await api("POST", "/api/auth/register", {
+  const response = await api("POST", "/api/auth/register", {
     body: { nome: "Dev Teste", email: "Dev@Teste.com", senha: "senha123" },
   });
+  const { status, data } = response;
 
   assert.equal(status, 201);
-  assert.ok(data.token);
+  assert.equal(data.token, undefined);
   assert.equal(data.user.email, "dev@teste.com");
   assert.equal(data.dailyLoginReward.xp, 20);
   assert.equal(data.user.xp, 20);
 
-  userToken = data.token;
+  userSession = sessionCookieOf(response);
+  assert.ok(userSession);
+
+  const cookie = response.headers.getSetCookie().find((c) => c.startsWith(`${SESSION_COOKIE}=`));
+  assert.match(cookie, /HttpOnly/);
+  assert.match(cookie, /SameSite=Lax/);
+  assert.match(cookie, /Path=\//);
   userId = data.user.id;
 });
 
@@ -93,15 +108,35 @@ test("cadastro com e-mail já usado é recusado", async () => {
   assert.equal(status, 409);
 });
 
-test("rotas autenticadas exigem token válido", async () => {
+test("rotas autenticadas exigem sessão válida", async () => {
   assert.equal((await api("GET", "/api/me")).status, 401);
-  assert.equal((await api("GET", "/api/me", { token: "invalido" })).status, 401);
-  assert.equal((await api("GET", "/api/me", { token: userToken })).status, 200);
-  assert.equal((await api("GET", "/api/admin/study-data", { token: userToken })).status, 403);
+  assert.equal(
+    (await api("GET", "/api/me", { session: `${SESSION_COOKIE}=invalido` })).status,
+    401,
+  );
+  assert.equal((await api("GET", "/api/me", { session: userSession })).status, 200);
+  assert.equal((await api("GET", "/api/admin/study-data", { session: userSession })).status, 403);
+});
+
+test("alterações vindas de outro site são recusadas (CSRF)", async () => {
+  const body = { avatarConfig: DEFAULT_AVATAR };
+  const crossSite = await api("PATCH", "/api/me/avatar", {
+    session: userSession,
+    body,
+    headers: { Origin: "https://site-malicioso.exemplo" },
+  });
+  assert.equal(crossSite.status, 403);
+
+  const sameSite = await api("PATCH", "/api/me/avatar", {
+    session: userSession,
+    body,
+    headers: { Origin: baseUrl },
+  });
+  assert.equal(sameSite.status, 200);
 });
 
 test("lista de desafios não expõe a resposta certa", async () => {
-  const { status, data } = await api("GET", "/api/challenges", { token: userToken });
+  const { status, data } = await api("GET", "/api/challenges", { session: userSession });
 
   assert.equal(status, 200);
   assert.equal(data.challenges.length, 30);
@@ -114,7 +149,7 @@ test("lista de desafios não expõe a resposta certa", async () => {
 
 test("desafio fechado ideal soma XP e desbloqueia a primeira badge", async () => {
   const { status, data } = await api("POST", "/api/challenges/communication-closed-1/submit", {
-    token: userToken,
+    session: userSession,
     body: { respostaId: "b" },
   });
 
@@ -132,7 +167,7 @@ test("desafio fechado ideal soma XP e desbloqueia a primeira badge", async () =>
 
 test("o mesmo desafio não pode ser respondido duas vezes", async () => {
   const { status, data } = await api("POST", "/api/challenges/communication-closed-1/submit", {
-    token: userToken,
+    session: userSession,
     body: { respostaId: "a" },
   });
 
@@ -144,7 +179,7 @@ test("envios simultâneos do mesmo desafio contam uma vez só", async () => {
   const responses = await Promise.all(
     [1, 2, 3].map(() =>
       api("POST", "/api/challenges/communication-closed-2/submit", {
-        token: userToken,
+        session: userSession,
         body: { respostaId: "b" },
       }),
     ),
@@ -171,7 +206,7 @@ test("o banco recusa uma segunda tentativa do mesmo desafio (restrição única)
 
 test("desafio aberto sem IA configurada usa a avaliação heurística", async () => {
   const { status, data } = await api("POST", "/api/challenges/communication-open-1/submit", {
-    token: userToken,
+    session: userSession,
     body: {
       texto:
         "Entendo a frustração do cliente, vou explicar com clareza o impacto, alinhar com a equipe e resolver priorizando o que é mais urgente.",
@@ -191,7 +226,7 @@ test("desafio aberto sem IA configurada usa a avaliação heurística", async ()
 test("resposta aberta curta demais é recusada sem gravar nada", async () => {
   const before = (await db.listAttemptsByUser(userId)).length;
   const { status } = await api("POST", "/api/challenges/communication-open-2/submit", {
-    token: userToken,
+    session: userSession,
     body: { texto: "curta" },
   });
 
@@ -201,7 +236,7 @@ test("resposta aberta curta demais é recusada sem gravar nada", async () => {
 
 test("avatar com item bloqueado volta para o padrão liberado", async () => {
   const { status, data } = await api("PATCH", "/api/me/avatar", {
-    token: userToken,
+    session: userSession,
     body: { avatarConfig: { ...DEFAULT_AVATAR, cabelo: "spiky" } },
   });
 
@@ -211,20 +246,20 @@ test("avatar com item bloqueado volta para o padrão liberado", async () => {
 
 test("questionário do estudo: pré uma vez só; pós exige 10 desafios", async () => {
   const post = await api("POST", "/api/study/questionnaire", {
-    token: userToken,
+    session: userSession,
     body: { type: "post", data: { sus: {} } },
   });
   assert.equal(post.status, 403);
 
   const pre = await api("POST", "/api/study/questionnaire", {
-    token: userToken,
+    session: userSession,
     body: { type: "pre", data: { curso: "CC" } },
   });
   assert.equal(pre.status, 200);
   assert.equal(pre.data.user.studyPreDone, true);
 
   const again = await api("POST", "/api/study/questionnaire", {
-    token: userToken,
+    session: userSession,
     body: { type: "pre", data: { curso: "CC" } },
   });
   assert.equal(again.status, 409);
@@ -260,7 +295,7 @@ test("redefinição de senha: link de uso único que derruba as sessões", async
   });
   assert.equal(reset.status, 200);
 
-  assert.equal((await api("GET", "/api/me", { token: userToken })).status, 401);
+  assert.equal((await api("GET", "/api/me", { session: userSession })).status, 401);
 
   const reuse = await api("POST", "/api/auth/reset-password", {
     body: { token: resetToken, senha: "outra-senha" },
@@ -277,34 +312,54 @@ test("login com a senha nova mantém o progresso e logout encerra a sessão", as
   assert.equal(login.data.dailyLoginReward, null);
   assert.equal(login.data.user.completedChallenges, 3);
 
-  userToken = login.data.token;
-  assert.equal((await api("POST", "/api/auth/logout", { token: userToken })).status, 200);
-  assert.equal((await api("GET", "/api/me", { token: userToken })).status, 401);
+  userSession = sessionCookieOf(login);
+  const logout = await api("POST", "/api/auth/logout", { session: userSession });
+  assert.equal(logout.status, 200);
+  assert.match(sessionCookieOf(logout), new RegExp(`^${SESSION_COOKIE}=$`));
+  assert.equal((await api("GET", "/api/me", { session: userSession })).status, 401);
 });
 
 test("painel admin: acesso restrito, dados do estudo, CSV e exclusão em cascata", async () => {
   const admin = await api("POST", "/api/auth/login", {
     body: { email: "admin@teste.com", senha: "admin-senha" },
   });
-  const adminToken = admin.data.token;
+  const adminSession = sessionCookieOf(admin);
 
-  const studyData = await api("GET", "/api/admin/study-data", { token: adminToken });
+  const studyData = await api("GET", "/api/admin/study-data", { session: adminSession });
   assert.equal(studyData.status, 200);
   assert.equal(studyData.data.summary.preCompletedCount, 1);
   assert.equal(studyData.data.participants[0].challengesCompleted, 3);
 
-  const csv = await api("GET", "/api/admin/study-data/export", { token: adminToken });
+  const csv = await api("GET", "/api/admin/study-data/export", { session: adminSession });
   assert.equal(csv.status, 200);
   assert.match(csv.headers.get("content-type"), /text\/csv/);
 
   const deleteAdmin = await api("DELETE", `/api/admin/users/${admin.data.user.id}`, {
-    token: adminToken,
+    session: adminSession,
   });
   assert.equal(deleteAdmin.status, 403);
 
-  const deleteUser = await api("DELETE", `/api/admin/users/${userId}`, { token: adminToken });
+  const deleteUser = await api("DELETE", `/api/admin/users/${userId}`, { session: adminSession });
   assert.equal(deleteUser.status, 200);
   assert.equal(await db.findUserById(userId), null);
   assert.deepEqual(await db.listAttemptsByUser(userId), []);
   assert.equal(await db.findStudyResponse(userId, "pre"), null);
+});
+
+test("login bloqueia a conta após 5 senhas erradas, mesmo com a senha certa", async () => {
+  const credentials = (senha) => ({ body: { email: "admin@teste.com", senha } });
+
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
+    assert.equal((await api("POST", "/api/auth/login", credentials("errada"))).status, 401);
+  }
+
+  const blocked = await api("POST", "/api/auth/login", credentials("admin-senha"));
+  assert.equal(blocked.status, 429);
+  assert.ok(blocked.data.message);
+
+  // O bloqueio é da conta: outra conta, do mesmo IP, continua entrando.
+  const other = await api("POST", "/api/auth/login", {
+    body: { email: "outra@teste.com", senha: "qualquer" },
+  });
+  assert.equal(other.status, 401);
 });

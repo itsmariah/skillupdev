@@ -49,9 +49,6 @@
 
     if (!window.skillUpAuth?.requireSession()) return;
 
-    const token = window.skillUpApi.getToken();
-    if (!token) return;
-
     window.skillUpApi
       .getMe()
       .then((resp) => {
@@ -382,8 +379,7 @@
       return;
     }
 
-    const token = window.skillUpApi?.getToken();
-    if (!token) return;
+    if (!window.skillUpApi?.hasSession()) return;
 
     window.skillUpApi
       .getMe()

@@ -84,9 +84,7 @@
   // --- Sessão ---
 
   function requireSession() {
-    const token = window.skillUpApi?.getToken();
-
-    if (!token) {
+    if (!window.skillUpApi?.hasSession()) {
       window.location.href = "login.html";
       return false;
     }
@@ -135,9 +133,7 @@
 
   async function logout() {
     try {
-      if (window.skillUpApi?.getToken()) {
-        await window.skillUpApi.logout();
-      }
+      await window.skillUpApi.logout();
     } catch (_error) {
       // Ignora erro de rede para nao travar o logout local.
     } finally {

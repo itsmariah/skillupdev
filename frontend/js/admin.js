@@ -172,11 +172,10 @@
       return;
 
     try {
-      const token = window.skillUpApi.getToken();
       const origin = window.skillUpApi.getApiOrigin();
       const res = await fetch(`${origin}/api/admin/users/${encodeURIComponent(id)}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "same-origin",
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -254,10 +253,9 @@
         exportBtn.addEventListener("click", async (ev) => {
           ev.preventDefault();
           try {
-            const token = window.skillUpApi.getToken();
             const origin = window.skillUpApi.getApiOrigin();
             const response = await fetch(`${origin}/api/admin/study-data/export`, {
-              headers: { Authorization: `Bearer ${token}` },
+              credentials: "same-origin",
             });
             if (!response.ok) throw new Error("Falha ao exportar.");
             const blob = await response.blob();

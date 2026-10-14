@@ -1,13 +1,14 @@
 (function attachSkillUpApi() {
-  const TOKEN_KEY = "skillup_token";
+  // A sessão fica num cookie HttpOnly definido pelo servidor, fora do alcance deste script.
+  // Aqui guardamos só uma cópia dos dados do usuário para exibir a interface.
   const USER_KEY = "skillup_user";
+  const LEGACY_TOKEN_KEY = "skillup_token";
+
+  // Token salvo por versões antigas, quando a sessão ficava no localStorage.
+  window.localStorage.removeItem(LEGACY_TOKEN_KEY);
 
   function getApiOrigin() {
     return window.location.origin;
-  }
-
-  function getToken() {
-    return window.localStorage.getItem(TOKEN_KEY) || "";
   }
 
   function getStoredUser() {
@@ -24,41 +25,45 @@
     }
   }
 
-  function setSession(payload) {
-    if (payload?.token) {
-      window.localStorage.setItem(TOKEN_KEY, payload.token);
-    }
+  // Indica se há um login feito neste navegador. Quem confirma a sessão é o servidor:
+  // se o cookie tiver expirado, a próxima requisição responde 401.
+  function hasSession() {
+    return Boolean(getStoredUser());
+  }
 
+  function setSession(payload) {
     if (payload?.user) {
       window.localStorage.setItem(USER_KEY, JSON.stringify(payload.user));
     }
   }
 
   function clearSession() {
-    window.localStorage.removeItem(TOKEN_KEY);
     window.localStorage.removeItem(USER_KEY);
   }
 
   async function request(path, options = {}) {
     const method = options.method || "GET";
     const body = options.body;
-    const auth = options.auth || false;
     const headers = {
       ...(body ? { "Content-Type": "application/json" } : {}),
       ...(options.headers || {}),
     };
 
-    if (auth && getToken()) {
-      headers.Authorization = `Bearer ${getToken()}`;
-    }
-
     const response = await fetch(`${getApiOrigin()}${path}`, {
       method,
       headers,
       body: body ? JSON.stringify(body) : undefined,
+      credentials: "same-origin",
     });
 
     const data = await response.json().catch(() => ({}));
+
+    // Sessão expirada ou encerrada no servidor: limpa a cópia local e volta ao login.
+    // As rotas de /api/auth/ ficam de fora porque nelas o 401 é "senha errada".
+    if (response.status === 401 && !path.startsWith("/api/auth/")) {
+      clearSession();
+      window.location.href = "/pages/login.html";
+    }
 
     if (!response.ok) {
       const error = new Error(data.message || "Não foi possível concluir a requisição.");
@@ -74,14 +79,14 @@
     clearSession,
     getApiOrigin,
     getStoredUser,
-    getToken,
+    hasSession,
     request,
     setSession,
     getMe() {
-      return request("/api/me", { auth: true });
+      return request("/api/me");
     },
     getChallenges() {
-      return request("/api/challenges", { auth: true });
+      return request("/api/challenges");
     },
     login(credentials) {
       return request("/api/auth/login", {
@@ -98,7 +103,6 @@
     logout() {
       return request("/api/auth/logout", {
         method: "POST",
-        auth: true,
       });
     },
     resetPassword(payload) {
@@ -121,25 +125,22 @@
       return request(`/api/challenges/${challengeId}/submit`, {
         method: "POST",
         body: payload,
-        auth: true,
       });
     },
     updateAvatar(avatarConfig) {
       return request("/api/me/avatar", {
         method: "PATCH",
         body: { avatarConfig },
-        auth: true,
       });
     },
     submitQuestionnaire(type, data) {
       return request("/api/study/questionnaire", {
         method: "POST",
         body: { type, data },
-        auth: true,
       });
     },
     getAdminStudyData() {
-      return request("/api/admin/study-data", { auth: true });
+      return request("/api/admin/study-data");
     },
     getAdminStudyDataExportUrl() {
       return `${getApiOrigin()}/api/admin/study-data/export`;

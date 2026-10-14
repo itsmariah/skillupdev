@@ -4,7 +4,15 @@ const crypto = require("crypto");
 const { SESSION_TTL_MS, MAX_NAME_LENGTH } = require("../config");
 const db = require("../db");
 const { normalizeEmail } = require("../lib/text");
-const { authRateLimiter, authenticateRequest } = require("../middleware/auth");
+const { setSessionCookie, clearSessionCookie, authenticateRequest } = require("../middleware/auth");
+const {
+  loginIpLimiter,
+  loginAccountLimiter,
+  registerLimiter,
+  forgotPasswordIpLimiter,
+  forgotPasswordAccountLimiter,
+  resetPasswordLimiter,
+} = require("../middleware/rateLimits");
 const {
   createPasswordHash,
   verifyPassword,
@@ -29,6 +37,10 @@ const { hydrateUser, buildUserResponse } = require("../services/users");
 
 const router = express.Router();
 
+// Limites por IP e por conta (e-mail informado), nesta ordem.
+const loginLimiters = [loginIpLimiter, loginAccountLimiter];
+const forgotPasswordLimiters = [forgotPasswordIpLimiter, forgotPasswordAccountLimiter];
+
 function createSession(userId) {
   const token = createToken();
   const createdAt = new Date();
@@ -47,7 +59,7 @@ function createSession(userId) {
 const REGISTER_CONFLICT_MESSAGE =
   "Não foi possível criar a conta. Verifique os dados e tente novamente.";
 
-router.post("/api/auth/register", authRateLimiter, async (req, res) => {
+router.post("/api/auth/register", registerLimiter, async (req, res) => {
   const nome = String(req.body.nome || "").trim();
   const email = normalizeEmail(req.body.email);
   const senha = String(req.body.senha || "");
@@ -101,15 +113,16 @@ router.post("/api/auth/register", authRateLimiter, async (req, res) => {
     throw error;
   }
 
+  setSessionCookie(res, session.token);
+
   return res.status(201).json({
     message: "Conta criada com sucesso.",
-    token: session.token,
     dailyLoginReward,
     user: buildUserResponse(user, []),
   });
 });
 
-router.post("/api/auth/login", authRateLimiter, async (req, res) => {
+router.post("/api/auth/login", loginLimiters, async (req, res) => {
   const email = normalizeEmail(req.body.email);
   const senha = String(req.body.senha || "");
 
@@ -135,15 +148,16 @@ router.post("/api/auth/login", authRateLimiter, async (req, res) => {
   });
   await db.purgeExpiredSessions();
 
+  setSessionCookie(res, session.token);
+
   return res.json({
     message: "Login realizado com sucesso.",
-    token: session.token,
     dailyLoginReward,
     user: buildUserResponse(user, attempts),
   });
 });
 
-router.post("/api/auth/forgot-password", authRateLimiter, async (req, res) => {
+router.post("/api/auth/forgot-password", forgotPasswordLimiters, async (req, res) => {
   const email = normalizeEmail(req.body.email);
 
   if (!email) {
@@ -193,7 +207,7 @@ router.post("/api/auth/forgot-password", authRateLimiter, async (req, res) => {
   return res.json(response);
 });
 
-router.get("/api/auth/reset-password/validate", authRateLimiter, async (req, res) => {
+router.get("/api/auth/reset-password/validate", resetPasswordLimiter, async (req, res) => {
   const token = String(req.query.token || "").trim();
 
   if (!token) {
@@ -214,7 +228,7 @@ router.get("/api/auth/reset-password/validate", authRateLimiter, async (req, res
   });
 });
 
-router.post("/api/auth/reset-password", authRateLimiter, async (req, res) => {
+router.post("/api/auth/reset-password", resetPasswordLimiter, async (req, res) => {
   const token = String(req.body.token || "").trim();
   const senha = String(req.body.senha || "");
 
@@ -241,6 +255,7 @@ router.post("/api/auth/reset-password", authRateLimiter, async (req, res) => {
     await db.deleteSessionsByUser(user.id, tx);
     await db.deleteResetTokensByUser(user.id, tx);
   });
+  clearSessionCookie(res);
 
   return res.json({
     message: "Senha redefinida com sucesso. Faça login com a nova senha.",
@@ -249,6 +264,7 @@ router.post("/api/auth/reset-password", authRateLimiter, async (req, res) => {
 
 router.post("/api/auth/logout", authenticateRequest, async (req, res) => {
   await db.deleteSession(req.tokenHash);
+  clearSessionCookie(res);
 
   res.json({ message: "Sessão encerrada com sucesso." });
 });
