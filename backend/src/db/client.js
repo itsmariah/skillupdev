@@ -1,7 +1,7 @@
 // Conexão com o banco. Com DATABASE_URL usa PostgreSQL (Neon em produção);
 // sem ela, usa o PGlite: um Postgres embutido para desenvolvimento local e testes.
 // As duas opções expõem a mesma interface: query, exec e transaction.
-const { DATABASE_URL, PGLITE_DATA_DIR } = require("../config");
+const { IS_PRODUCTION, DATABASE_URL, PGLITE_DATA_DIR } = require("../config");
 
 function createPostgresClient() {
   const { Pool } = require("pg");
@@ -36,7 +36,7 @@ function createPostgresClient() {
 
 function createPgliteClient() {
   // Em hospedagem, cair no PGlite significaria gravar dados num disco temporário.
-  if (process.env.NODE_ENV === "production" || process.env.RENDER) {
+  if (IS_PRODUCTION) {
     throw new Error("DATABASE_URL não definida. Em produção o banco precisa ser PostgreSQL.");
   }
 

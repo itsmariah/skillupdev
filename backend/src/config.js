@@ -2,6 +2,11 @@ const path = require("path");
 
 require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 
+const { isProductionEnv } = require("./env");
+
+// Produção: NODE_ENV=production ou hospedagem no Render (que sempre define RENDER).
+const IS_PRODUCTION = isProductionEnv(process.env);
+
 const PORT = Number(process.env.PORT) || 3000;
 const FRONTEND_DIR = path.join(__dirname, "..", "..", "frontend");
 // PostgreSQL (Neon em produção). Sem DATABASE_URL, o desenvolvimento local usa o PGlite,
@@ -28,6 +33,7 @@ const MIN_OPEN_ANSWER_LENGTH = 30;
 const MAX_OPEN_ANSWER_LENGTH = 3000;
 
 module.exports = {
+  IS_PRODUCTION,
   PORT,
   FRONTEND_DIR,
   DATABASE_URL,

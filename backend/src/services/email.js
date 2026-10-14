@@ -1,10 +1,10 @@
-const { PORT, RESEND_API_URL, EMAIL_TIMEOUT_MS } = require("../config");
+const { IS_PRODUCTION, PORT, RESEND_API_URL, EMAIL_TIMEOUT_MS } = require("../config");
 const { normalizeTextValue, normalizeEmail, escapeHtml } = require("../lib/text");
 
 // O hostname da requisição é controlável pelo cliente (X-Forwarded-Host com trust proxy),
 // então o preview depende só de configuração do servidor.
 function shouldExposeResetPreview() {
-  return process.env.NODE_ENV !== "production" && process.env.ALLOW_RESET_PREVIEW === "true";
+  return !IS_PRODUCTION && process.env.ALLOW_RESET_PREVIEW === "true";
 }
 
 // Nunca deriva a URL do header Host, para evitar host header poisoning no link de reset.

@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 
-const { PORT, FRONTEND_DIR, FRONTEND_URL } = require("./config");
+const { IS_PRODUCTION, PORT, FRONTEND_DIR, FRONTEND_URL } = require("./config");
 const authRoutes = require("./routes/auth");
 const meRoutes = require("./routes/me");
 const challengeRoutes = require("./routes/challenges");
@@ -14,7 +14,7 @@ app.set("trust proxy", 1);
 
 const allowedOrigins = FRONTEND_URL
   ? [FRONTEND_URL]
-  : process.env.NODE_ENV !== "production"
+  : !IS_PRODUCTION
     ? [`http://localhost:${PORT}`, `http://127.0.0.1:${PORT}`]
     : [];
 

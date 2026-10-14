@@ -1,10 +1,12 @@
-// Ponto de entrada: prepara o banco (migrações), garante o admin e inicia o servidor HTTP.
+// Ponto de entrada: valida a configuração, prepara o banco (migrações), garante o admin e
+// inicia o servidor HTTP.
 // A aplicação Express fica em src/app.js e as regras em src/services/.
 const crypto = require("crypto");
 
 const app = require("./src/app");
 const { PORT, ADMIN_EMAIL, ADMIN_PASSWORD } = require("./src/config");
 const db = require("./src/db");
+const { validateEnv } = require("./src/env");
 const { normalizeEmail } = require("./src/lib/text");
 const { createPasswordHash } = require("./src/services/auth");
 const { DEFAULT_AVATAR, createDefaultGamificationState } = require("./src/services/gamification");
@@ -37,7 +39,25 @@ async function ensureAdminExists() {
   console.log("[Admin] Usuário administrador criado com sucesso.");
 }
 
+function checkEnvironment() {
+  const { errors, warnings } = validateEnv();
+
+  for (const warning of warnings) {
+    console.warn(`[Config] ${warning}`);
+  }
+
+  if (errors.length > 0) {
+    console.error("[Config] Configuração inválida. Servidor não será iniciado:");
+    for (const error of errors) {
+      console.error(`  - ${error}`);
+    }
+    process.exit(1);
+  }
+}
+
 async function start() {
+  checkEnvironment();
+
   try {
     const client = await db.initDatabase();
     console.log(
@@ -49,10 +69,6 @@ async function start() {
   } catch (error) {
     console.error("[Banco] Falha ao preparar o banco. Servidor não será iniciado.", error);
     process.exit(1);
-  }
-
-  if (!process.env.APP_BASE_URL) {
-    console.warn("[Config] APP_BASE_URL não definido. Links de e-mail apontarão para localhost.");
   }
 
   app.listen(PORT, () => {
