@@ -126,6 +126,7 @@
           <p class="history-footnote">
             +${escapeHtml(item.xpGanho)} XP${evaluatorNote ? ` · ${escapeHtml(evaluatorNote)}` : ""}
           </p>
+          <div class="reflection-slot" data-attempt-id="${escapeHtml(item.id)}"></div>
           ${retryButton(item, isLatest)}
         </div>
       </details>
@@ -183,6 +184,14 @@
     list.innerHTML = visible.length
       ? visible.map((item) => renderItem(item, latestIds.has(item.id))).join("")
       : '<p class="dashboard-empty">Nenhum feedback com esses filtros.</p>';
+
+    list.querySelectorAll(".reflection-slot").forEach((slot) => {
+      const item = historyItems.find((entry) => entry.id === slot.dataset.attemptId);
+      window.skillUpReflection?.mount(slot, item, (reflexao, reflexaoEm) => {
+        item.reflexao = reflexao;
+        item.reflexaoEm = reflexaoEm;
+      });
+    });
   }
 
   function renderSummary(evolution) {

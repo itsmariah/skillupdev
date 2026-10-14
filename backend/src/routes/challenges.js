@@ -260,6 +260,7 @@ async function handleChallengeSubmission(req, res, challenge) {
       wasIdeal: result.wasIdeal,
       perfectStreak: user.gamification.perfectStreak,
       tentativa: attempts[attempts.length - 1].attemptNumber,
+      tentativaId: attempts[attempts.length - 1].id,
       revisao: Boolean(result.review),
       melhorFaixaAnterior: result.previousBestTier || null,
       xpBreakdown: result.xpBreakdown,

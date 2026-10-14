@@ -2561,6 +2561,48 @@
       }
 /* FIM VÁRIAS TENTATIVAS */
 
+/* DIÁRIO DE REFLEXÃO */
+      .reflection-box {
+         margin-top: var(--space-4);
+         padding: var(--space-4);
+         border-radius: var(--radius-md);
+         background: var(--color-surface);
+         border: 1px dashed var(--color-border-strong);
+         text-align: left;
+      }
+
+      .reflection-box .history-subtitle {
+         margin-top: 0;
+      }
+
+      .reflection-prompt {
+         display: block;
+         margin-bottom: var(--space-2);
+         color: var(--color-ink);
+         font-weight: var(--font-weight-bold);
+      }
+
+      .reflection-status {
+         color: var(--color-text-muted);
+         font-size: var(--font-size-sm);
+      }
+/* FIM DIÁRIO DE REFLEXÃO */
+
+/* BOTÕES CONTORNADOS */
+      /* O azul padrão do Bootstrap (#0d6efd) fica abaixo de 4,5:1 nos fundos claros. "body" dá
+         especificidade para vencer o Bootstrap, que é carregado depois deste arquivo. */
+      body .btn-outline-primary {
+         --bs-btn-color: var(--color-primary-strong);
+         --bs-btn-border-color: var(--color-primary-strong);
+         --bs-btn-hover-color: var(--color-on-dark);
+         --bs-btn-hover-bg: var(--color-primary-strong);
+         --bs-btn-hover-border-color: var(--color-primary-strong);
+         --bs-btn-active-color: var(--color-on-dark);
+         --bs-btn-active-bg: var(--color-primary-strong);
+         --bs-btn-active-border-color: var(--color-primary-strong);
+      }
+/* FIM BOTÕES CONTORNADOS */
+
 /* ACESSIBILIDADE */
       /* Link para pular a navegação: fica fora da tela até receber foco pelo teclado. */
       .skip-link {

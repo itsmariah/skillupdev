@@ -323,7 +323,15 @@
       ${breakdownMarkup ? `<ul class="result-breakdown">${breakdownMarkup}</ul>` : ""}
       ${badgesMarkup}
     </div>
+    <div id="reflectionSlot" class="mt-3"></div>
   `;
+
+    window.skillUpReflection?.mount(
+      document.getElementById("reflectionSlot"),
+      { id: result.tentativaId, qualityTier: result.qualityTier },
+      null,
+      { headingLevel: 2 },
+    );
 
     nextButton.classList.remove("d-none");
   }

@@ -153,7 +153,7 @@ Passar de "responder uma vez" para "praticar e evoluir".
 - [x] Taxonomia de competências ligada aos critérios de avaliação
 - [x] Conteúdo gerenciado pelo painel admin, sem precisar de deploy
 - [x] Várias tentativas por desafio e nota por critério
-- [ ] Diário de reflexão após o feedback
+- [x] Diário de reflexão após o feedback
 - [ ] Trilhas por competência com dificuldade progressiva
 - [ ] Badges por regras configuráveis
 

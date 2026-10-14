@@ -45,6 +45,10 @@ function buildAccountExport({ user, attempts, studyResponses, exportedAt = new D
       avaliador: attempt.evaluator,
       avaliacao: attempt.evaluation,
       respondidaEm: attempt.createdAt,
+      tentativa: attempt.attemptNumber ?? 1,
+      reflexao: attempt.reflection
+        ? { texto: attempt.reflection, atualizadaEm: attempt.reflectionUpdatedAt }
+        : null,
     })),
     estudoPiloto: studyResponses.map((response) => ({
       questionario: response.type,

@@ -100,6 +100,12 @@
     exportAccount() {
       return request("/api/me/export");
     },
+    saveReflection(attemptId, texto) {
+      return request(`/api/me/attempts/${encodeURIComponent(attemptId)}/reflection`, {
+        method: "PUT",
+        body: { texto },
+      });
+    },
     getHistory() {
       return request("/api/me/history");
     },

@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { MAX_NAME_LENGTH, MIN_PASSWORD_LENGTH } = require("../config");
+const { MAX_NAME_LENGTH, MIN_PASSWORD_LENGTH, MAX_REFLECTION_LENGTH } = require("../config");
 const db = require("../db");
 const { authenticateRequest, clearSessionCookie } = require("../middleware/auth");
 const { accountSecurityLimiter } = require("../middleware/rateLimits");
@@ -66,6 +66,33 @@ router.patch("/api/me/avatar", authenticateRequest, async (req, res) => {
   res.json({
     message: "Avatar salvo com sucesso.",
     user: buildUserResponse(req.user, attempts),
+  });
+});
+
+// Diário de reflexão: texto opcional da própria pessoa sobre uma tentativa. Vazio apaga.
+router.put("/api/me/attempts/:attemptId/reflection", authenticateRequest, async (req, res) => {
+  const text = String(req.body?.texto ?? "").trim();
+
+  if (text.length > MAX_REFLECTION_LENGTH) {
+    return res
+      .status(400)
+      .json({ message: `A reflexão pode ter no máximo ${MAX_REFLECTION_LENGTH} caracteres.` });
+  }
+
+  const saved = await db.saveReflection({
+    userId: req.user.id,
+    attemptId: req.params.attemptId,
+    text,
+  });
+
+  if (!saved) {
+    return res.status(404).json({ message: "Tentativa não encontrada." });
+  }
+
+  res.json({
+    message: saved.reflection ? "Reflexão salva." : "Reflexão apagada.",
+    reflexao: saved.reflection,
+    reflexaoEm: saved.reflectionUpdatedAt,
   });
 });
 

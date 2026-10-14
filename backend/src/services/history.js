@@ -54,6 +54,8 @@ function buildHistoryItem(attempt) {
     tentativa: Number(attempt.attemptNumber) || 1,
     revisao: isReviewAttempt(attempt),
     disponivel: isPublished(attempt.challengeId),
+    reflexao: attempt.reflection || null,
+    reflexaoEm: attempt.reflectionUpdatedAt || null,
   };
 }
 

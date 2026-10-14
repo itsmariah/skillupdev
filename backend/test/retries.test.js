@@ -113,3 +113,59 @@ test("a lista de desafios mostra tentativas, melhor nota e convite para melhorar
   assert.equal(challenge.refazer, "melhorar");
   assert.equal(challenge.lastResult.tentativa, 4);
 });
+
+test("diário de reflexão: salvar, editar, apagar e só a própria pessoa", async () => {
+  const [attempt] = await db.listAttemptsForChallenge(userId, CHALLENGE);
+  const url = `/api/me/attempts/${attempt.id}/reflection`;
+
+  const saved = await api("PUT", url, { texto: "  Faltou avisar cedo e propor um novo prazo.  " });
+  assert.equal(saved.status, 200);
+  assert.equal(saved.data.reflexao, "Faltou avisar cedo e propor um novo prazo.");
+  assert.ok(saved.data.reflexaoEm);
+
+  const edited = await api("PUT", url, { texto: "Na próxima, aviso no mesmo dia." });
+  assert.equal(edited.data.reflexao, "Na próxima, aviso no mesmo dia.");
+
+  const tooLong = await api("PUT", url, { texto: "x".repeat(1001) });
+  assert.equal(tooLong.status, 400);
+
+  const history = (await api("GET", "/api/me/history")).data;
+  assert.equal(
+    history.items.find((item) => item.id === attempt.id).reflexao,
+    "Na próxima, aviso no mesmo dia.",
+  );
+
+  const exported = (await api("GET", "/api/me/export")).data;
+  assert.equal(
+    exported.tentativas.find((item) => item.tentativa === 1 && item.desafio.id === CHALLENGE)
+      .reflexao.texto,
+    "Na próxima, aviso no mesmo dia.",
+  );
+
+  // Outra pessoa não escreve na tentativa de alguém.
+  const ownSession = session;
+  const other = await api("POST", "/api/auth/register", {
+    nome: "Outra",
+    email: "outra-reflexao@teste.com",
+    senha: "senha123",
+    aceiteTermos: true,
+  });
+  session = other.headers
+    .getSetCookie()
+    .find((cookie) => cookie.startsWith(`${SESSION_COOKIE}=`))
+    .split(";")[0];
+  assert.equal((await api("PUT", url, { texto: "invasão" })).status, 404);
+  session = ownSession;
+
+  const cleared = await api("PUT", url, { texto: "   " });
+  assert.equal(cleared.data.reflexao, null);
+  const [after] = await db.listAttemptsForChallenge(userId, CHALLENGE);
+  assert.equal(after.reflection, null);
+  assert.equal(after.reflectionUpdatedAt, null);
+});
+
+test("o resultado do envio informa o id da tentativa (para a reflexão)", async () => {
+  const { data } = await submit(STRONG);
+  const attempts = await db.listAttemptsForChallenge(userId, CHALLENGE);
+  assert.equal(data.result.tentativaId, attempts[attempts.length - 1].id);
+});

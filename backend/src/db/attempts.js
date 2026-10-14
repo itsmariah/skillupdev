@@ -9,6 +9,8 @@ function rowToAttempt(row) {
     challengeId: row.challenge_id,
     challengeVersion: row.challenge_version,
     attemptNumber: row.attempt_number,
+    reflection: row.reflection || null,
+    reflectionUpdatedAt: toIso(row.reflection_updated_at),
     challengeType: row.challenge_type,
     category: row.category,
     answer: row.answer,
@@ -76,6 +78,24 @@ async function insertAttempt(attempt, db = getClient()) {
   );
 }
 
+// Grava (ou apaga, com texto vazio) a reflexão de uma tentativa da própria pessoa.
+// Devolve null se a tentativa não existir ou for de outra pessoa.
+async function saveReflection({ userId, attemptId, text }, db = getClient()) {
+  const { rows } = await db.query(
+    `UPDATE challenge_attempts
+     SET reflection = $3, reflection_updated_at = CASE WHEN $3::text IS NULL THEN NULL ELSE now() END
+     WHERE id = $1 AND user_id = $2
+     RETURNING reflection, reflection_updated_at`,
+    [attemptId, userId, text || null],
+  );
+  return rows[0]
+    ? {
+        reflection: rows[0].reflection || null,
+        reflectionUpdatedAt: toIso(rows[0].reflection_updated_at),
+      }
+    : null;
+}
+
 // Desafios distintos respondidos por usuário (inclui desafios que não existem mais).
 async function countAttemptsByUser(db = getClient()) {
   const { rows } = await db.query(
@@ -87,6 +107,7 @@ async function countAttemptsByUser(db = getClient()) {
 module.exports = {
   listAttemptsByUser,
   listAttemptsForChallenge,
+  saveReflection,
   insertAttempt,
   countAttemptsByUser,
 };
