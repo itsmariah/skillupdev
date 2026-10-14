@@ -9,6 +9,7 @@ const db = require("./src/db");
 const { validateEnv } = require("./src/env");
 const { normalizeEmail } = require("./src/lib/text");
 const { createPasswordHash } = require("./src/services/auth");
+const { ROLES } = require("./src/services/roles");
 const { DEFAULT_AVATAR, createDefaultGamificationState } = require("./src/services/gamification");
 
 async function ensureAdminExists() {
@@ -24,7 +25,7 @@ async function ensureAdminExists() {
     nome: "Administrador",
     email: normalizeEmail(ADMIN_EMAIL),
     passwordHash: createPasswordHash(ADMIN_PASSWORD),
-    isAdmin: true,
+    role: ROLES.ADMIN,
     xp: 0,
     nivel: 1,
     badges: [],

@@ -31,7 +31,7 @@ test.before(async () => {
     nome: "Administrador",
     email: "admin@teste.com",
     passwordHash: createPasswordHash("admin-senha"),
-    isAdmin: true,
+    role: "admin",
     xp: 0,
     nivel: 1,
     badges: [],
@@ -88,6 +88,8 @@ test("cadastro cria conta, sessão e bônus de login diário", async () => {
   assert.equal(status, 201);
   assert.equal(data.token, undefined);
   assert.equal(data.user.email, "dev@teste.com");
+  assert.equal(data.user.role, "user");
+  assert.equal("isAdmin" in data.user, false);
   assert.equal(data.dailyLoginReward.xp, 20);
   assert.equal(data.user.xp, 20);
 
@@ -324,6 +326,7 @@ test("painel admin: acesso restrito, dados do estudo, CSV e exclusão em cascata
     body: { email: "admin@teste.com", senha: "admin-senha" },
   });
   const adminSession = sessionCookieOf(admin);
+  assert.equal(admin.data.user.role, "admin");
 
   const studyData = await api("GET", "/api/admin/study-data", { session: adminSession });
   assert.equal(studyData.status, 200);

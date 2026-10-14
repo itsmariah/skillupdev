@@ -129,7 +129,7 @@ Base técnica para o projeto crescer com segurança.
 - [x] Migrar o banco para PostgreSQL (Neon) com migrações e importação dos dados atuais
 - [x] Validação das variáveis de ambiente na inicialização
 - [x] Sessão em cookie seguro e limites de requisição por rota e por conta
-- [ ] Papéis de usuário no lugar do `isAdmin`
+- [x] Papéis de usuário no lugar do `isAdmin`
 - [x] Avaliação da IA mais robusta: saída estruturada, proteção contra manipulação da nota e registro de quem avaliou (IA ou heurística)
 - [x] Lint, formatação e CI (ESLint, Prettier e GitHub Actions)
 

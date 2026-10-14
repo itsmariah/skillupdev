@@ -83,6 +83,8 @@ test("importa usuários, badges, sessões ativas, tentativas e respostas do estu
   assert.deepEqual(await db.findActiveSession("ativa"), { tokenHash: "ativa", userId: "u1" });
   assert.equal(await db.findActiveSession("expirada"), null);
   assert.equal(await db.hasAdmin(), true);
+  assert.equal(user.role, "user");
+  assert.equal((await db.findUserById("u2")).role, "admin");
   assert.deepEqual((await db.findStudyResponse("u1", "pre")).data, { curso: "CC" });
 });
 

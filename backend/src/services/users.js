@@ -11,14 +11,19 @@ const {
   buildBadgeCatalog,
   buildCategoryProgress,
 } = require("./gamification");
+const { resolveRole } = require("./roles");
 
 function hydrateUser(user) {
   const xp = Math.max(Number(user?.xp) || 0, 0);
   const level = calculateLevel(xp);
   const nome = String(user?.nome || user?.usuário || "Dev").trim();
+  // O papel substitui o antigo isAdmin, que não segue adiante no objeto.
+  const rest = { ...user };
+  delete rest.isAdmin;
 
   return {
-    ...user,
+    ...rest,
+    role: resolveRole(user),
     nome,
     email: normalizeEmail(user?.email),
     usuário: user?.usuário || null,
@@ -60,7 +65,7 @@ function buildUserResponse(user, userAttempts) {
       dailyLoginAwardedToday: user.gamification?.lastDailyLoginDate === getTodayKey(),
       totalBadges: unlockedBadges.length,
     },
-    isAdmin: Boolean(user.isAdmin),
+    role: resolveRole(user),
     studyPreDone: Boolean(user.studyPreDone),
     studyPostDone: Boolean(user.studyPostDone),
   };

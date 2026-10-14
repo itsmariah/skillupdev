@@ -1,6 +1,7 @@
 const { IS_PRODUCTION, SESSION_TTL_MS } = require("../config");
 const { findActiveSession, findUserById } = require("../db");
 const { hashToken } = require("../services/auth");
+const { hasRole } = require("../services/roles");
 
 // O token da sessão vive só num cookie HttpOnly: o JavaScript da página não consegue lê-lo.
 // Em produção o prefixo __Host- obriga Secure, Path=/ e nenhum Domain.
@@ -58,11 +59,14 @@ async function authenticateRequest(req, res, next) {
   next();
 }
 
-function requireAdmin(req, res, next) {
-  if (!req.user.isAdmin) {
-    return res.status(403).json({ message: "Acesso restrito ao administrador." });
-  }
-  next();
+// Uso: router.get(rota, authenticateRequest, requireRole(ROLES.ADMIN), handler).
+function requireRole(...roles) {
+  return function checkRole(req, res, next) {
+    if (!hasRole(req.user, ...roles)) {
+      return res.status(403).json({ message: "Você não tem permissão para acessar este recurso." });
+    }
+    next();
+  };
 }
 
 module.exports = {
@@ -70,5 +74,5 @@ module.exports = {
   setSessionCookie,
   clearSessionCookie,
   authenticateRequest,
-  requireAdmin,
+  requireRole,
 };

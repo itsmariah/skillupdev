@@ -93,7 +93,7 @@
   }
 
   function resolvePostLoginRedirect(user) {
-    if (user.isAdmin) return "admin.html";
+    if (user.role === "admin") return "admin.html";
     return "dashboard.html";
   }
 

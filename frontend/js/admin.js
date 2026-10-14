@@ -288,7 +288,7 @@
 
     if (!window.skillUpAuth?.requireSession()) return;
 
-    if (!window.skillUpApi.getStoredUser()?.isAdmin) {
+    if (window.skillUpApi.getStoredUser()?.role !== "admin") {
       window.location.href = "dashboard.html";
       return;
     }

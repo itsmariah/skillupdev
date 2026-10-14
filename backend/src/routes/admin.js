@@ -1,12 +1,15 @@
 const express = require("express");
 
 const db = require("../db");
-const { authenticateRequest, requireAdmin } = require("../middleware/auth");
+const { authenticateRequest, requireRole } = require("../middleware/auth");
+const { ROLES, hasRole } = require("../services/roles");
 const { calcSusScore, susClassification } = require("../services/study");
 
 const router = express.Router();
 
-router.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (req, res) => {
+const adminOnly = [authenticateRequest, requireRole(ROLES.ADMIN)];
+
+router.get("/api/admin/study-data", adminOnly, async (req, res) => {
   const responses = await db.listStudyResponses();
   const users = await db.listUsers();
   const attemptCounts = await db.countAttemptsByUser();
@@ -74,7 +77,7 @@ router.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (re
   ]).size;
 
   const participants = users
-    .filter((u) => !u.isAdmin && (u.studyPreDone || u.studyPostDone))
+    .filter((u) => !hasRole(u, ROLES.ADMIN) && (u.studyPreDone || u.studyPostDone))
     .map((u) => {
       const pre = preResponses.find((r) => r.userId === u.id);
       const post = postResponses.find((r) => r.userId === u.id);
@@ -117,7 +120,7 @@ router.get("/api/admin/study-data", authenticateRequest, requireAdmin, async (re
   });
 });
 
-router.get("/api/admin/study-data/export", authenticateRequest, requireAdmin, async (req, res) => {
+router.get("/api/admin/study-data/export", adminOnly, async (req, res) => {
   const responses = await db.listStudyResponses();
   const postResponses = responses.filter((r) => r.type === "post");
 
@@ -192,7 +195,7 @@ router.get("/api/admin/study-data/export", authenticateRequest, requireAdmin, as
   return res.send("﻿" + csv);
 });
 
-router.delete("/api/admin/users/:id", authenticateRequest, requireAdmin, async (req, res) => {
+router.delete("/api/admin/users/:id", adminOnly, async (req, res) => {
   const { id } = req.params;
   const user = await db.findUserById(id);
 
@@ -200,7 +203,7 @@ router.delete("/api/admin/users/:id", authenticateRequest, requireAdmin, async (
     return res.status(404).json({ message: "Usuário não encontrado." });
   }
 
-  if (user.isAdmin) {
+  if (hasRole(user, ROLES.ADMIN)) {
     return res.status(403).json({ message: "Não é possível excluir um administrador." });
   }
 

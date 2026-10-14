@@ -1,4 +1,5 @@
 const { getClient } = require("./client");
+const { ROLES } = require("../services/roles");
 const { hydrateUser } = require("../services/users");
 
 const toIso = (value) => (value ? new Date(value).toISOString() : null);
@@ -11,7 +12,7 @@ function rowToUser(row, badges = []) {
     email: row.email,
     usuário: row.legacy_username,
     passwordHash: row.password_hash,
-    isAdmin: row.is_admin,
+    role: row.role,
     xp: row.xp,
     nivel: row.nivel,
     badges,
@@ -39,7 +40,7 @@ function toMutableColumns(user) {
     email: user.email,
     legacy_username: user.usuário || null,
     password_hash: user.passwordHash,
-    is_admin: Boolean(user.isAdmin),
+    role: user.role || ROLES.USER,
     xp: Number(user.xp) || 0,
     nivel: Number(user.nivel) || 1,
     avatar_config: JSON.stringify(user.avatarConfig || {}),
@@ -101,7 +102,7 @@ async function listUsers(db = getClient()) {
 }
 
 async function hasAdmin(db = getClient()) {
-  const { rows } = await db.query("SELECT 1 FROM users WHERE is_admin LIMIT 1");
+  const { rows } = await db.query("SELECT 1 FROM users WHERE role = $1 LIMIT 1", [ROLES.ADMIN]);
   return rows.length > 0;
 }
 
