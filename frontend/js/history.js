@@ -90,6 +90,7 @@
           <span class="history-item-main">
             <span class="history-item-title">${escapeHtml(item.titulo)}</span>
             <span class="history-item-meta">
+              ${window.skillUpIcons.categoryIcon(item.categoria, "category-icon")}
               ${escapeHtml(item.categoria)} · ${typeLabel} · ${escapeHtml(formatDate(item.respondidoEm))}
             </span>
           </span>

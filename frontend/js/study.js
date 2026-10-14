@@ -287,8 +287,8 @@
             </button>
           </div>
         </div>
-        <button id="studyPostBannerDismiss"
-          style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;opacity:0.7;padding:0;flex-shrink:0;">✕</button>
+        <button id="studyPostBannerDismiss" aria-label="Fechar"
+          style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;opacity:0.7;padding:0;flex-shrink:0;"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#icon-close"></use></svg></button>
       </div>
     `;
 
@@ -324,7 +324,9 @@
                   max-width:460px; width:100%; text-align:center;
                   box-shadow:0 24px 64px rgba(0,0,0,0.35);
                   animation:slideUp 0.3s ease;">
-        <div style="font-size:2.2rem; margin-bottom:0.75rem;">🎓</div>
+        <div style="font-size:2.2rem; margin-bottom:0.75rem; color:var(--color-primary);">
+          <svg class="ui-icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#icon-graduation"></use></svg>
+        </div>
         <h3 style="color:#2c2457; font-weight:800; font-size:1.2rem; margin-bottom:0.6rem;">
           Estudo Piloto Encerrado
         </h3>

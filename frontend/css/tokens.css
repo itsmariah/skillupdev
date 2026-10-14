@@ -1,0 +1,106 @@
+/*
+ * Design tokens da SkillUp Dev.
+ * Fonte única de cores, raios, sombras, espaçamentos e tipografia. O style.css usa
+ * estes valores via var(--...); valor novo entra aqui, não direto no componente.
+ * As cores do avatar (pele, cabelo, roupa) são dados do personagem e ficam em style.css.
+ * Carregar antes do style.css em todas as páginas.
+ */
+:root {
+  /* Marca */
+  --color-primary: #5b6cff;
+  --color-primary-strong: #4451c9;
+  --color-primary-soft: #7a88ff;
+  --color-primary-deep: #4a59e8;
+  --color-primary-bright: #6d7cff;
+  --color-primary-rgb: 91, 108, 255;
+
+  /* Texto */
+  --color-ink: #2c2457;
+  --color-ink-soft: #3b3566;
+  --color-text-muted: #5d647d;
+  --color-label: #6c78bd;
+  --color-on-dark: #ffffff;
+  --color-on-dark-soft: #d6d6ff;
+
+  /* Fundos e superfícies */
+  --color-bg: #1d183a;
+  --color-bg-raised: #443a7a;
+  --color-bg-sunken: #1c173a;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f7f8ff;
+  --color-surface-tint: #eef1ff;
+  --color-surface-tint-strong: #dfe6ff;
+  --color-surface-warm: #fffbeb;
+
+  /* Bordas */
+  --color-border: #e3e6fb;
+  --color-border-strong: #d7dcff;
+
+  /* Estados */
+  --color-success: #0f766e;
+  --color-success-bright: #28a745;
+  --color-warning: #b45309;
+  --color-danger: #ff4d4d;
+
+  /* Raridade das badges */
+  --color-rarity-common: #6b7280;
+  --color-rarity-rare: #3b82f6;
+  --color-rarity-epic: #8b5cf6;
+  --color-rarity-legendary: #d97706;
+
+  /* Gradientes */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary), var(--color-primary-soft));
+  --gradient-primary-hover: linear-gradient(
+    135deg,
+    var(--color-primary-deep),
+    var(--color-primary-bright)
+  );
+  --gradient-surface: linear-gradient(
+    135deg,
+    var(--color-surface-tint),
+    var(--color-surface-tint-strong)
+  );
+
+  /* Raios */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  /* Sombras */
+  --shadow-sm: 0 10px 20px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.18);
+  --shadow-primary: 0 6px 15px rgba(var(--color-primary-rgb), 0.35);
+  --focus-ring: 0 0 0 0.2rem rgba(var(--color-primary-rgb), 0.2);
+
+  /* Espaçamentos (escala de 4px) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Tipografia */
+  --font-sans: Arial, sans-serif;
+  --font-mono: monospace;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.85rem;
+  --font-size-md: 1rem;
+  --font-weight-bold: 700;
+  --font-weight-heavy: 800;
+
+  /* Ícones */
+  --icon-size-sm: 1rem;
+  --icon-size-md: 1.5rem;
+  --icon-size-lg: 2.25rem;
+
+  /* Layout e movimento */
+  --navbar-height: 90px;
+  --transition-base: 0.3s ease;
+}

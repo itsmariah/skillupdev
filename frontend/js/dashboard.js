@@ -425,7 +425,10 @@
         return `
           <div class="category-progress-item">
             <div class="category-progress-header">
-              <strong>${escapeHtml(item.categoria)}</strong>
+              <strong class="category-name">
+                ${window.skillUpIcons.categoryIcon(item.categoria, "category-icon")}
+                ${escapeHtml(item.categoria)}
+              </strong>
               <span>${average}${escapeHtml(item.completed)}/${escapeHtml(item.total)}</span>
             </div>
             <div class="progress" role="img" aria-label="${escapeHtml(item.categoria)}: ${escapeHtml(item.completed)} de ${escapeHtml(item.total)} desafios">
