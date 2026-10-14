@@ -1,4 +1,4 @@
-const { CHALLENGES } = require("../content/challenges");
+const { getChallenges } = require("../content/catalog");
 const { normalizeEmail } = require("../lib/text");
 const {
   getTodayKey,
@@ -54,8 +54,8 @@ function buildUserResponse(user, userAttempts) {
     email: user.email,
     ...progress,
     completedChallenges: attempts.length,
-    totalChallenges: CHALLENGES.length,
-    pendingChallenges: Math.max(CHALLENGES.length - attempts.length, 0),
+    totalChallenges: getChallenges().length,
+    pendingChallenges: Math.max(getChallenges().length - attempts.length, 0),
     categoryProgress: buildCategoryProgress(attempts),
     badges: unlockedBadges,
     badgeCatalog,

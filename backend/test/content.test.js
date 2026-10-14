@@ -1,5 +1,5 @@
-// Integridade do conteúdo e da taxonomia: os desafios ainda estão fixos no código (auditoria, item 13),
-// então estes testes evitam que uma edição quebre as regras de XP ou as badges.
+// Integridade da semente de desafios (content/challenges.js, gravada no banco na primeira
+// inicialização) e da taxonomia. Conteúdo novo é validado pelo painel (services/content.js).
 const test = require("node:test");
 const assert = require("node:assert/strict");
 

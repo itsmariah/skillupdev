@@ -1,6 +1,11 @@
 // Histórico de feedbacks e números da evolução, a partir das tentativas do usuário.
 // Só entram tentativas de desafios que ainda existem (mesma regra do progresso).
-const { CHALLENGES, getChallengeById } = require("../content/challenges");
+const {
+  getChallenges,
+  getCategories,
+  getChallengeVersion,
+  countPublishedByCategory,
+} = require("../content/catalog");
 const { filterValidAttempts } = require("./gamification");
 
 // Tendência: média das últimas N tentativas contra as N anteriores.
@@ -15,7 +20,8 @@ const average = (values) =>
 const byDate = (a, b) => String(a.createdAt).localeCompare(String(b.createdAt));
 
 function buildHistoryItem(attempt) {
-  const challenge = getChallengeById(attempt.challengeId);
+  // A versão que a pessoa respondeu, mesmo que o desafio tenha mudado depois.
+  const challenge = getChallengeVersion(attempt.challengeId, attempt.challengeVersion);
   const criteriaScores = Array.isArray(attempt.evaluation?.criteriaScores)
     ? attempt.evaluation.criteriaScores.map(({ criterio, nota }) => ({ criterio, nota }))
     : [];
@@ -61,22 +67,26 @@ function buildTrend(sortedAttempts) {
 
 function buildEvolution(attempts) {
   const valid = filterValidAttempts(attempts).sort(byDate);
-  const categories = Array.from(new Set(CHALLENGES.map((challenge) => challenge.categoria)));
+  const categories = getCategories();
 
   return {
     completed: valid.length,
-    totalChallenges: CHALLENGES.length,
+    totalChallenges: getChallenges().length,
     averageScore: average(valid.map((attempt) => attempt.score)),
     trend: buildTrend(valid),
     byCategory: categories.map((categoria) => {
       const scores = valid
-        .filter((attempt) => getChallengeById(attempt.challengeId).categoria === categoria)
+        .filter(
+          (attempt) =>
+            getChallengeVersion(attempt.challengeId, attempt.challengeVersion)?.categoria ===
+            categoria,
+        )
         .map((attempt) => attempt.score);
 
       return {
         categoria,
         completed: scores.length,
-        total: CHALLENGES.filter((challenge) => challenge.categoria === categoria).length,
+        total: countPublishedByCategory(categoria),
         averageScore: average(scores),
         bestScore: scores.length ? Math.max(...scores) : null,
       };
@@ -88,7 +98,8 @@ function buildEvolution(attempts) {
 function buildHistory(attempts) {
   return {
     evolution: buildEvolution(attempts),
-    items: filterValidAttempts(attempts)
+    items: (attempts || [])
+      .filter((attempt) => getChallengeVersion(attempt.challengeId, attempt.challengeVersion))
       .sort((a, b) => byDate(b, a))
       .map(buildHistoryItem),
   };

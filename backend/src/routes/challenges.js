@@ -2,7 +2,7 @@ const express = require("express");
 const crypto = require("crypto");
 
 const { MIN_OPEN_ANSWER_LENGTH, MAX_OPEN_ANSWER_LENGTH } = require("../config");
-const { CHALLENGES, getChallengeById } = require("../content/challenges");
+const { getChallenges, getChallengeById } = require("../content/catalog");
 const { buildPublicTaxonomy, getSkillById } = require("../content/competencies");
 const db = require("../db");
 const { authenticateRequest } = require("../middleware/auth");
@@ -64,7 +64,7 @@ router.get("/api/challenges", authenticateRequest, async (req, res) => {
   const userAttempts = await db.listAttemptsByUser(req.user.id);
 
   res.json({
-    challenges: CHALLENGES.map((challenge) =>
+    challenges: getChallenges().map((challenge) =>
       buildPublicChallenge(
         challenge,
         userAttempts.find((attempt) => attempt.challengeId === challenge.id),
@@ -205,6 +205,7 @@ async function handleChallengeSubmission(req, res, challenge) {
         id: crypto.randomUUID(),
         userId: user.id,
         challengeId: challenge.id,
+        challengeVersion: challenge.version,
         challengeType: challenge.tipo,
         category: challenge.categoria,
         answer,

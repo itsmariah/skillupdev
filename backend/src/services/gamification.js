@@ -1,5 +1,10 @@
 const { APP_TIMEZONE } = require("../config");
-const { CHALLENGES, VALID_CHALLENGE_IDS, ALL_CATEGORIES } = require("../content/challenges");
+const {
+  getChallenges,
+  getCategories,
+  isPublished,
+  countPublishedByCategory,
+} = require("../content/catalog");
 
 // XP por conclusão de desafio (base, antes de qualidade e multiplicador)
 const CHALLENGE_COMPLETION_XP = 40;
@@ -131,21 +136,21 @@ const BADGE_DEFINITIONS = [
   {
     id: "collaborative-dev",
     name: "Dev Colaborativo",
-    description: "Complete todos os 6 desafios de Trabalho em Equipe.",
+    description: "Complete todos os desafios de Trabalho em Equipe.",
     theme: "teamwork",
     rarity: "raro",
     predicate(context) {
-      return countAttemptsByCategory(context.attempts, "Trabalho em Equipe") >= 6;
+      return isCategoryComplete(context.attempts, "Trabalho em Equipe");
     },
   },
   {
     id: "time-master",
     name: "Mestre do Tempo",
-    description: "Complete todos os 6 desafios de Gestão de Tempo.",
+    description: "Complete todos os desafios de Gestão de Tempo.",
     theme: "time",
     rarity: "raro",
     predicate(context) {
-      return countAttemptsByCategory(context.attempts, "Gestão de Tempo") >= 6;
+      return isCategoryComplete(context.attempts, "Gestão de Tempo");
     },
   },
   {
@@ -154,11 +159,10 @@ const BADGE_DEFINITIONS = [
     description: "Obtenha resposta ideal nos dois desafios de conflito entre colegas.",
     theme: "teamwork",
     rarity: "raro",
+    // Desafios específicos de que a badge depende (o painel avisa antes de arquivá-los).
+    requiresChallenges: ["teamwork-closed-2", "teamwork-open-2"],
     predicate(context) {
-      return (
-        hasIdealAttempt(context.attempts, "teamwork-closed-2") &&
-        hasIdealAttempt(context.attempts, "teamwork-open-2")
-      );
+      return this.requiresChallenges.every((id) => hasIdealAttempt(context.attempts, id));
     },
   },
   // ── Épico ─────────────────────────────────────────────────────────────────
@@ -206,11 +210,11 @@ const BADGE_DEFINITIONS = [
   {
     id: "full-dev",
     name: "360° Dev",
-    description: "Complete todos os 30 desafios da plataforma.",
+    description: "Complete todos os desafios da plataforma.",
     theme: "master",
     rarity: "lendario",
     predicate(context) {
-      return context.attempts.length >= 30;
+      return getChallenges().length > 0 && context.attempts.length >= getChallenges().length;
     },
   },
   {
@@ -347,9 +351,10 @@ function deriveQualityTier(score, challengeType = "aberto") {
   return "low";
 }
 
-// Ignora tentativas de desafios que não existem mais no catálogo.
+// Só contam tentativas de desafios publicados (arquivados e removidos ficam de fora do
+// progresso; o XP já ganho e o histórico continuam).
 function filterValidAttempts(attempts) {
-  return (attempts || []).filter((attempt) => VALID_CHALLENGE_IDS.has(attempt.challengeId));
+  return (attempts || []).filter((attempt) => isPublished(attempt.challengeId));
 }
 
 function countAttemptsByCategory(attempts, category) {
@@ -365,11 +370,17 @@ function countIdealAttempts(attempts) {
 }
 
 function countCategoriesWithAttempts(attempts) {
-  return ALL_CATEGORIES.filter((cat) => countAttemptsByCategory(attempts, cat) >= 1).length;
+  return getCategories().filter((cat) => countAttemptsByCategory(attempts, cat) >= 1).length;
+}
+
+// Categoria completa = todos os desafios publicados dela respondidos (o total vem do catálogo).
+function isCategoryComplete(attempts, category) {
+  const total = countPublishedByCategory(category);
+  return total > 0 && countAttemptsByCategory(attempts, category) >= total;
 }
 
 function countCompletedCategories(attempts) {
-  return ALL_CATEGORIES.filter((cat) => countAttemptsByCategory(attempts, cat) >= 6).length;
+  return getCategories().filter((cat) => isCategoryComplete(attempts, cat)).length;
 }
 
 function getProgress(xp) {
@@ -466,18 +477,16 @@ function syncBadges(user, userAttempts) {
 }
 
 function buildCategoryProgress(attempts) {
-  return Array.from(new Set(CHALLENGES.map((challenge) => challenge.categoria))).map(
-    (categoria) => {
-      const total = CHALLENGES.filter((challenge) => challenge.categoria === categoria).length;
-      const completed = countAttemptsByCategory(attempts, categoria);
+  return getCategories().map((categoria) => {
+    const total = countPublishedByCategory(categoria);
+    const completed = countAttemptsByCategory(attempts, categoria);
 
-      return {
-        categoria,
-        completed,
-        total,
-      };
-    },
-  );
+    return {
+      categoria,
+      completed,
+      total,
+    };
+  });
 }
 
 function applyDailyLoginReward(user) {
@@ -587,7 +596,15 @@ function buildChallengeResult({ challenge, score, feedback, previousStreak }) {
   };
 }
 
+// Badges que deixam de ser alcançáveis se este desafio sair do catálogo.
+function findBadgesRequiringChallenge(challengeId) {
+  return BADGE_DEFINITIONS.filter((badge) => badge.requiresChallenges?.includes(challengeId)).map(
+    (badge) => ({ id: badge.id, name: badge.name }),
+  );
+}
+
 module.exports = {
+  findBadgesRequiringChallenge,
   CHALLENGE_COMPLETION_XP,
   IDEAL_ANSWER_BONUS_XP,
   LOW_QUALITY_ADJUSTMENT_XP,

@@ -7,6 +7,7 @@ function rowToAttempt(row) {
     id: row.id,
     userId: row.user_id,
     challengeId: row.challenge_id,
+    challengeVersion: row.challenge_version,
     challengeType: row.challenge_type,
     category: row.category,
     answer: row.answer,
@@ -46,8 +47,8 @@ async function insertAttempt(attempt, db = getClient()) {
     `INSERT INTO challenge_attempts (
        id, user_id, challenge_id, challenge_type, category, answer, feedback, consequence,
        score, quality_tier, was_ideal, xp_awarded, xp_breakdown, unlocked_badges, created_at,
-       evaluator, evaluation
-     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)`,
+       evaluator, evaluation, challenge_version
+     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)`,
     [
       attempt.id,
       attempt.userId,
@@ -66,6 +67,7 @@ async function insertAttempt(attempt, db = getClient()) {
       attempt.createdAt || new Date().toISOString(),
       attempt.evaluator || null,
       attempt.evaluation ? JSON.stringify(attempt.evaluation) : null,
+      attempt.challengeVersion ?? null,
     ],
   );
 }

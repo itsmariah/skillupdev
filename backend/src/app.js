@@ -10,6 +10,7 @@ const meRoutes = require("./routes/me");
 const challengeRoutes = require("./routes/challenges");
 const studyRoutes = require("./routes/study");
 const adminRoutes = require("./routes/admin");
+const adminContentRoutes = require("./routes/adminContent");
 
 const app = express();
 app.set("trust proxy", 1);
@@ -60,5 +61,6 @@ app.use(meRoutes);
 app.use(challengeRoutes);
 app.use(studyRoutes);
 app.use(adminRoutes);
+app.use(adminContentRoutes);
 
 module.exports = app;

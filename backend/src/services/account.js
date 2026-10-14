@@ -1,7 +1,7 @@
 // Exportação dos dados da conta (portabilidade, LGPD art. 18, V): tudo o que a plataforma
 // guarda sobre a pessoa, num JSON legível. Fica de fora só o que é segredo do sistema:
 // hash da senha e tokens de sessão ou de redefinição.
-const { getChallengeById } = require("../content/challenges");
+const { getChallengeVersion } = require("../content/catalog");
 
 const EXPORT_FORMAT_VERSION = 1;
 
@@ -29,7 +29,8 @@ function buildAccountExport({ user, attempts, studyResponses, exportedAt = new D
     tentativas: attempts.map((attempt) => ({
       desafio: {
         id: attempt.challengeId,
-        titulo: getChallengeById(attempt.challengeId)?.titulo || null,
+        titulo: getChallengeVersion(attempt.challengeId, attempt.challengeVersion)?.titulo || null,
+        versao: attempt.challengeVersion ?? null,
         categoria: attempt.category,
         tipo: attempt.challengeType,
       },

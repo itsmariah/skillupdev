@@ -1,5 +1,8 @@
 const { getSkillById } = require("./competencies");
 
+// Semente do catálogo: os desafios originais, gravados no banco (versão 1) na primeira
+// inicialização. Depois disso, o conteúdo é gerenciado pelo painel admin (content/catalog.js).
+
 const OPEN_CHALLENGE_XP_MULTIPLIER = 1.2;
 
 function createClosedChallenge({

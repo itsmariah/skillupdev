@@ -2,7 +2,7 @@
 // Usado pelo script scripts/import-json-to-postgres.js na virada para o PostgreSQL.
 const crypto = require("crypto");
 
-const { getChallengeById } = require("../content/challenges");
+const { getChallengeVersion } = require("../content/catalog");
 const { deriveQualityTier } = require("../services/gamification");
 const { hydrateUser } = require("../services/users");
 const { insertUser } = require("./users");
@@ -11,7 +11,7 @@ const { insertSession } = require("./sessions");
 const { insertStudyResponse } = require("./studyResponses");
 
 function hydrateAttempt(attempt) {
-  const challenge = getChallengeById(attempt?.challengeId);
+  const challenge = getChallengeVersion(attempt?.challengeId);
   const score = Number(attempt?.score) || 0;
   const qualityTier =
     attempt?.qualityTier || deriveQualityTier(score, challenge?.tipo || attempt?.challengeType);
@@ -26,6 +26,7 @@ function hydrateAttempt(attempt) {
     qualityTier,
     wasIdeal: typeof attempt?.wasIdeal === "boolean" ? attempt.wasIdeal : qualityTier === "ideal",
     unlockedBadges: Array.isArray(attempt?.unlockedBadges) ? attempt.unlockedBadges : [],
+    challengeVersion: attempt?.challengeVersion ?? 1,
   };
 }
 
