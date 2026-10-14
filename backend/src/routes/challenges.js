@@ -14,12 +14,21 @@ const {
   normalizeAvatarConfig,
   syncBadges,
   buildChallengeResult,
+  buildRetryResult,
+  isReviewAttempt,
 } = require("../services/gamification");
 const { buildUserResponse } = require("../services/users");
 
 const router = express.Router();
 
-function buildPublicChallenge(challenge, completedAttempt) {
+function buildPublicChallenge(challenge, attempts) {
+  const counted = attempts.filter((attempt) => !isReviewAttempt(attempt));
+  const latest = attempts[attempts.length - 1];
+  const best = counted.reduce(
+    (top, attempt) => (!top || Number(attempt.score) > Number(top.score) ? attempt : top),
+    null,
+  );
+
   return {
     id: challenge.id,
     tipo: challenge.tipo,
@@ -42,14 +51,19 @@ function buildPublicChallenge(challenge, completedAttempt) {
             texto: resposta.texto,
           }))
         : [],
-    completed: Boolean(completedAttempt),
-    lastResult: completedAttempt
+    completed: counted.length > 0,
+    tentativas: attempts.length,
+    melhorNota: best ? best.score : null,
+    // Abertos: refazer pode render XP pela melhora. Fechados: refazer é só revisão.
+    refazer: attempts.length > 0 ? (challenge.tipo === "aberto" ? "melhorar" : "revisar") : null,
+    lastResult: latest
       ? {
-          nota: completedAttempt.score,
-          feedback: completedAttempt.feedback,
-          xpGanho: completedAttempt.xpAwarded,
-          qualityTier: completedAttempt.qualityTier,
-          respondidoEm: completedAttempt.createdAt,
+          nota: latest.score,
+          feedback: latest.feedback,
+          xpGanho: latest.xpAwarded,
+          qualityTier: latest.qualityTier,
+          respondidoEm: latest.createdAt,
+          tentativa: latest.attemptNumber,
         }
       : null,
   };
@@ -67,14 +81,15 @@ router.get("/api/challenges", authenticateRequest, async (req, res) => {
     challenges: getChallenges().map((challenge) =>
       buildPublicChallenge(
         challenge,
-        userAttempts.find((attempt) => attempt.challengeId === challenge.id),
+        userAttempts.filter((attempt) => attempt.challengeId === challenge.id),
       ),
     ),
   });
 });
 
-// Envios em andamento por usuário+desafio. A restrição única no banco já impede XP em dobro;
-// isto evita avaliar com a IA (e pagar por) duas respostas simultâneas do mesmo desafio.
+// Envios em andamento por usuário+desafio. O número da tentativa é único no banco, então dois
+// envios simultâneos não viram a mesma tentativa; isto evita avaliar com a IA (e pagar por)
+// duas respostas simultâneas do mesmo desafio.
 const submissionsInFlight = new Set();
 
 // O limite vem depois da autenticação porque conta por usuário.
@@ -104,32 +119,7 @@ router.post("/api/challenges/:challengeId/submit", submitGuards, async (req, res
   }
 });
 
-async function respondAlreadyCompleted(res, user, existingAttempt) {
-  const attempts = await db.listAttemptsByUser(user.id);
-
-  return res.status(409).json({
-    message: "Este desafio já foi concluído.",
-    result: {
-      nota: existingAttempt.score,
-      feedback: existingAttempt.feedback,
-      consequence: existingAttempt.consequence,
-      xpGanho: existingAttempt.xpAwarded,
-      qualityTier: existingAttempt.qualityTier,
-      xpBreakdown: existingAttempt.xpBreakdown,
-      unlockedBadges: existingAttempt.unlockedBadges,
-      evaluator: existingAttempt.evaluator,
-    },
-    user: buildUserResponse(user, attempts),
-  });
-}
-
 async function handleChallengeSubmission(req, res, challenge) {
-  const existingAttempt = await db.findAttempt(req.user.id, challenge.id);
-
-  if (existingAttempt) {
-    return respondAlreadyCompleted(res, req.user, existingAttempt);
-  }
-
   let answer = "";
   let score = 0;
   let feedback = "";
@@ -184,20 +174,32 @@ async function handleChallengeSubmission(req, res, challenge) {
     outcome = await db.getClient().transaction(async (tx) => {
       const user = await db.findUserById(req.user.id, tx, { forUpdate: true });
       const previousAttempts = await db.listAttemptsByUser(user.id, tx);
+      const previousForChallenge = previousAttempts.filter(
+        (attempt) => attempt.challengeId === challenge.id,
+      );
+      const isRetry = previousForChallenge.length > 0;
 
-      const result = buildChallengeResult({
-        challenge,
-        score,
-        feedback,
-        previousStreak: Number(user.gamification?.perfectStreak) || 0,
-      });
+      // Primeira resposta: regras de sempre (XP, sequência perfeita). Nova tentativa: XP só
+      // pela melhora nos abertos, revisão sem XP nos fechados, sequência inalterada.
+      const result = isRetry
+        ? buildRetryResult({ challenge, score, feedback, previousAttempts: previousForChallenge })
+        : buildChallengeResult({
+            challenge,
+            score,
+            feedback,
+            previousStreak: Number(user.gamification?.perfectStreak) || 0,
+          });
 
       user.xp = Math.max(0, Number(user.xp) + result.xpGanho);
       user.nivel = calculateLevel(user.xp);
       user.avatarConfig = normalizeAvatarConfig(user.avatarConfig, user.xp);
-      user.gamification.perfectStreak = result.perfectStreak;
 
-      if (result.wasIdeal) {
+      if (!isRetry) {
+        user.gamification.perfectStreak = result.perfectStreak;
+      }
+
+      // Respostas ideais contam desafios: só a primeira vez que um desafio chega a ideal.
+      if (isRetry ? result.firstIdeal : result.wasIdeal) {
         user.gamification.idealAnswers = (Number(user.gamification.idealAnswers) || 0) + 1;
       }
 
@@ -206,6 +208,11 @@ async function handleChallengeSubmission(req, res, challenge) {
         userId: user.id,
         challengeId: challenge.id,
         challengeVersion: challenge.version,
+        attemptNumber:
+          previousForChallenge.reduce(
+            (max, attempt) => Math.max(max, Number(attempt.attemptNumber) || 1),
+            0,
+          ) + 1,
         challengeType: challenge.tipo,
         category: challenge.categoria,
         answer,
@@ -233,8 +240,9 @@ async function handleChallengeSubmission(req, res, challenge) {
     });
   } catch (error) {
     if (db.isUniqueViolation(error)) {
-      const attempt = await db.findAttempt(req.user.id, challenge.id);
-      return respondAlreadyCompleted(res, req.user, attempt);
+      return res.status(409).json({
+        message: "Outra resposta para este desafio acabou de ser registrada. Atualize a página.",
+      });
     }
     throw error;
   }
@@ -250,7 +258,10 @@ async function handleChallengeSubmission(req, res, challenge) {
       xpGanho: result.xpGanho,
       qualityTier: result.qualityTier,
       wasIdeal: result.wasIdeal,
-      perfectStreak: result.perfectStreak,
+      perfectStreak: user.gamification.perfectStreak,
+      tentativa: attempts[attempts.length - 1].attemptNumber,
+      revisao: Boolean(result.review),
+      melhorFaixaAnterior: result.previousBestTier || null,
       xpBreakdown: result.xpBreakdown,
       unlockedBadges,
       evaluator: evaluation.evaluator,

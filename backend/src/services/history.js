@@ -1,12 +1,21 @@
 // Histórico de feedbacks e números da evolução, a partir das tentativas do usuário.
-// Só entram tentativas de desafios que ainda existem (mesma regra do progresso).
+// O histórico lista todas as tentativas; os números usam a última tentativa de cada desafio
+// (nível atual), a melhor (melhor nota) e a sequência cronológica (tendência). Revisões de
+// desafios fechados não entram nos números.
 const {
   getChallenges,
   getCategories,
   getChallengeVersion,
   countPublishedByCategory,
+  isPublished,
 } = require("../content/catalog");
-const { filterValidAttempts } = require("./gamification");
+const { COMPETENCIES } = require("../content/competencies");
+const {
+  filterValidAttempts,
+  countedAttempts,
+  latestAttemptPerChallenge,
+  isReviewAttempt,
+} = require("./gamification");
 
 // Tendência: média das últimas N tentativas contra as N anteriores.
 const TREND_WINDOW = 5;
@@ -42,6 +51,9 @@ function buildHistoryItem(attempt) {
     evaluator: attempt.evaluator,
     criteriaScores,
     respondidoEm: attempt.createdAt,
+    tentativa: Number(attempt.attemptNumber) || 1,
+    revisao: isReviewAttempt(attempt),
+    disponivel: isPublished(attempt.challengeId),
   };
 }
 
@@ -65,32 +77,62 @@ function buildTrend(sortedAttempts) {
   };
 }
 
+const challengeOf = (attempt) => getChallengeVersion(attempt.challengeId, attempt.challengeVersion);
+
+// Nota da tentativa numa habilidade: a nota que a IA deu àquela habilidade, quando existe;
+// senão (fechados, avaliação de reserva), a nota da resposta.
+function skillScoreOf(attempt, skill) {
+  const criterion = attempt.evaluation?.criteriaScores?.find(
+    (item) => item.criterio === skill.nome,
+  );
+  return criterion ? Number(criterion.nota) : Number(attempt.score);
+}
+
+// Nível atual em cada habilidade: média das últimas tentativas dos desafios que a exercitam.
+function buildSkillScores(currentAttempts) {
+  return COMPETENCIES.map((competency) => {
+    const habilidades = competency.habilidades.map((skill) => {
+      const scores = currentAttempts
+        .filter((attempt) => challengeOf(attempt)?.habilidades?.includes(skill.id))
+        .map((attempt) => skillScoreOf(attempt, skill));
+
+      return { id: skill.id, nome: skill.nome, score: average(scores), desafios: scores.length };
+    });
+    const scored = habilidades.filter((skill) => skill.score !== null).map((skill) => skill.score);
+
+    return {
+      id: competency.id,
+      nome: competency.nome,
+      score: average(scored),
+      habilidades,
+    };
+  });
+}
+
 function buildEvolution(attempts) {
-  const valid = filterValidAttempts(attempts).sort(byDate);
-  const categories = getCategories();
+  const current = latestAttemptPerChallenge(attempts);
+  const best = filterValidAttempts(attempts);
+  const chronological = countedAttempts(attempts).sort(byDate);
 
   return {
-    completed: valid.length,
+    completed: current.length,
     totalChallenges: getChallenges().length,
-    averageScore: average(valid.map((attempt) => attempt.score)),
-    trend: buildTrend(valid),
-    byCategory: categories.map((categoria) => {
-      const scores = valid
-        .filter(
-          (attempt) =>
-            getChallengeVersion(attempt.challengeId, attempt.challengeVersion)?.categoria ===
-            categoria,
-        )
-        .map((attempt) => attempt.score);
+    averageScore: average(current.map((attempt) => attempt.score)),
+    trend: buildTrend(chronological),
+    byCategory: getCategories().map((categoria) => {
+      const inCategory = (attempt) => challengeOf(attempt)?.categoria === categoria;
+      const scores = current.filter(inCategory).map((attempt) => attempt.score);
+      const bestScores = best.filter(inCategory).map((attempt) => attempt.score);
 
       return {
         categoria,
         completed: scores.length,
         total: countPublishedByCategory(categoria),
         averageScore: average(scores),
-        bestScore: scores.length ? Math.max(...scores) : null,
+        bestScore: bestScores.length ? Math.max(...bestScores) : null,
       };
     }),
+    competencias: buildSkillScores(current),
   };
 }
 
@@ -106,6 +148,7 @@ function buildHistory(attempts) {
 }
 
 module.exports = {
+  buildSkillScores,
   buildHistoryItem,
   buildEvolution,
   buildHistory,

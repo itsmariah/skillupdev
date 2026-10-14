@@ -1,6 +1,8 @@
 (function () {
   let challenges = [];
   let currentChallengeIndex = 0;
+  // ?desafio=ID abre um desafio específico (inclusive já respondido) para refazer.
+  let retryMode = false;
 
   document.addEventListener("DOMContentLoaded", async () => {
     if (!window.skillUpAuth?.requireSession()) {
@@ -20,6 +22,17 @@
   async function loadChallenges() {
     try {
       const payload = await window.skillUpApi.getChallenges();
+      const requestedId = new URLSearchParams(window.location.search).get("desafio");
+      const requested = payload.challenges.find((challenge) => challenge.id === requestedId);
+
+      if (requested) {
+        retryMode = true;
+        challenges = [requested];
+        currentChallengeIndex = 0;
+        renderCurrentChallenge();
+        return;
+      }
+
       const filtered = payload.challenges.filter((challenge) => !challenge.completed);
       const closed = filtered.filter((c) => c.tipo === "fechado").sort(() => Math.random() - 0.5);
       const open = filtered.filter((c) => c.tipo === "aberto").sort(() => Math.random() - 0.5);
@@ -48,7 +61,7 @@
     const el = document.getElementById("challengeProgress");
     if (!el) return;
     const total = challenges.length;
-    if (!total) {
+    if (!total || retryMode) {
       el.textContent = "";
       return;
     }
@@ -77,14 +90,30 @@
     answersContainer.innerHTML = "";
     feedbackElement.innerHTML = "";
     nextButton.classList.add("d-none");
-    nextButton.textContent = "Próximo desafio";
+    nextButton.textContent = retryMode ? "Voltar ao histórico" : "Próximo desafio";
 
     if (challenge.tipo === "fechado") {
       renderClosedChallenge(challenge, answersContainer);
+    } else {
+      renderOpenChallenge(challenge, answersContainer);
+    }
+
+    renderRetryNotice(challenge, answersContainer);
+  }
+
+  // Aviso antes de refazer: o que a nova tentativa vale.
+  function renderRetryNotice(challenge, container) {
+    if (!challenge.tentativas) {
       return;
     }
 
-    renderOpenChallenge(challenge, answersContainer);
+    const notice = document.createElement("p");
+    notice.className = "retry-notice";
+    notice.textContent =
+      challenge.tipo === "aberto"
+        ? `Nova tentativa (sua melhor nota: ${challenge.melhorNota}). Você ganha XP só se a nota subir de faixa; a nota das habilidades passa a ser a desta tentativa.`
+        : "Revisão: esta resposta não vale XP nem muda a nota do desafio. Serve para rever a situação e o feedback.";
+    container.prepend(notice);
   }
 
   function renderClosedChallenge(challenge, container) {
@@ -270,11 +299,20 @@
       `
         : "";
 
+    const attemptNote = result.revisao
+      ? "Revisão registrada: sem XP, e a nota do desafio continua a da primeira resposta."
+      : result.tentativa > 1
+        ? result.xpGanho > 0
+          ? `Tentativa ${result.tentativa}: você subiu de faixa e ganhou a diferença de XP.`
+          : `Tentativa ${result.tentativa}: sem XP, porque a nota não subiu de faixa em relação à sua melhor.`
+        : "";
+
     feedbackElement.innerHTML = `
     <div class="feedback-box">
       <p class="feedback-score">
         ${escapeHtml(getQualityLabel(result.qualityTier))} | Nota: ${escapeHtml(result.nota)} | XP ganho: ${escapeHtml(result.xpGanho)}
       </p>
+      ${attemptNote ? `<p class="feedback-attempt-note">${escapeHtml(attemptNote)}</p>` : ""}
       <p>${escapeHtml(result.feedback)}</p>
       ${
         result.evaluator === "heuristic"
@@ -312,7 +350,8 @@
     }
 
     // Valores calculados no servidor com as mesmas regras do XP (inclui o multiplicador dos abertos).
-    const rewards = challenge.recompensas;
+    // Numa nova tentativa a regra é outra (só a melhora paga); o aviso de tentativa explica.
+    const rewards = challenge.tentativas ? null : challenge.recompensas;
     if (rewards) {
       parts.push(
         `Recompensas: +${rewards.conclusionXp} XP por concluir. Resposta ideal: +${rewards.idealTotalXp} XP no total. ` +
@@ -368,7 +407,7 @@
     if (feedbackElement) {
       feedbackElement.innerHTML = `
       <div class="feedback-box">
-        <p>Agora é um bom momento para revisar badges desbloqueadas e personalizar o avatar.</p>
+        <p>Quer melhorar uma nota? No <a href="history.html">Histórico</a>, refaça os desafios abertos: a melhora rende XP.</p>
       </div>
     `;
     }
@@ -383,6 +422,11 @@
   }
 
   function goToNextChallenge() {
+    if (retryMode) {
+      window.location.href = "history.html";
+      return;
+    }
+
     currentChallengeIndex += 1;
 
     if (currentChallengeIndex >= challenges.length) {

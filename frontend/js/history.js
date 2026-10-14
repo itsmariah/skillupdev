@@ -79,7 +79,16 @@
     `;
   }
 
-  function renderItem(item) {
+  // Botão só na tentativa mais recente de cada desafio que ainda está disponível.
+  function retryButton(item, isLatest) {
+    if (!isLatest || !item.disponivel) {
+      return "";
+    }
+    const label = item.tipo === "aberto" ? "Refazer para melhorar" : "Revisar";
+    return `<a class="btn btn-sm btn-outline-primary" href="challenges.html?desafio=${encodeURIComponent(item.challengeId)}">${label}</a>`;
+  }
+
+  function renderItem(item, isLatest) {
     const tier = QUALITY_LABEL[item.qualityTier] ? item.qualityTier : "low";
     const typeLabel = item.tipo === "aberto" ? "Resposta aberta" : "Múltipla escolha";
     const evaluatorNote = EVALUATOR_NOTE[item.evaluator] || "";
@@ -91,7 +100,7 @@
             <span class="history-item-title">${escapeHtml(item.titulo)}</span>
             <span class="history-item-meta">
               ${window.skillUpIcons.categoryIcon(item.categoria, "category-icon")}
-              ${escapeHtml(item.categoria)} · ${typeLabel} · ${escapeHtml(formatDate(item.respondidoEm))}
+              ${escapeHtml(item.categoria)} · ${typeLabel} · ${escapeHtml(formatDate(item.respondidoEm))}${item.tentativa > 1 ? ` · Tentativa ${escapeHtml(item.tentativa)}${item.revisao ? " (revisão)" : ""}` : ""}
             </span>
           </span>
           <span class="history-score tier-${tier}">
@@ -117,6 +126,7 @@
           <p class="history-footnote">
             +${escapeHtml(item.xpGanho)} XP${evaluatorNote ? ` · ${escapeHtml(evaluatorNote)}` : ""}
           </p>
+          ${retryButton(item, isLatest)}
         </div>
       </details>
     `;
@@ -160,8 +170,18 @@
         ? `${visible.length} ${visible.length === 1 ? "feedback" : "feedbacks"}`
         : `${visible.length} de ${historyItems.length} feedbacks`;
 
+    // Tentativa mais recente de cada desafio (a lista da API vem da mais nova para a mais antiga).
+    const latestIds = new Set();
+    const seen = new Set();
+    for (const item of historyItems) {
+      if (!seen.has(item.challengeId)) {
+        seen.add(item.challengeId);
+        latestIds.add(item.id);
+      }
+    }
+
     list.innerHTML = visible.length
-      ? visible.map(renderItem).join("")
+      ? visible.map((item) => renderItem(item, latestIds.has(item.id))).join("")
       : '<p class="dashboard-empty">Nenhum feedback com esses filtros.</p>';
   }
 

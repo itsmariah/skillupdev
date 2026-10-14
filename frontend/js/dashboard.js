@@ -439,9 +439,22 @@
         ? user.categoryProgress
         : [];
 
+    const competencies = Array.isArray(evolution?.competencias) ? evolution.competencias : [];
+
     container.innerHTML = progressList
       .map((item) => {
         const percent = item.total > 0 ? Math.round((item.completed / item.total) * 100) : 0;
+        const skills = (
+          competencies.find((competency) => competency.nome === item.categoria)?.habilidades || []
+        ).filter((skill) => skill.score !== null);
+        const skillsMarkup = skills.length
+          ? `<ul class="skill-scores" aria-label="Nível por habilidade em ${escapeHtml(item.categoria)}">${skills
+              .map(
+                (skill) =>
+                  `<li><span>${escapeHtml(skill.nome)}</span><strong>${escapeHtml(skill.score)}</strong></li>`,
+              )
+              .join("")}</ul>`
+          : "";
         const average =
           item.averageScore === null || item.averageScore === undefined
             ? ""
@@ -458,6 +471,7 @@
             <div class="progress" role="img" aria-label="${escapeHtml(item.categoria)}: ${escapeHtml(item.completed)} de ${escapeHtml(item.total)} desafios">
               <div class="progress-bar" style="width: ${percent}%"></div>
             </div>
+            ${skillsMarkup}
           </div>
         `;
       })

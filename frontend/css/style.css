@@ -2518,6 +2518,49 @@
       }
 /* FIM ADMIN: CONTEÚDO */
 
+/* VÁRIAS TENTATIVAS */
+      .retry-notice {
+         margin-bottom: var(--space-3);
+         padding: var(--space-3) var(--space-4);
+         border-radius: var(--radius-sm);
+         background: var(--color-surface-warm);
+         border-left: 4px solid var(--color-rarity-legendary);
+         color: var(--color-ink-soft);
+         font-size: var(--font-size-sm);
+         text-align: left;
+      }
+
+      .feedback-attempt-note {
+         margin-bottom: 8px !important;
+         color: var(--color-ink-soft) !important;
+         font-size: var(--font-size-sm);
+      }
+
+      .skill-scores {
+         list-style: none;
+         margin: var(--space-3) 0 0;
+         padding: 0;
+         display: flex;
+         flex-wrap: wrap;
+         gap: var(--space-2);
+      }
+
+      .skill-scores li {
+         display: inline-flex;
+         gap: var(--space-2);
+         padding: 2px 10px;
+         border-radius: var(--radius-pill);
+         background: var(--color-surface);
+         border: 1px solid var(--color-border);
+         color: var(--color-ink-soft);
+         font-size: var(--font-size-sm);
+      }
+
+      .skill-scores strong {
+         color: var(--color-primary-strong);
+      }
+/* FIM VÁRIAS TENTATIVAS */
+
 /* ACESSIBILIDADE */
       /* Link para pular a navegação: fica fora da tela até receber foco pelo teclado. */
       .skip-link {

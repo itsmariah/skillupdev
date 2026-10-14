@@ -1,6 +1,7 @@
 const { APP_TIMEZONE } = require("../config");
 const {
   getChallenges,
+  getChallengeById,
   getCategories,
   isPublished,
   countPublishedByCategory,
@@ -351,10 +352,50 @@ function deriveQualityTier(score, challengeType = "aberto") {
   return "low";
 }
 
-// Só contam tentativas de desafios publicados (arquivados e removidos ficam de fora do
-// progresso; o XP já ganho e o histórico continuam).
+const TIER_ORDER = { low: 0, medium: 1, ideal: 2 };
+
+// Refazer um desafio fechado é revisão: a alternativa ideal já apareceu no feedback, então
+// a nova escolha não mede nada. Revisões não dão XP nem mudam progresso ou notas.
+function isReviewAttempt(attempt) {
+  const type = attempt.challengeType || getChallengeById(attempt.challengeId)?.tipo;
+  return type === "fechado" && (Number(attempt.attemptNumber) || 1) > 1;
+}
+
+// Tentativas que contam: de desafios publicados (arquivados e removidos ficam de fora do
+// progresso; o XP já ganho e o histórico continuam) e que não são revisão.
+function countedAttempts(attempts) {
+  return (attempts || []).filter(
+    (attempt) => isPublished(attempt.challengeId) && !isReviewAttempt(attempt),
+  );
+}
+
+// Uma tentativa por desafio: a melhor (maior nota; no empate, a mais antiga). Progresso e
+// badges contam desafios, não tentativas, e o que já foi conquistado não se perde.
 function filterValidAttempts(attempts) {
-  return (attempts || []).filter((attempt) => isPublished(attempt.challengeId));
+  const best = new Map();
+
+  for (const attempt of countedAttempts(attempts)) {
+    const current = best.get(attempt.challengeId);
+    if (!current || Number(attempt.score) > Number(current.score)) {
+      best.set(attempt.challengeId, attempt);
+    }
+  }
+
+  return [...best.values()];
+}
+
+// Uma tentativa por desafio: a mais recente que conta (nível atual em cada habilidade).
+function latestAttemptPerChallenge(attempts) {
+  const latest = new Map();
+
+  for (const attempt of countedAttempts(attempts)) {
+    const current = latest.get(attempt.challengeId);
+    if (!current || (Number(attempt.attemptNumber) || 1) > (Number(current.attemptNumber) || 1)) {
+      latest.set(attempt.challengeId, attempt);
+    }
+  }
+
+  return [...latest.values()];
 }
 
 function countAttemptsByCategory(attempts, category) {
@@ -596,6 +637,45 @@ function buildChallengeResult({ challenge, score, feedback, previousStreak }) {
   };
 }
 
+// XP total de uma faixa de qualidade num desafio (conclusão + qualidade, com multiplicador).
+function tierXp(qualityTier, xpMultiplier) {
+  return buildXpBreakdown(qualityTier, 0, xpMultiplier).reduce((total, item) => total + item.xp, 0);
+}
+
+// Nova tentativa de um desafio já respondido. Nos abertos, só a melhora paga: se a nota sobe
+// de faixa, a pessoa recebe a diferença entre a nova faixa e a melhor anterior. Nos fechados é
+// revisão (sem XP). Em nenhum caso a sequência perfeita muda.
+function buildRetryResult({ challenge, score, feedback, previousAttempts }) {
+  const qualityTier = deriveQualityTier(score, challenge.tipo);
+  const review = challenge.tipo === "fechado";
+  const counted = previousAttempts.filter((attempt) => !isReviewAttempt(attempt));
+  const bestTier = counted.reduce(
+    (best, attempt) =>
+      TIER_ORDER[attempt.qualityTier] > TIER_ORDER[best] ? attempt.qualityTier : best,
+    "low",
+  );
+  const xpMultiplier = Number(challenge.xpMultiplier) || 1;
+  const improvement =
+    !review && TIER_ORDER[qualityTier] > TIER_ORDER[bestTier]
+      ? tierXp(qualityTier, xpMultiplier) - tierXp(bestTier, xpMultiplier)
+      : 0;
+
+  return {
+    challengeId: challenge.id,
+    qualityTier,
+    wasIdeal: qualityTier === "ideal",
+    feedback,
+    nota: score,
+    consequence: buildChallengeConsequence(qualityTier),
+    xpBreakdown:
+      improvement > 0 ? [{ label: "Melhora em relação à melhor tentativa", xp: improvement }] : [],
+    xpGanho: improvement,
+    review,
+    previousBestTier: bestTier,
+    firstIdeal: !review && qualityTier === "ideal" && bestTier !== "ideal",
+  };
+}
+
 // Badges que deixam de ser alcançáveis se este desafio sair do catálogo.
 function findBadgesRequiringChallenge(challengeId) {
   return BADGE_DEFINITIONS.filter((badge) => badge.requiresChallenges?.includes(challengeId)).map(
@@ -630,6 +710,11 @@ module.exports = {
   createDefaultGamificationState,
   deriveQualityTier,
   filterValidAttempts,
+  countedAttempts,
+  latestAttemptPerChallenge,
+  isReviewAttempt,
+  tierXp,
+  buildRetryResult,
   countAttemptsByCategory,
   hasIdealAttempt,
   countIdealAttempts,

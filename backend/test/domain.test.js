@@ -24,6 +24,13 @@ const {
   applyDailyLoginReward,
 } = require("../src/services/gamification");
 const { hydrateUser } = require("../src/services/users");
+const {
+  buildRetryResult,
+  tierXp,
+  filterValidAttempts: bestPerChallenge,
+  latestAttemptPerChallenge,
+  isReviewAttempt,
+} = require("../src/services/gamification");
 const { buildHeuristicFeedback, extractJsonObject } = require("../src/services/evaluation");
 const { createPasswordHash, verifyPassword } = require("../src/services/auth");
 const { calcSusScore, susClassification } = require("../src/services/study");
@@ -425,5 +432,94 @@ test.describe("SUS (estudo piloto)", () => {
     assert.equal(susClassification(71), "Bom");
     assert.equal(susClassification(51), "Razoável");
     assert.equal(susClassification(50), "Ruim");
+  });
+});
+
+test.describe("várias tentativas por desafio", () => {
+  const open = CHALLENGES.find((challenge) => challenge.tipo === "aberto");
+  const closed = CHALLENGES.find((challenge) => challenge.tipo === "fechado");
+  const attempt = (challenge, attemptNumber, qualityTier, score) => ({
+    challengeId: challenge.id,
+    challengeType: challenge.tipo,
+    attemptNumber,
+    qualityTier,
+    score,
+    wasIdeal: qualityTier === "ideal",
+  });
+
+  test("subir de faixa paga só a diferença para a melhor tentativa anterior", () => {
+    const result = buildRetryResult({
+      challenge: open,
+      score: 90,
+      feedback: "ok",
+      previousAttempts: [attempt(open, 1, "low", 40)],
+    });
+
+    assert.equal(result.qualityTier, "ideal");
+    assert.equal(result.xpGanho, tierXp("ideal", 1.2) - tierXp("low", 1.2));
+    assert.equal(result.firstIdeal, true);
+  });
+
+  test("repetir a mesma faixa ou piorar não rende XP", () => {
+    const same = buildRetryResult({
+      challenge: open,
+      score: 70,
+      feedback: "ok",
+      previousAttempts: [attempt(open, 1, "medium", 65)],
+    });
+    const worse = buildRetryResult({
+      challenge: open,
+      score: 30,
+      feedback: "ok",
+      previousAttempts: [attempt(open, 1, "low", 40), attempt(open, 2, "ideal", 95)],
+    });
+
+    assert.equal(same.xpGanho, 0);
+    assert.equal(worse.xpGanho, 0);
+    assert.equal(worse.firstIdeal, false);
+  });
+
+  test("a melhora conta a partir da melhor tentativa, não da última", () => {
+    const result = buildRetryResult({
+      challenge: open,
+      score: 90,
+      feedback: "ok",
+      previousAttempts: [attempt(open, 1, "medium", 70), attempt(open, 2, "low", 30)],
+    });
+
+    assert.equal(result.xpGanho, tierXp("ideal", 1.2) - tierXp("medium", 1.2));
+  });
+
+  test("refazer um fechado é revisão: sem XP, mesmo escolhendo a ideal", () => {
+    const result = buildRetryResult({
+      challenge: closed,
+      score: 100,
+      feedback: "ok",
+      previousAttempts: [attempt(closed, 1, "low", 5)],
+    });
+
+    assert.equal(result.review, true);
+    assert.equal(result.xpGanho, 0);
+    assert.equal(isReviewAttempt(attempt(closed, 2, "ideal", 100)), true);
+    assert.equal(isReviewAttempt(attempt(open, 2, "ideal", 100)), false);
+  });
+
+  test("contagens usam um desafio por vez: a melhor para conquistas, a última para o nível", () => {
+    const attempts = [
+      attempt(open, 1, "medium", 70),
+      attempt(open, 2, "ideal", 95),
+      attempt(open, 3, "low", 40),
+      attempt(closed, 1, "low", 5),
+      attempt(closed, 2, "ideal", 100),
+    ];
+
+    const best = bestPerChallenge(attempts);
+    assert.equal(best.length, 2);
+    assert.equal(best.find((item) => item.challengeId === open.id).score, 95);
+    assert.equal(best.find((item) => item.challengeId === closed.id).score, 5);
+
+    const latest = latestAttemptPerChallenge(attempts);
+    assert.equal(latest.find((item) => item.challengeId === open.id).score, 40);
+    assert.equal(latest.find((item) => item.challengeId === closed.id).score, 5);
   });
 });

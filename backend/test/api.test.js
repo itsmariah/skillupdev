@@ -189,17 +189,32 @@ test("desafio fechado ideal soma XP e desbloqueia a primeira badge", async () =>
   assert.equal(data.user.completedChallenges, 1);
 });
 
-test("o mesmo desafio não pode ser respondido duas vezes", async () => {
+test("refazer um desafio fechado é revisão: sem XP, sem mudar progresso nem sequência", async () => {
+  const before = (await api("GET", "/api/me", { session: userSession })).data.user;
   const { status, data } = await api("POST", "/api/challenges/communication-closed-1/submit", {
     session: userSession,
     body: { respostaId: "a" },
   });
 
-  assert.equal(status, 409);
-  assert.equal(data.result.xpGanho, 100);
+  assert.equal(status, 200);
+  assert.equal(data.result.revisao, true);
+  assert.equal(data.result.tentativa, 2);
+  assert.equal(data.result.xpGanho, 0);
+  assert.equal(data.user.xp, before.xp);
+  assert.equal(data.user.completedChallenges, before.completedChallenges);
+  assert.equal(data.user.gamification.perfectStreak, before.gamification.perfectStreak);
+
+  // A revisão não troca a melhor resposta nem a nota do desafio.
+  const listed = (
+    await api("GET", "/api/challenges", { session: userSession })
+  ).data.challenges.find((challenge) => challenge.id === "communication-closed-1");
+  assert.equal(listed.tentativas, 2);
+  assert.equal(listed.melhorNota, 100);
+  assert.equal(listed.refazer, "revisar");
 });
 
-test("envios simultâneos do mesmo desafio contam uma vez só", async () => {
+test("envios simultâneos do mesmo desafio não pagam XP em dobro", async () => {
+  const xpBefore = (await db.findUserById(userId)).xp;
   const responses = await Promise.all(
     [1, 2, 3].map(() =>
       api("POST", "/api/challenges/communication-closed-2/submit", {
@@ -209,17 +224,26 @@ test("envios simultâneos do mesmo desafio contam uma vez só", async () => {
     ),
   );
 
-  assert.equal(responses.filter((response) => response.status === 200).length, 1);
-  assert.equal(responses.filter((response) => response.status === 409).length, 2);
+  const accepted = responses.filter((response) => response.status === 200);
+  assert.ok(accepted.length >= 1);
+  assert.ok(responses.every((response) => [200, 409].includes(response.status)));
 
-  const attempts = await db.listAttemptsByUser(userId);
-  assert.equal(
-    attempts.filter((attempt) => attempt.challengeId === "communication-closed-2").length,
-    1,
+  // Só a primeira tentativa paga; as outras são revisões, com números de tentativa distintos.
+  const attempts = (await db.listAttemptsByUser(userId)).filter(
+    (attempt) => attempt.challengeId === "communication-closed-2",
   );
+  assert.deepEqual(
+    attempts.map((attempt) => attempt.attemptNumber).sort(),
+    attempts.map((_, index) => index + 1),
+  );
+  const paid = attempts.filter((attempt) => attempt.xpAwarded > 0);
+  assert.equal(paid.length, 1);
+  assert.equal(paid[0].attemptNumber, 1);
+  const badgeXp = (await db.findUserById(userId)).xp - xpBefore - paid[0].xpAwarded;
+  assert.ok(badgeXp >= 0, "nenhum XP além da primeira tentativa (e eventuais badges)");
 });
 
-test("o banco recusa uma segunda tentativa do mesmo desafio (restrição única)", async () => {
+test("o banco recusa duas tentativas com o mesmo número (restrição única)", async () => {
   const [existing] = await db.listAttemptsByUser(userId);
 
   await assert.rejects(
@@ -242,7 +266,7 @@ test("desafio aberto sem IA configurada usa a avaliação heurística", async ()
   assert.ok(data.result.feedback);
   assert.equal(data.result.evaluator, "heuristic");
 
-  const stored = await db.findAttempt(userId, "communication-open-1");
+  const [stored] = await db.listAttemptsForChallenge(userId, "communication-open-1");
   assert.equal(stored.evaluator, "heuristic");
   assert.equal(stored.evaluation.fallbackReason, "OPENAI_API_KEY não configurada");
 });
@@ -265,7 +289,9 @@ test("histórico traz os feedbacks do mais recente ao mais antigo, com a evoluç
 
   assert.equal(status, 200);
   assert.equal(data.evolution.completed, 3);
-  assert.equal(data.items.length, 3);
+  // O histórico lista todas as tentativas, revisões inclusive.
+  assert.equal(data.items.length, (await db.listAttemptsByUser(userId)).length);
+  assert.ok(data.items.some((item) => item.revisao && item.tentativa > 1));
   assert.equal(data.items[0].challengeId, "communication-open-1");
   assert.equal(data.items[0].evaluator, "heuristic");
   assert.ok(data.items[0].resposta.startsWith("Entendo a frustração"));
@@ -273,10 +299,15 @@ test("histórico traz os feedbacks do mais recente ao mais antigo, com a evoluç
 
   const comunicacao = data.evolution.byCategory.find((item) => item.categoria === "Comunicação");
   assert.equal(comunicacao.completed, 3);
+  const firstAttempts = data.items.filter((item) => item.tentativa === 1);
   assert.equal(
     comunicacao.averageScore,
-    Math.round(data.items.reduce((total, item) => total + item.nota, 0) / 3),
+    Math.round(firstAttempts.reduce((total, item) => total + item.nota, 0) / 3),
   );
+
+  const skills = data.evolution.competencias.flatMap((competency) => competency.habilidades);
+  assert.equal(data.evolution.competencias.length, 5);
+  assert.ok(skills.find((skill) => skill.id === "empatia").score !== null);
 });
 
 test("avatar com item bloqueado volta para o padrão liberado", async () => {
