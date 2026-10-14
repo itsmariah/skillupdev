@@ -15,6 +15,9 @@ function buildAccountExport({ user, attempts, studyResponses, exportedAt = new D
       email: user.email,
       papel: user.role,
       criadaEm: user.createdAt || null,
+      termosAceitos: user.termsVersion
+        ? { versao: user.termsVersion, aceitosEm: user.termsAcceptedAt }
+        : null,
     },
     progresso: {
       xp: user.xp,

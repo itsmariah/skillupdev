@@ -37,7 +37,12 @@ test.before(async () => {
   baseUrl = `http://localhost:${server.address().port}`;
 
   const response = await api("POST", "/api/auth/register", {
-    body: { nome: "Pessoa Conta", email: "pessoa@conta.com", senha: "senha123" },
+    body: {
+      nome: "Pessoa Conta",
+      email: "pessoa@conta.com",
+      senha: "senha123",
+      aceiteTermos: true,
+    },
   });
   session = sessionOf(response);
   userId = response.data.user.id;
@@ -119,7 +124,7 @@ test("troca de senha exige a senha atual e encerra só as outras sessões", asyn
   assert.equal(
     (
       await api("POST", "/api/auth/login", {
-        body: { email: "pessoa@conta.com", senha: "senha123" },
+        body: { email: "pessoa@conta.com", senha: "senha123", aceiteTermos: true },
       })
     ).status,
     401,
@@ -154,11 +159,17 @@ test("exportação traz conta, progresso, tentativas e estudo, sem segredos", as
 });
 
 test("exclusão exige a senha, apaga tudo em cascata e encerra a sessão", async () => {
-  const wrong = await api("DELETE", "/api/me", { session, body: { senha: "errada" } });
+  const wrong = await api("DELETE", "/api/me", {
+    session,
+    body: { senha: "errada", aceiteTermos: true },
+  });
   assert.equal(wrong.status, 403);
   assert.ok(await db.findUserById(userId));
 
-  const deleted = await api("DELETE", "/api/me", { session, body: { senha: "nova-senha" } });
+  const deleted = await api("DELETE", "/api/me", {
+    session,
+    body: { senha: "nova-senha", aceiteTermos: true },
+  });
   assert.equal(deleted.status, 200);
   assert.match(sessionOf(deleted), new RegExp(`^${SESSION_COOKIE}=$`));
 
@@ -172,7 +183,7 @@ test("administrador não exclui a própria conta por esta rota", async () => {
   const adminSession = await login("admin@conta.com", "admin-senha");
   const response = await api("DELETE", "/api/me", {
     session: adminSession,
-    body: { senha: "admin-senha" },
+    body: { senha: "admin-senha", aceiteTermos: true },
   });
   assert.equal(response.status, 403);
   assert.ok(await db.findUserByEmail("admin@conta.com"));
@@ -180,7 +191,12 @@ test("administrador não exclui a própria conta por esta rota", async () => {
 
 test("senha errada repetida bloqueia as ações protegidas da conta", async () => {
   const response = await api("POST", "/api/auth/register", {
-    body: { nome: "Insistente", email: "insistente@conta.com", senha: "senha123" },
+    body: {
+      nome: "Insistente",
+      email: "insistente@conta.com",
+      senha: "senha123",
+      aceiteTermos: true,
+    },
   });
   const insistent = sessionOf(response);
   const attempt = () =>

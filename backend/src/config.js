@@ -31,6 +31,9 @@ const FRONTEND_URL = process.env.FRONTEND_URL;
 const STUDY_ENABLED = String(process.env.STUDY_ENABLED || "").trim() === "true";
 const STUDY_MIN_CHALLENGES = 10;
 const STUDY_VERSION = 2;
+// Versão vigente dos Termos de uso e da Política de privacidade (data da publicação).
+// Ao mudar os textos de forma relevante, atualize aqui e nas páginas terms.html e privacy.html.
+const TERMS_VERSION = "2026-10-14";
 const MAX_NAME_LENGTH = 200;
 const MIN_PASSWORD_LENGTH = 6;
 const MIN_OPEN_ANSWER_LENGTH = 30;
@@ -56,6 +59,7 @@ module.exports = {
   STUDY_ENABLED,
   STUDY_MIN_CHALLENGES,
   STUDY_VERSION,
+  TERMS_VERSION,
   MAX_NAME_LENGTH,
   MIN_PASSWORD_LENGTH,
   MIN_OPEN_ANSWER_LENGTH,

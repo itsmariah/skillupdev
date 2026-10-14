@@ -27,6 +27,8 @@ function rowToUser(row, badges = []) {
     studyPreDone: row.study_pre_done,
     studyPostDone: row.study_post_done,
     studyVersion: row.study_version,
+    termsVersion: row.terms_version,
+    termsAcceptedAt: toIso(row.terms_accepted_at),
     createdAt: toIso(row.created_at),
   });
 }
@@ -52,6 +54,8 @@ function toMutableColumns(user) {
     study_pre_done: Boolean(user.studyPreDone),
     study_post_done: Boolean(user.studyPostDone),
     study_version: user.studyVersion ?? null,
+    terms_version: user.termsVersion ?? null,
+    terms_accepted_at: user.termsAcceptedAt ?? null,
   };
 }
 

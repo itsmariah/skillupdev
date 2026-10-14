@@ -19,6 +19,7 @@ const assert = require("node:assert/strict");
 const crypto = require("crypto");
 
 const app = require("../src/app");
+const { TERMS_VERSION } = require("../src/config");
 const db = require("../src/db");
 const { SESSION_COOKIE } = require("../src/middleware/auth");
 const { createPasswordHash } = require("../src/services/auth");
@@ -84,7 +85,7 @@ let userId;
 
 test("cadastro cria conta, sessão e bônus de login diário", async () => {
   const response = await api("POST", "/api/auth/register", {
-    body: { nome: "Dev Teste", email: "Dev@Teste.com", senha: "senha123" },
+    body: { nome: "Dev Teste", email: "Dev@Teste.com", senha: "senha123", aceiteTermos: true },
   });
   const { status, data } = response;
 
@@ -106,9 +107,21 @@ test("cadastro cria conta, sessão e bônus de login diário", async () => {
   userId = data.user.id;
 });
 
+test("cadastro exige o aceite dos termos e registra a versão aceita", async () => {
+  const withoutConsent = await api("POST", "/api/auth/register", {
+    body: { nome: "Sem Aceite", email: "sem-aceite@teste.com", senha: "senha123" },
+  });
+  assert.equal(withoutConsent.status, 400);
+  assert.equal(await db.findUserByEmail("sem-aceite@teste.com"), null);
+
+  const user = await db.findUserById(userId);
+  assert.equal(user.termsVersion, TERMS_VERSION);
+  assert.ok(Date.parse(user.termsAcceptedAt));
+});
+
 test("cadastro com e-mail já usado é recusado", async () => {
   const { status } = await api("POST", "/api/auth/register", {
-    body: { nome: "Outro", email: "dev@teste.com", senha: "senha123" },
+    body: { nome: "Outro", email: "dev@teste.com", senha: "senha123", aceiteTermos: true },
   });
   assert.equal(status, 409);
 });
@@ -323,21 +336,21 @@ test("redefinição de senha: link de uso único que derruba as sessões", async
   assert.equal(validation.data.emailHint, "de*@teste.com");
 
   const reset = await api("POST", "/api/auth/reset-password", {
-    body: { token: resetToken, senha: "nova-senha" },
+    body: { token: resetToken, senha: "nova-senha", aceiteTermos: true },
   });
   assert.equal(reset.status, 200);
 
   assert.equal((await api("GET", "/api/me", { session: userSession })).status, 401);
 
   const reuse = await api("POST", "/api/auth/reset-password", {
-    body: { token: resetToken, senha: "outra-senha" },
+    body: { token: resetToken, senha: "outra-senha", aceiteTermos: true },
   });
   assert.equal(reuse.status, 400);
 });
 
 test("login com a senha nova mantém o progresso e logout encerra a sessão", async () => {
   const login = await api("POST", "/api/auth/login", {
-    body: { email: "dev@teste.com", senha: "nova-senha" },
+    body: { email: "dev@teste.com", senha: "nova-senha", aceiteTermos: true },
   });
 
   assert.equal(login.status, 200);
@@ -353,7 +366,7 @@ test("login com a senha nova mantém o progresso e logout encerra a sessão", as
 
 test("painel admin: acesso restrito, dados do estudo, CSV e exclusão em cascata", async () => {
   const admin = await api("POST", "/api/auth/login", {
-    body: { email: "admin@teste.com", senha: "admin-senha" },
+    body: { email: "admin@teste.com", senha: "admin-senha", aceiteTermos: true },
   });
   const adminSession = sessionCookieOf(admin);
   assert.equal(admin.data.user.role, "admin");
@@ -392,7 +405,7 @@ test("login bloqueia a conta após 5 senhas erradas, mesmo com a senha certa", a
 
   // O bloqueio é da conta: outra conta, do mesmo IP, continua entrando.
   const other = await api("POST", "/api/auth/login", {
-    body: { email: "outra@teste.com", senha: "qualquer" },
+    body: { email: "outra@teste.com", senha: "qualquer", aceiteTermos: true },
   });
   assert.equal(other.status, 401);
 });

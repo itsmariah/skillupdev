@@ -108,10 +108,15 @@
 
   function renderOpenChallenge(_challenge, container) {
     container.innerHTML = `
+    <p id="aiNotice" class="ai-notice">
+      Sua resposta será avaliada por inteligência artificial (OpenAI). Não inclua nomes reais,
+      contatos ou outros dados pessoais. A nota é uma estimativa para apoiar seu aprendizado.
+      <a href="privacy.html#ia">Saiba mais</a>
+    </p>
     <label for="respostaUsuario" class="visually-hidden">Sua resposta</label>
     <textarea
       id="respostaUsuario"
-      aria-describedby="answerCounter"
+      aria-describedby="aiNotice answerCounter"
       class="form-control challenge-textarea"
       placeholder="Digite sua resposta aqui..."
       maxlength="3000"

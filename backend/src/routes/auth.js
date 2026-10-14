@@ -1,7 +1,12 @@
 const express = require("express");
 const crypto = require("crypto");
 
-const { SESSION_TTL_MS, MAX_NAME_LENGTH, MIN_PASSWORD_LENGTH } = require("../config");
+const {
+  SESSION_TTL_MS,
+  MAX_NAME_LENGTH,
+  MIN_PASSWORD_LENGTH,
+  TERMS_VERSION,
+} = require("../config");
 const db = require("../db");
 const { normalizeEmail } = require("../lib/text");
 const { setSessionCookie, clearSessionCookie, authenticateRequest } = require("../middleware/auth");
@@ -80,6 +85,12 @@ router.post("/api/auth/register", registerLimiter, async (req, res) => {
     return res.status(400).json({ message: PASSWORD_TOO_SHORT_MESSAGE });
   }
 
+  if (req.body.aceiteTermos !== true) {
+    return res.status(400).json({
+      message: "Para criar a conta, aceite os Termos de uso e a Política de privacidade.",
+    });
+  }
+
   if (await db.findUserByEmail(email)) {
     return res.status(409).json({ message: REGISTER_CONFLICT_MESSAGE });
   }
@@ -94,6 +105,8 @@ router.post("/api/auth/register", registerLimiter, async (req, res) => {
     badges: [],
     avatarConfig: DEFAULT_AVATAR,
     gamification: createDefaultGamificationState(),
+    termsVersion: TERMS_VERSION,
+    termsAcceptedAt: new Date().toISOString(),
     createdAt: new Date().toISOString(),
   });
 

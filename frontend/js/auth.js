@@ -226,6 +226,16 @@
       return;
     }
 
+    if (!document.getElementById("aceiteTermos")?.checked) {
+      setFeedback(
+        "registerFeedback",
+        "Para criar a conta, aceite os Termos de uso e a Política de privacidade.",
+        "danger",
+      );
+      document.getElementById("aceiteTermos")?.focus();
+      return;
+    }
+
     setButtonState(button, true, "Criando conta...", "Criar conta");
 
     try {
@@ -233,6 +243,7 @@
         nome: document.getElementById("nome")?.value.trim() || "",
         email: document.getElementById("email")?.value.trim() || "",
         senha,
+        aceiteTermos: document.getElementById("aceiteTermos")?.checked === true,
       });
 
       window.skillUpApi.setSession(payload);
