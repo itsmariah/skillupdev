@@ -1,3 +1,6 @@
+// Preferência do sistema por menos movimento (Configurações de acessibilidade).
+const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 document.addEventListener("DOMContentLoaded", () => {
   const navbar = document.querySelector(".navbar");
 
@@ -33,13 +36,13 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("scroll", toggleBackToTop, { passive: true });
 
     backToTopButton.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
     });
   }
 
   const container = document.getElementById("code-particles");
 
-  if (!container) {
+  if (!container || prefersReducedMotion()) {
     return;
   }
 
