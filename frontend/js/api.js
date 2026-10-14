@@ -88,6 +88,18 @@
     getMe() {
       return request("/api/me");
     },
+    updateProfile(payload) {
+      return request("/api/me/profile", { method: "PATCH", body: payload });
+    },
+    changePassword(payload) {
+      return request("/api/me/password", { method: "POST", body: payload });
+    },
+    deleteAccount(payload) {
+      return request("/api/me", { method: "DELETE", body: payload });
+    },
+    exportAccount() {
+      return request("/api/me/export");
+    },
     getHistory() {
       return request("/api/me/history");
     },

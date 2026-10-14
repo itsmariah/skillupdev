@@ -41,6 +41,14 @@ async function insertStudyResponse(record, db = getClient()) {
   );
 }
 
+async function listStudyResponsesByUser(userId, db = getClient()) {
+  const { rows } = await db.query(
+    "SELECT * FROM study_responses WHERE user_id = $1 ORDER BY submitted_at, id",
+    [userId],
+  );
+  return rows.map(rowToStudyResponse);
+}
+
 async function listStudyResponses(db = getClient()) {
   const { rows } = await db.query("SELECT * FROM study_responses ORDER BY submitted_at, id");
   return rows.map(rowToStudyResponse);
@@ -50,4 +58,5 @@ module.exports = {
   findStudyResponse,
   insertStudyResponse,
   listStudyResponses,
+  listStudyResponsesByUser,
 };

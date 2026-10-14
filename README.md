@@ -142,7 +142,7 @@ Fazer a plataforma parecer um produto, não um projeto acadêmico.
 - [x] Design system com tokens e ícones SVG
 - [x] Acessibilidade (teclado, leitores de tela, formulários)
 - [x] Imagens otimizadas e suporte a `prefers-reduced-motion`
-- [ ] Página de conta: perfil, troca de senha, exclusão e exportação dos dados
+- [x] Página de conta: perfil, troca de senha, exclusão e exportação dos dados
 - [ ] Política de privacidade, termos de uso e aviso sobre o uso de IA (LGPD)
 - [ ] Ajustes de regras e textos (dica do desafio, login diário, textos alinhados ao código)
 

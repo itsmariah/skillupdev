@@ -23,6 +23,14 @@ async function deleteSessionsByUser(userId, db = getClient()) {
   await db.query("DELETE FROM sessions WHERE user_id = $1", [userId]);
 }
 
+// Usado na troca de senha: os outros dispositivos saem, este continua logado.
+async function deleteOtherSessionsByUser(userId, keepTokenHash, db = getClient()) {
+  await db.query("DELETE FROM sessions WHERE user_id = $1 AND token_hash <> $2", [
+    userId,
+    keepTokenHash,
+  ]);
+}
+
 async function purgeExpiredSessions(db = getClient()) {
   await db.query("DELETE FROM sessions WHERE expires_at <= now()");
 }
@@ -32,5 +40,6 @@ module.exports = {
   findActiveSession,
   deleteSession,
   deleteSessionsByUser,
+  deleteOtherSessionsByUser,
   purgeExpiredSessions,
 };

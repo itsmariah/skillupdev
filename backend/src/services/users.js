@@ -66,6 +66,7 @@ function buildUserResponse(user, userAttempts) {
       totalBadges: unlockedBadges.length,
     },
     role: resolveRole(user),
+    createdAt: user.createdAt || null,
     studyPreDone: Boolean(user.studyPreDone),
     studyPostDone: Boolean(user.studyPostDone),
   };

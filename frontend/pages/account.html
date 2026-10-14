@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+  <title>Minha conta - SkillUp Dev</title>
+
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="../js/api.js" defer></script>
+  <script src="../js/main.js" defer></script>
+  <script src="../js/auth.js" defer></script>
+  <script src="../js/account.js" defer></script>
+</head>
+<body data-page="account">
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div id="code-particles" aria-hidden="true"></div>
+
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark navbar-custom">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="../index.html">
+        <img src="../assets/images/SkillUpDevLogoSemNome.webp" width="52" height="35" class="me-2" alt="">
+        <span>SkillUp Dev</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu"
+        aria-controls="menu" aria-expanded="false" aria-label="Abrir menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="menu">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item">
+            <a class="nav-link" href="dashboard.html">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="challenges.html">Desafios</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="history.html">Histórico</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="account.html">Conta</a>
+          </li>
+          <li class="nav-item ms-2">
+            <button id="logoutBtn" class="btn btn-outline-light">Sair</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo" class="dashboard-section" tabindex="-1">
+    <div class="container account-container">
+      <div class="dashboard-header">
+        <div>
+          <p class="dashboard-kicker">Configurações</p>
+          <h1 class="h2">Minha conta</h1>
+          <p>Seus dados, sua senha e o que a plataforma guarda sobre você.</p>
+        </div>
+      </div>
+
+      <section class="dashboard-panel mt-4" aria-labelledby="profileTitle">
+        <div class="dashboard-panel-header">
+          <div>
+            <h2 id="profileTitle" class="h3">Perfil</h2>
+            <p id="memberSince">Carregando...</p>
+          </div>
+        </div>
+
+        <div id="profileFeedback" class="alert d-none" role="alert"></div>
+
+        <form id="profileForm" class="account-form" novalidate>
+          <div class="mb-3">
+            <label for="profileName" class="form-label">Nome</label>
+            <input type="text" id="profileName" class="form-control" autocomplete="name" maxlength="200" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="profileEmail" class="form-label">E-mail</label>
+            <input type="email" id="profileEmail" class="form-control" readonly aria-describedby="profileEmailHint">
+            <p id="profileEmailHint" class="form-hint">
+              A troca de e-mail ainda não está disponível. Precisa mudar? Fale com o <a href="support.html">suporte</a>.
+            </p>
+          </div>
+
+          <button id="profileSaveBtn" class="btn btn-primary" type="submit">Salvar perfil</button>
+        </form>
+      </section>
+
+      <section class="dashboard-panel mt-4" aria-labelledby="passwordTitle">
+        <div class="dashboard-panel-header">
+          <div>
+            <h2 id="passwordTitle" class="h3">Senha</h2>
+            <p>Ao trocar a senha, as sessões abertas em outros dispositivos são encerradas.</p>
+          </div>
+        </div>
+
+        <div id="passwordFeedback" class="alert d-none" role="alert"></div>
+
+        <form id="passwordForm" class="account-form" novalidate>
+          <!-- Para gerenciadores de senha saberem de qual conta é a senha. -->
+          <input type="email" class="account-username" autocomplete="username" hidden>
+          <div class="mb-3">
+            <label for="currentPassword" class="form-label">Senha atual</label>
+            <input type="password" id="currentPassword" class="form-control" autocomplete="current-password" required>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="newPassword" class="form-label">Nova senha</label>
+              <input type="password" id="newPassword" class="form-control" autocomplete="new-password"
+                minlength="6" required aria-describedby="newPasswordHint">
+              <p id="newPasswordHint" class="form-hint">Pelo menos 6 caracteres.</p>
+            </div>
+
+            <div class="col-md-6">
+              <label for="confirmNewPassword" class="form-label">Confirmar nova senha</label>
+              <input type="password" id="confirmNewPassword" class="form-control" autocomplete="new-password"
+                minlength="6" required>
+            </div>
+          </div>
+
+          <button id="passwordSaveBtn" class="btn btn-primary" type="submit">Trocar senha</button>
+        </form>
+      </section>
+
+      <section class="dashboard-panel mt-4" aria-labelledby="exportTitle">
+        <div class="dashboard-panel-header">
+          <div>
+            <h2 id="exportTitle" class="h3">Seus dados</h2>
+            <p>
+              Baixe uma cópia de tudo o que a plataforma guarda sobre você: perfil, progresso,
+              badges, respostas, feedbacks e avaliações. O arquivo vem em JSON.
+            </p>
+          </div>
+        </div>
+
+        <div id="exportFeedback" class="alert d-none" role="alert"></div>
+
+        <button id="exportBtn" class="btn btn-outline-primary" type="button">Baixar meus dados</button>
+      </section>
+
+      <section class="dashboard-panel account-danger mt-4" aria-labelledby="deleteTitle">
+        <div class="dashboard-panel-header">
+          <div>
+            <h2 id="deleteTitle" class="h3">Excluir conta</h2>
+            <p>
+              Remove sua conta e todos os dados ligados a ela: progresso, badges, respostas,
+              feedbacks e respostas do estudo. Não dá para desfazer. Se quiser guardar uma cópia,
+              baixe seus dados antes.
+            </p>
+          </div>
+        </div>
+
+        <div id="deleteFeedback" class="alert d-none" role="alert"></div>
+
+        <form id="deleteForm" class="account-form" novalidate>
+          <!-- Para gerenciadores de senha saberem de qual conta é a senha. -->
+          <input type="email" class="account-username" autocomplete="username" hidden>
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="deleteConfirm" required>
+            <label class="form-check-label" for="deleteConfirm">
+              Entendo que a exclusão é permanente.
+            </label>
+          </div>
+
+          <div class="mb-3">
+            <label for="deletePassword" class="form-label">Confirme com sua senha</label>
+            <input type="password" id="deletePassword" class="form-control" autocomplete="current-password" required>
+          </div>
+
+          <button id="deleteBtn" class="btn btn-danger" type="submit">Excluir minha conta</button>
+        </form>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

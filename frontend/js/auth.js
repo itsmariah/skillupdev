@@ -135,17 +135,22 @@
     }
   }
 
+  // Apaga a cópia local do usuário (o cookie de sessão é apagado pelo servidor).
+  function clearLocalSession() {
+    window.skillUpApi.clearSession();
+    window.localStorage.removeItem("userName");
+    window.localStorage.removeItem("xp");
+    window.localStorage.removeItem("nivel");
+    window.sessionStorage.removeItem(DAILY_REWARD_KEY);
+  }
+
   async function logout() {
     try {
       await window.skillUpApi.logout();
     } catch (_error) {
       // Ignora erro de rede para nao travar o logout local.
     } finally {
-      window.skillUpApi.clearSession();
-      window.localStorage.removeItem("userName");
-      window.localStorage.removeItem("xp");
-      window.localStorage.removeItem("nivel");
-      window.sessionStorage.removeItem(DAILY_REWARD_KEY);
+      clearLocalSession();
       window.location.href = "login.html";
     }
   }
@@ -399,6 +404,7 @@
   window.logout = logout;
   window.skillUpAuth = {
     requireSession,
+    clearLocalSession,
     updateStoredUser,
     setFeedback,
     clearFeedback,

@@ -1,7 +1,7 @@
 const express = require("express");
 const crypto = require("crypto");
 
-const { SESSION_TTL_MS, MAX_NAME_LENGTH } = require("../config");
+const { SESSION_TTL_MS, MAX_NAME_LENGTH, MIN_PASSWORD_LENGTH } = require("../config");
 const db = require("../db");
 const { normalizeEmail } = require("../lib/text");
 const { setSessionCookie, clearSessionCookie, authenticateRequest } = require("../middleware/auth");
@@ -56,6 +56,8 @@ function createSession(userId) {
   };
 }
 
+const PASSWORD_TOO_SHORT_MESSAGE = `A senha precisa ter pelo menos ${MIN_PASSWORD_LENGTH} caracteres.`;
+
 const REGISTER_CONFLICT_MESSAGE =
   "Não foi possível criar a conta. Verifique os dados e tente novamente.";
 
@@ -74,8 +76,8 @@ router.post("/api/auth/register", registerLimiter, async (req, res) => {
       .json({ message: `O nome pode ter no máximo ${MAX_NAME_LENGTH} caracteres.` });
   }
 
-  if (senha.length < 6) {
-    return res.status(400).json({ message: "A senha precisa ter pelo menos 6 caracteres." });
+  if (senha.length < MIN_PASSWORD_LENGTH) {
+    return res.status(400).json({ message: PASSWORD_TOO_SHORT_MESSAGE });
   }
 
   if (await db.findUserByEmail(email)) {
@@ -236,8 +238,8 @@ router.post("/api/auth/reset-password", resetPasswordLimiter, async (req, res) =
     return res.status(400).json({ message: "Token de recuperação não informado." });
   }
 
-  if (senha.length < 6) {
-    return res.status(400).json({ message: "A senha precisa ter pelo menos 6 caracteres." });
+  if (senha.length < MIN_PASSWORD_LENGTH) {
+    return res.status(400).json({ message: PASSWORD_TOO_SHORT_MESSAGE });
   }
 
   const resetToken = await db.findActiveResetToken(hashToken(token));

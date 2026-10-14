@@ -78,6 +78,15 @@ const challengeSubmitLimiter = createLimiter({
   message: "Muitos envios em pouco tempo. Aguarde alguns minutos e tente de novo.",
 });
 
+// Por conta: só tentativas com senha errada contam, para não virar teste de senha.
+const accountSecurityLimiter = createLimiter({
+  windowMs: 15 * MINUTE,
+  limit: 5,
+  keyGenerator: byUser,
+  skipSuccessfulRequests: true,
+  message: "Muitas tentativas com senha incorreta. Tente novamente em 15 minutos.",
+});
+
 module.exports = {
   apiLimiter,
   loginIpLimiter,
@@ -87,4 +96,5 @@ module.exports = {
   forgotPasswordAccountLimiter,
   resetPasswordLimiter,
   challengeSubmitLimiter,
+  accountSecurityLimiter,
 };
