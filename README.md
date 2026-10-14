@@ -138,7 +138,7 @@ Base técnica para o projeto crescer com segurança.
 Fazer a plataforma parecer um produto, não um projeto acadêmico.
 
 - [x] Tirar o fluxo do estudo piloto da jornada principal (vira configuração)
-- [ ] Histórico de feedbacks e dashboard focado na evolução
+- [x] Histórico de feedbacks e dashboard focado na evolução
 - [ ] Design system com tokens e ícones SVG
 - [ ] Acessibilidade (teclado, leitores de tela, formulários)
 - [ ] Imagens otimizadas e suporte a `prefers-reduced-motion`

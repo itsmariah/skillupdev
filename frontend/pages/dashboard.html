@@ -26,7 +26,9 @@
         <span>SkillUp Dev</span>
       </a>
 
-      <div class="ms-auto">
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <a class="nav-link text-white d-none d-sm-block" href="challenges.html">Desafios</a>
+        <a class="nav-link text-white d-none d-sm-block me-2" href="history.html">Histórico</a>
         <button id="logoutBtn" class="btn btn-outline-light">Sair</button>
       </div>
     </div>
@@ -110,6 +112,38 @@
 
       <div class="row mt-4 g-4">
         <div class="col-lg-7">
+          <div class="dashboard-panel h-100">
+            <div class="dashboard-panel-header">
+              <div>
+                <h3>Evolução por categoria</h3>
+                <p>Quantos desafios você concluiu e sua nota média em cada soft skill.</p>
+              </div>
+            </div>
+
+            <div id="categoryProgress" class="category-progress"></div>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="dashboard-panel h-100">
+            <div class="dashboard-panel-header">
+              <div>
+                <h3>Últimos feedbacks</h3>
+                <p>O retorno mais recente dos seus desafios.</p>
+              </div>
+            </div>
+
+            <div id="recentFeedback" class="recent-feedback">
+              <p class="dashboard-empty">Carregando...</p>
+            </div>
+
+            <a href="history.html" class="btn btn-outline-primary w-100 mt-3">Ver histórico completo</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4 g-4">
+        <div class="col-lg-7">
           <div class="dashboard-panel">
             <div class="dashboard-panel-header">
               <div>
@@ -121,16 +155,6 @@
             <div id="badgeGrid" class="badge-grid"></div>
           </div>
 
-          <div class="dashboard-panel mt-4">
-            <div class="dashboard-panel-header">
-              <div>
-                <h3>Progresso por categoria</h3>
-                <p>Veja em quais soft skills você já tem mais consistência.</p>
-              </div>
-            </div>
-
-            <div id="categoryProgress" class="category-progress"></div>
-          </div>
         </div>
 
         <div class="col-lg-5">

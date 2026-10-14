@@ -88,6 +88,9 @@
     getMe() {
       return request("/api/me");
     },
+    getHistory() {
+      return request("/api/me/history");
+    },
     getChallenges() {
       return request("/api/challenges");
     },

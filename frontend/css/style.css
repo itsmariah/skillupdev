@@ -2081,3 +2081,187 @@
       body {
          padding-top: var(--navbar-height);
       }
+
+/* HISTÓRICO DE FEEDBACKS */
+      .history-filters {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+         gap: 16px;
+         margin-bottom: 18px;
+      }
+
+      .history-filters .form-label {
+         color: #2c2457;
+         font-weight: 600;
+      }
+
+      .history-count {
+         color: #5d647d;
+         font-size: 0.9rem;
+         margin-bottom: 12px;
+      }
+
+      .history-list {
+         display: grid;
+         gap: 12px;
+      }
+
+      .history-item {
+         border-radius: 14px;
+         background: #f7f8ff;
+         color: #2c2457;
+      }
+
+      .history-item summary {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         gap: 16px;
+         padding: 16px 18px;
+         cursor: pointer;
+         list-style: none;
+         border-radius: 14px;
+      }
+
+      .history-item summary::-webkit-details-marker {
+         display: none;
+      }
+
+      .history-item summary:focus-visible {
+         outline: 3px solid #5b6cff;
+         outline-offset: 2px;
+      }
+
+      .history-item[open] summary {
+         border-bottom: 1px solid #e3e6fb;
+         border-radius: 14px 14px 0 0;
+      }
+
+      .history-item-main {
+         display: grid;
+         gap: 4px;
+         min-width: 0;
+      }
+
+      .history-item-title {
+         font-weight: 800;
+      }
+
+      .history-item-meta {
+         color: #5d647d;
+         font-size: 0.85rem;
+      }
+
+      .history-score {
+         display: grid;
+         justify-items: end;
+         flex-shrink: 0;
+         text-align: right;
+      }
+
+      .history-score strong {
+         font-size: 1.5rem;
+         line-height: 1;
+      }
+
+      .history-score span {
+         font-size: 0.75rem;
+         font-weight: 700;
+         text-transform: uppercase;
+         letter-spacing: 0.5px;
+      }
+
+      .history-score.tier-ideal { color: #0f766e; }
+      .history-score.tier-medium { color: #4451c9; }
+      .history-score.tier-low { color: #b45309; }
+
+      .history-item-body {
+         padding: 4px 18px 18px;
+      }
+
+      .history-item-body p,
+      .history-item-body li {
+         color: #3b3566;
+         line-height: 1.6;
+      }
+
+      .history-subtitle {
+         color: #6c78bd;
+         font-size: 0.78rem;
+         font-weight: 700;
+         text-transform: uppercase;
+         letter-spacing: 1px;
+         margin: 16px 0 6px;
+      }
+
+      .history-answer {
+         white-space: pre-wrap;
+         background: white;
+         border-left: 4px solid #5b6cff;
+         border-radius: 10px;
+         padding: 12px 14px;
+      }
+
+      .history-feedback-parts,
+      .history-criteria {
+         list-style: none;
+         padding: 0;
+         margin: 0;
+         display: grid;
+         gap: 10px;
+      }
+
+      .history-consequence {
+         margin-top: 14px;
+      }
+
+      .history-footnote {
+         margin: 12px 0 0;
+         font-size: 0.85rem;
+         color: #5d647d !important;
+      }
+
+      .category-average {
+         color: #5d647d;
+         font-size: 0.85rem;
+         margin-right: 12px;
+      }
+
+      .recent-feedback {
+         display: grid;
+         gap: 12px;
+      }
+
+      .recent-feedback-item {
+         padding: 14px 16px;
+         border-radius: 14px;
+         background: #f7f8ff;
+      }
+
+      .recent-feedback-item .category-progress-header {
+         margin-bottom: 4px;
+      }
+
+      .history-score-inline {
+         font-weight: 800;
+         color: #4451c9;
+      }
+
+      .recent-feedback-meta {
+         color: #6c78bd;
+         font-size: 0.8rem;
+         margin-bottom: 6px;
+      }
+
+      .recent-feedback-text {
+         color: #3b3566;
+         font-size: 0.9rem;
+         margin-bottom: 0;
+      }
+
+      @media (max-width: 576px) {
+         .history-item summary {
+            align-items: flex-start;
+         }
+      }
+/* FIM HISTÓRICO */

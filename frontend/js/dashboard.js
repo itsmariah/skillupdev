@@ -271,7 +271,6 @@
       renderAvatarBuilder(payload.user);
       renderProgressSummary(payload.user);
       renderBadgeCatalog(payload.user);
-      renderCategoryProgress(payload.user);
       window.skillUpAuth.setFeedback(
         "avatarFeedback",
         payload.message || "Avatar salvo com sucesso.",
@@ -394,24 +393,42 @@
       .join("");
   }
 
-  function renderCategoryProgress(user) {
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  // Usa a evolução do histórico (com nota média) quando disponível; senão, só a contagem.
+  function renderCategoryProgress(user, evolution) {
     const container = document.getElementById("categoryProgress");
     if (!container) {
       return;
     }
 
-    const progressList = Array.isArray(user.categoryProgress) ? user.categoryProgress : [];
+    const progressList = Array.isArray(evolution?.byCategory)
+      ? evolution.byCategory
+      : Array.isArray(user.categoryProgress)
+        ? user.categoryProgress
+        : [];
 
     container.innerHTML = progressList
       .map((item) => {
         const percent = item.total > 0 ? Math.round((item.completed / item.total) * 100) : 0;
+        const average =
+          item.averageScore === null || item.averageScore === undefined
+            ? ""
+            : `<span class="category-average">Nota média ${escapeHtml(item.averageScore)}</span>`;
         return `
           <div class="category-progress-item">
             <div class="category-progress-header">
-              <strong>${item.categoria}</strong>
-              <span>${item.completed}/${item.total}</span>
+              <strong>${escapeHtml(item.categoria)}</strong>
+              <span>${average}${escapeHtml(item.completed)}/${escapeHtml(item.total)}</span>
             </div>
-            <div class="progress">
+            <div class="progress" role="img" aria-label="${escapeHtml(item.categoria)}: ${escapeHtml(item.completed)} de ${escapeHtml(item.total)} desafios">
               <div class="progress-bar" style="width: ${percent}%"></div>
             </div>
           </div>
@@ -420,12 +437,57 @@
       .join("");
   }
 
-  function renderDashboard(user) {
+  const RECENT_FEEDBACK_LIMIT = 3;
+  const FEEDBACK_PREVIEW_LENGTH = 140;
+
+  function renderRecentFeedback(history) {
+    const container = document.getElementById("recentFeedback");
+    if (!container) {
+      return;
+    }
+
+    if (!history) {
+      container.innerHTML =
+        '<p class="dashboard-empty">Não foi possível carregar os feedbacks agora.</p>';
+      return;
+    }
+
+    const items = history.items.slice(0, RECENT_FEEDBACK_LIMIT);
+
+    if (items.length === 0) {
+      container.innerHTML =
+        '<p class="dashboard-empty">Responda seu primeiro desafio para receber feedback.</p>';
+      return;
+    }
+
+    container.innerHTML = items
+      .map((item) => {
+        const feedback = String(item.feedback || "");
+        const preview =
+          feedback.length > FEEDBACK_PREVIEW_LENGTH
+            ? `${feedback.slice(0, FEEDBACK_PREVIEW_LENGTH).trimEnd()}…`
+            : feedback;
+        return `
+          <article class="recent-feedback-item">
+            <div class="category-progress-header">
+              <strong>${escapeHtml(item.titulo)}</strong>
+              <span class="history-score-inline">${escapeHtml(item.nota)}</span>
+            </div>
+            <p class="recent-feedback-meta">${escapeHtml(item.categoria)}</p>
+            <p class="recent-feedback-text">${escapeHtml(preview)}</p>
+          </article>
+        `;
+      })
+      .join("");
+  }
+
+  function renderDashboard(user, history) {
     dashboardUser = user;
     renderRewardBanner(user);
     renderProgressSummary(user);
     renderBadgeCatalog(user);
-    renderCategoryProgress(user);
+    renderCategoryProgress(user, history?.evolution);
+    renderRecentFeedback(history);
     renderAvatarBuilder(user);
     bindAvatarControls();
   }
@@ -442,9 +504,13 @@
     document.getElementById("logoutBtn")?.addEventListener("click", () => window.logout());
 
     try {
-      const payload = await window.skillUpApi.getMe();
+      // O histórico é complementar: se falhar, o dashboard abre mesmo assim.
+      const [payload, history] = await Promise.all([
+        window.skillUpApi.getMe(),
+        window.skillUpApi.getHistory().catch(() => null),
+      ]);
       window.skillUpAuth.updateStoredUser(payload.user);
-      renderDashboard(payload.user);
+      renderDashboard(payload.user, history);
       window.skillUpStudy?.checkAndShowPostBanner(payload.user);
     } catch (_error) {
       window.skillUpApi.clearSession();

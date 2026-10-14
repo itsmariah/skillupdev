@@ -3,6 +3,7 @@ const express = require("express");
 const db = require("../db");
 const { authenticateRequest } = require("../middleware/auth");
 const { normalizeAvatarConfig } = require("../services/gamification");
+const { buildHistory } = require("../services/history");
 const { buildUserResponse } = require("../services/users");
 
 const router = express.Router();
@@ -13,6 +14,11 @@ router.get("/api/me", authenticateRequest, async (req, res) => {
   res.json({
     user: buildUserResponse(req.user, attempts),
   });
+});
+
+// Histórico de feedbacks (mais recentes primeiro) e números da evolução por categoria.
+router.get("/api/me/history", authenticateRequest, async (req, res) => {
+  res.json(buildHistory(await db.listAttemptsByUser(req.user.id)));
 });
 
 router.patch("/api/me/avatar", authenticateRequest, async (req, res) => {

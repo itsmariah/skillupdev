@@ -245,6 +245,27 @@ test("resposta aberta curta demais é recusada sem gravar nada", async () => {
   assert.equal((await db.listAttemptsByUser(userId)).length, before);
 });
 
+test("histórico traz os feedbacks do mais recente ao mais antigo, com a evolução", async () => {
+  assert.equal((await api("GET", "/api/me/history")).status, 401);
+
+  const { status, data } = await api("GET", "/api/me/history", { session: userSession });
+
+  assert.equal(status, 200);
+  assert.equal(data.evolution.completed, 3);
+  assert.equal(data.items.length, 3);
+  assert.equal(data.items[0].challengeId, "communication-open-1");
+  assert.equal(data.items[0].evaluator, "heuristic");
+  assert.ok(data.items[0].resposta.startsWith("Entendo a frustração"));
+  assert.ok(data.items.every((item) => item.titulo && item.feedback));
+
+  const comunicacao = data.evolution.byCategory.find((item) => item.categoria === "Comunicação");
+  assert.equal(comunicacao.completed, 3);
+  assert.equal(
+    comunicacao.averageScore,
+    Math.round(data.items.reduce((total, item) => total + item.nota, 0) / 3),
+  );
+});
+
 test("avatar com item bloqueado volta para o padrão liberado", async () => {
   const { status, data } = await api("PATCH", "/api/me/avatar", {
     session: userSession,
