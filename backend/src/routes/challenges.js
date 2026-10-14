@@ -3,6 +3,7 @@ const crypto = require("crypto");
 
 const { MIN_OPEN_ANSWER_LENGTH, MAX_OPEN_ANSWER_LENGTH } = require("../config");
 const { CHALLENGES, getChallengeById } = require("../content/challenges");
+const { buildPublicTaxonomy, getSkillById } = require("../content/competencies");
 const db = require("../db");
 const { authenticateRequest } = require("../middleware/auth");
 const { challengeSubmitLimiter } = require("../middleware/rateLimits");
@@ -23,6 +24,10 @@ function buildPublicChallenge(challenge, completedAttempt) {
     id: challenge.id,
     tipo: challenge.tipo,
     categoria: challenge.categoria,
+    habilidades: challenge.habilidades.map((skillId) => {
+      const skill = getSkillById(skillId);
+      return { id: skill.id, nome: skill.nome, competencia: skill.competencia };
+    }),
     titulo: challenge.titulo,
     pergunta: challenge.pergunta,
     descricao: challenge.descricao,
@@ -49,6 +54,11 @@ function buildPublicChallenge(challenge, completedAttempt) {
       : null,
   };
 }
+
+// Taxonomia pública: competências, habilidades e rubricas (o que cada faixa significa).
+router.get("/api/competencies", (_req, res) => {
+  res.json({ competencias: buildPublicTaxonomy() });
+});
 
 router.get("/api/challenges", authenticateRequest, async (req, res) => {
   const userAttempts = await db.listAttemptsByUser(req.user.id);

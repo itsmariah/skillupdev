@@ -1,43 +1,12 @@
 const { OPENAI_MODEL, OPENAI_TIMEOUT_MS } = require("../config");
 const { normalizeTextValue } = require("../lib/text");
+const { SKILLS, getSkillById } = require("../content/competencies");
 const { OPEN_CHALLENGE_IDEAL_SCORE, OPEN_CHALLENGE_MEDIUM_SCORE } = require("./gamification");
 
-const CRITERIA_KEYWORDS = {
-  empatia: ["entendo", "compreendo", "desculpe", "ajudar", "obrigado"],
-  clareza: ["objetivo", "claro", "explicar", "resumo", "passo"],
-  "postura emocional": ["calma", "tranquilo", "serenidade", "entendo", "vamos"],
-  simplificacao: ["simples", "analogia", "exemplo", "facil", "resumindo"],
-  didatica: ["passo", "etapa", "explico", "porque", "impacto"],
-  "ausencia de jargao": ["simples", "claro", "sem termo tecnico", "facil"],
-  respeito: ["respeito", "podemos", "sugiro", "percebi", "melhorar"],
-  assertividade: ["direto", "objetivo", "proponho", "precisa", "recomendo"],
-  colaboracao: ["equipe", "junto", "time", "alinhar", "colaborar"],
-  lideranca: ["organizar", "delegar", "priorizar", "direcionar", "coordenar"],
-  organizacao: ["plano", "ordem", "etapas", "mapear", "organizar"],
-  mediacao: ["ouvir", "mediar", "consenso", "facilitar", "conciliar"],
-  neutralidade: ["ambos", "critérios", "sem lado", "equilibrio", "imparcial"],
-  comunicacao: ["alinhar", "conversar", "explicar", "escutar", "mensagem"],
-  "pensamento critico": ["trade-off", "impacto", "critério", "risco", "beneficio"],
-  analise: ["pros", "contras", "avaliar", "comparar", "critério"],
-  metodo: ["diagnosticar", "isolar", "confirmar", "validar", "hipotese"],
-  priorizacao: ["priorizar", "impacto", "urgência", "ordem", "primeiro"],
-  "visao de produto": ["usuário", "produto", "negócio", "impacto", "valor"],
-  responsabilidade: ["assumir", "comunicar", "resolver", "acompanhar", "compromisso"],
-  investigacao: ["log", "hipotese", "causa", "evidencia", "investigar"],
-  "uso de dados": ["metrica", "log", "dado", "observacao", "monitoramento"],
-  "raciocinio logico": ["hipotese", "causa", "teste", "validar", "evidencia"],
-  planejamento: ["planejar", "mapear", "etapa", "estimar", "organizar"],
-  "gestao de tempo": ["agenda", "bloco", "priorizar", "prazo", "foco"],
-  "analise de impacto": ["impacto", "risco", "valor", "dependencia", "resultado"],
-  criterio: ["critério", "avaliar", "comparar", "decidir", "peso"],
-  decomposicao: ["quebrar", "subtarefa", "etapa", "dividir", "bloco"],
-  maturidade: ["ouvir", "aprender", "refletir", "melhorar", "aceitar"],
-  aprendizado: ["aprender", "ajustar", "evoluir", "melhorar", "licao"],
-  "controle emocional": ["calma", "respirar", "equilibrio", "serenidade", "controle"],
-  negociacao: ["negociar", "escopo", "prazo", "alinhamento", "combinar"],
-  resiliencia: ["seguir", "reconstruir", "adaptar", "recuperar", "persistir"],
-  reflexao: ["refletir", "entender", "analisar", "post-mortem", "aprendizado"],
-};
+// Palavras-chave da análise de reserva, por nome de habilidade (vêm da taxonomia).
+const CRITERIA_KEYWORDS = Object.fromEntries(
+  SKILLS.map((skill) => [normalizeTextValue(skill.nome), skill.palavrasChave]),
+);
 
 function getCriteriaMatches(answer, criteria) {
   const normalizedAnswer = normalizeTextValue(answer);
@@ -87,18 +56,27 @@ function buildHeuristicFeedback(answer, criteria = []) {
     feedback =
       "Boa resposta. Você demonstrou maturidade, contexto e um encaminhamento claro para a situação.";
     if (missingCriteria.length > 0) {
-      feedback += ` Reforce especialmente ${missingCriteria.slice(0, 2).join(" e ")}.`;
+      feedback += ` Reforce especialmente ${missingCriteria
+        .slice(0, 2)
+        .map((name) => name.toLowerCase())
+        .join(" e ")}.`;
     }
   } else if (finalScore >= OPEN_CHALLENGE_MEDIUM_SCORE) {
     feedback =
       "A resposta mostra boa intenção e uma linha de raciocínio útil, mas ainda pode ficar mais forte.";
     if (missingCriteria.length > 0) {
-      feedback += ` Reforce especialmente ${missingCriteria.slice(0, 2).join(" e ")}.`;
+      feedback += ` Reforce especialmente ${missingCriteria
+        .slice(0, 2)
+        .map((name) => name.toLowerCase())
+        .join(" e ")}.`;
     }
   } else {
     feedback = "A resposta precisa de mais desenvolvimento.";
     if (missingCriteria.length > 0) {
-      feedback += ` Trabalhe especialmente ${missingCriteria.slice(0, 2).join(" e ")}.`;
+      feedback += ` Trabalhe especialmente ${missingCriteria
+        .slice(0, 2)
+        .map((name) => name.toLowerCase())
+        .join(" e ")}.`;
     } else {
       feedback +=
         " Estruture melhor suas ideias, seja mais específico e detalhe como agiria na situação.";
@@ -136,7 +114,8 @@ function extractJsonObject(text) {
 
 // Versão do prompt e do formato de saída. Fica gravada em cada avaliação, para comparar
 // resultados quando o prompt ou o modelo mudarem.
-const PROMPT_VERSION = "2026-10-structured-v1";
+// v2: critérios vêm da taxonomia de habilidades, com rubrica em três faixas.
+const PROMPT_VERSION = "2026-10-rubric-v2";
 
 // Nota máxima quando a resposta tenta instruir o avaliador em vez de responder ao cenário.
 const MANIPULATION_SCORE_CAP = 30;
@@ -209,10 +188,26 @@ const SYSTEM_PROMPT = [
   "",
   "Regras de avaliação:",
   "- Dê uma nota inteira de 0 a 100 para cada critério informado, na mesma ordem e com o mesmo nome.",
+  `- Use a rubrica de cada critério: fraca = 0 a ${OPEN_CHALLENGE_MEDIUM_SCORE - 1}, boa = ${OPEN_CHALLENGE_MEDIUM_SCORE} a ${OPEN_CHALLENGE_IDEAL_SCORE - 1}, ideal = ${OPEN_CHALLENGE_IDEAL_SCORE} a 100.`,
   "- Em evidencia, cite ou resuma o trecho da resposta que justifica a nota; se não houver, diga o que faltou.",
   "- Respostas genéricas, que serviriam para qualquer cenário, não passam de 50 em nenhum critério.",
   "- Feedback em português, direto e específico sobre esta resposta: 1 a 2 frases em cada parte.",
+  '- Escreva o feedback falando com a pessoa ("você"), nunca sobre ela ("o usuário").',
 ].join("\n");
+
+// Uma linha por critério com a descrição e as três faixas da habilidade correspondente.
+function buildRubricLines(challenge, criteria) {
+  const skills = (challenge.habilidades || []).map(getSkillById).filter(Boolean);
+
+  return criteria.map((criterion) => {
+    const skill = skills.find((item) => item.nome === criterion);
+    if (!skill) {
+      return `- ${criterion}`;
+    }
+    const { fraca, boa, ideal } = skill.rubrica;
+    return `- ${skill.nome}: ${skill.descricao} Fraca: ${fraca} Boa: ${boa} Ideal: ${ideal}`;
+  });
+}
 
 function buildEvaluationMessages({ resposta, challenge, criteria }) {
   // Remove marcações iguais às do delimitador, para a resposta não "fechar" o bloco antes da hora.
@@ -227,6 +222,9 @@ function buildEvaluationMessages({ resposta, challenge, criteria }) {
         `Desafio: ${challenge.titulo}`,
         `Cenário: ${challenge.pergunta}`,
         `Critérios (nesta ordem): ${criteria.join(", ")}`,
+        "",
+        "Rubrica de cada critério:",
+        ...buildRubricLines(challenge, criteria),
         "",
         `<${ANSWER_TAG}>`,
         answer,

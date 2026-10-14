@@ -1,10 +1,22 @@
+const { getSkillById } = require("./competencies");
+
 const OPEN_CHALLENGE_XP_MULTIPLIER = 1.2;
 
-function createClosedChallenge({ id, categoria, titulo, pergunta, descricao, dica, respostas }) {
+function createClosedChallenge({
+  id,
+  categoria,
+  habilidades,
+  titulo,
+  pergunta,
+  descricao,
+  dica,
+  respostas,
+}) {
   return {
     id,
     tipo: "fechado",
     categoria,
+    habilidades,
     titulo,
     pergunta,
     descricao,
@@ -16,23 +28,17 @@ function createClosedChallenge({ id, categoria, titulo, pergunta, descricao, dic
   };
 }
 
-function createOpenChallenge({
-  id,
-  categoria,
-  titulo,
-  pergunta,
-  descricao,
-  criteriosAvaliacao,
-  dica,
-}) {
+// Nos abertos, as habilidades são os critérios da avaliação: a IA dá uma nota para cada uma.
+function createOpenChallenge({ id, categoria, habilidades, titulo, pergunta, descricao, dica }) {
   return {
     id,
     tipo: "aberto",
     categoria,
+    habilidades,
     titulo,
     pergunta,
     descricao,
-    criteriosAvaliacao,
+    criteriosAvaliacao: habilidades.map((skillId) => getSkillById(skillId).nome),
     dica,
     xpMultiplier: OPEN_CHALLENGE_XP_MULTIPLIER,
   };
@@ -42,6 +48,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "communication-closed-1",
     categoria: "Comunicação",
+    habilidades: ["empatia", "transparencia"],
     titulo: "Cliente Difícil",
     pergunta:
       "Um cliente envia uma mensagem irritado dizendo que o sistema caiu e está inútil. Como você responde?",
@@ -68,6 +75,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "communication-closed-2",
     categoria: "Comunicação",
+    habilidades: ["adaptacao-publico", "transparencia"],
     titulo: "Explicando Problema Técnico",
     pergunta:
       "Você precisa explicar para um gestor não técnico por que o deploy foi adiado. Como faz isso?",
@@ -95,6 +103,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "communication-closed-3",
     categoria: "Comunicação",
+    habilidades: ["assertividade", "empatia"],
     titulo: "Feedback Construtivo",
     pergunta: "Um colega entregou um código ruim. Como você reage?",
     descricao: "Escolha a postura com mais respeito e efetividade.",
@@ -121,6 +130,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "teamwork-closed-1",
     categoria: "Trabalho em Equipe",
+    habilidades: ["colaboracao", "priorizacao"],
     titulo: "Priorizar Tarefas com a Equipe",
     pergunta: "Sua equipe tem 6 tarefas e um prazo curto. Como organizar isso?",
     descricao: "Escolha a alternativa com mais colaboração e visão coletiva.",
@@ -147,6 +157,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "teamwork-closed-2",
     categoria: "Trabalho em Equipe",
+    habilidades: ["colaboracao", "empatia"],
     titulo: "Conflito entre Colegas",
     pergunta: "Dois devs discordam fortemente sobre uma decisão técnica. O que você faz?",
     descricao: "Escolha a resposta com mais neutralidade e capacidade de mediação.",
@@ -173,6 +184,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "teamwork-closed-3",
     categoria: "Trabalho em Equipe",
+    habilidades: ["colaboracao", "metodo-raciocinio"],
     titulo: "Decisão Coletiva",
     pergunta: "O time precisa escolher entre duas arquiteturas possíveis. Como conduzir a decisão?",
     descricao: "Escolha a opção com mais critério técnico e colaboração.",
@@ -199,6 +211,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "problem-solving-closed-1",
     categoria: "Resolução de Problemas",
+    habilidades: ["investigacao", "controle-emocional-resiliencia"],
     titulo: "Produção Caiu",
     pergunta: "O sistema caiu em produção. Qual é sua primeira postura?",
     descricao: "Escolha a alternativa com mais método e controle da situação.",
@@ -226,6 +239,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "problem-solving-closed-2",
     categoria: "Resolução de Problemas",
+    habilidades: ["priorizacao", "visao-tecnica"],
     titulo: "Bug Urgente vs Feature Nova",
     pergunta: "Um bug crítico e uma feature nova disputam seu tempo. O que você prioriza?",
     descricao: "Escolha o que faz mais sentido para o produto e para os usuários.",
@@ -252,6 +266,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "problem-solving-closed-3",
     categoria: "Resolução de Problemas",
+    habilidades: ["investigacao", "metodo-raciocinio"],
     titulo: "Estratégia de Solução",
     pergunta: "Você está lidando com um erro intermitente difícil. Como aborda a solução?",
     descricao: "Escolha a estratégia mais estruturada de investigação.",
@@ -278,6 +293,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "time-management-closed-1",
     categoria: "Gestão de Tempo",
+    habilidades: ["priorizacao", "planejamento-organizacao"],
     titulo: "Sprint Conflitante",
     pergunta: "Você recebeu 3 tasks urgentes ao mesmo tempo. Como decide o que fazer primeiro?",
     descricao: "Escolha a alternativa com melhor priorização.",
@@ -304,6 +320,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "time-management-closed-2",
     categoria: "Gestão de Tempo",
+    habilidades: ["foco", "priorizacao"],
     titulo: "Interrupções",
     pergunta:
       "Você está focado em uma tarefa crítica quando chegam mensagens urgentes de diferentes colegas. O que você faz?",
@@ -331,6 +348,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "time-management-closed-3",
     categoria: "Gestão de Tempo",
+    habilidades: ["planejamento-organizacao", "metodo-raciocinio"],
     titulo: "Estimar Esforço",
     pergunta: "Uma nova feature é desconhecida para o time. Como você estima o esforço?",
     descricao: "Escolha a forma mais segura de chegar a uma estimativa.",
@@ -357,6 +375,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "emotional-intelligence-closed-1",
     categoria: "Inteligência Emocional",
+    habilidades: ["responsabilidade-maturidade", "controle-emocional-resiliencia"],
     titulo: "Receber Crítica",
     pergunta: "Você recebeu um code review duro. Como reage?",
     descricao: "Escolha a postura com mais maturidade emocional e foco em aprendizado.",
@@ -382,6 +401,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "emotional-intelligence-closed-2",
     categoria: "Inteligência Emocional",
+    habilidades: ["negociacao-prazos", "controle-emocional-resiliencia", "transparencia"],
     titulo: "Pressão",
     pergunta: "Você recebeu um prazo praticamente impossível. Como reage?",
     descricao: "Escolha a resposta com mais controle emocional e responsabilidade.",
@@ -408,6 +428,7 @@ const CHALLENGES = [
   createClosedChallenge({
     id: "emotional-intelligence-closed-3",
     categoria: "Inteligência Emocional",
+    habilidades: ["controle-emocional-resiliencia", "responsabilidade-maturidade"],
     titulo: "Frustração de Projeto Falho",
     pergunta: "Uma entrega foi cancelada e o projeto falhou. Como lidar com isso?",
     descricao: "Escolha a atitude com mais resiliência e aprendizado.",
@@ -438,7 +459,7 @@ const CHALLENGES = [
     pergunta:
       "Você percebe que o que o cliente pediu foi interpretado de formas diferentes pelos membros do time. Como comunicaria isso antes de continuar o desenvolvimento?",
     descricao: "Descreva como evitaria o retrabalho e alinharia o entendimento de todos.",
-    criteriosAvaliacao: ["clareza", "proatividade", "comunicação"],
+    habilidades: ["clareza-objetividade", "proatividade"],
   }),
   createOpenChallenge({
     id: "communication-open-2",
@@ -447,7 +468,7 @@ const CHALLENGES = [
     pergunta:
       "Um prazo importante não vai ser cumprido. Como você comunicaria isso ao gestor e ao cliente?",
     descricao: "Escreva como anunciaria o problema com responsabilidade e proposta de solução.",
-    criteriosAvaliacao: ["transparência", "responsabilidade", "clareza"],
+    habilidades: ["transparencia", "responsabilidade-maturidade", "clareza-objetividade"],
   }),
   createOpenChallenge({
     id: "communication-open-3",
@@ -456,7 +477,7 @@ const CHALLENGES = [
     pergunta:
       "Você precisa apresentar o progresso do projeto para um grupo de executivos sem background técnico. Como estruturaria essa comunicação?",
     descricao: "Descreva como adaptaria a linguagem e o conteúdo para esse público.",
-    criteriosAvaliacao: ["adaptação de linguagem", "didática", "objetividade"],
+    habilidades: ["adaptacao-publico", "clareza-objetividade"],
   }),
   createOpenChallenge({
     id: "teamwork-open-1",
@@ -465,7 +486,7 @@ const CHALLENGES = [
     pergunta:
       "Um desenvolvedor júnior acabou de entrar no time no meio de uma sprint. Como você o integraria sem prejudicar as entregas?",
     descricao: "Descreva como equilibraria a integração da pessoa com o ritmo do time.",
-    criteriosAvaliacao: ["acolhimento", "organização", "colaboração"],
+    habilidades: ["acolhimento", "planejamento-organizacao", "colaboracao"],
   }),
   createOpenChallenge({
     id: "teamwork-open-2",
@@ -474,7 +495,7 @@ const CHALLENGES = [
     pergunta:
       "Um membro do time repetidamente não entrega o que prometeu nas sprints. Como você abordaria essa situação?",
     descricao: "Explique como lidaria com isso sem ignorar e sem criar conflito desnecessário.",
-    criteriosAvaliacao: ["assertividade", "empatia", "comunicação"],
+    habilidades: ["assertividade", "empatia", "clareza-objetividade"],
   }),
   createOpenChallenge({
     id: "teamwork-open-3",
@@ -483,7 +504,7 @@ const CHALLENGES = [
     pergunta:
       "O time está distribuído em fusos horários diferentes e tem dificuldade de se alinhar nas entregas. Como você melhoraria a colaboração?",
     descricao: "Descreva que mudanças de processo ou comunicação você proporia.",
-    criteriosAvaliacao: ["organização", "comunicação assíncrona", "colaboração"],
+    habilidades: ["planejamento-organizacao", "comunicacao-assincrona", "colaboracao"],
   }),
   createOpenChallenge({
     id: "problem-solving-open-1",
@@ -492,7 +513,7 @@ const CHALLENGES = [
     pergunta:
       "O código do projeto acumulou muita dívida técnica e está comprometendo a velocidade do time. Como você abordaria esse problema?",
     descricao: "Explique como priorizaria e comunicaria a necessidade de melhorias técnicas.",
-    criteriosAvaliacao: ["visão técnica", "priorização", "comunicação"],
+    habilidades: ["visao-tecnica", "priorizacao", "clareza-objetividade"],
   }),
   createOpenChallenge({
     id: "problem-solving-open-2",
@@ -501,7 +522,7 @@ const CHALLENGES = [
     pergunta:
       "Após um deploy, usuários começam a reclamar que o sistema ficou lento. Como você investigaria a causa?",
     descricao: "Descreva sua abordagem de diagnóstico passo a passo.",
-    criteriosAvaliacao: ["investigação", "método", "raciocínio lógico"],
+    habilidades: ["investigacao", "metodo-raciocinio"],
   }),
   createOpenChallenge({
     id: "problem-solving-open-3",
@@ -510,7 +531,7 @@ const CHALLENGES = [
     pergunta:
       "Você recebeu uma especificação confusa que pode ser interpretada de formas muito diferentes. O que você faz antes de começar a desenvolver?",
     descricao: "Escreva como garantiria o entendimento correto antes de codar.",
-    criteriosAvaliacao: ["clareza", "proatividade", "comunicação"],
+    habilidades: ["clareza-objetividade", "proatividade"],
   }),
   createOpenChallenge({
     id: "time-management-open-1",
@@ -519,7 +540,7 @@ const CHALLENGES = [
     pergunta:
       "Você tem uma semana com muitas entregas e reuniões previstas. Como planeja para garantir que o essencial seja feito?",
     descricao: "Descreva como organizaria os dias e protegeria o tempo para o que mais importa.",
-    criteriosAvaliacao: ["planejamento", "organização", "gestão de tempo"],
+    habilidades: ["planejamento-organizacao"],
   }),
   createOpenChallenge({
     id: "time-management-open-2",
@@ -528,7 +549,7 @@ const CHALLENGES = [
     pergunta:
       "Seu gestor pede que você encaixe mais uma tarefa numa semana já lotada. Como você responderia?",
     descricao: "Explique como negociaria sem comprometer o que já foi comprometido.",
-    criteriosAvaliacao: ["assertividade", "negociação", "gestão de tempo"],
+    habilidades: ["assertividade", "negociacao-prazos", "planejamento-organizacao"],
   }),
   createOpenChallenge({
     id: "time-management-open-3",
@@ -537,7 +558,7 @@ const CHALLENGES = [
     pergunta:
       "Você está evitando uma tarefa complexa e desconfortável há dias, mesmo sabendo que ela é importante. Como encararia isso?",
     descricao: "Descreva o que te trava e como você sairia do bloqueio.",
-    criteriosAvaliacao: ["autoconhecimento", "planejamento", "foco"],
+    habilidades: ["autoconhecimento", "planejamento-organizacao", "foco"],
   }),
   createOpenChallenge({
     id: "emotional-intelligence-open-1",
@@ -546,7 +567,11 @@ const CHALLENGES = [
     pergunta:
       "Você foi promovido mas sente que não é bom o suficiente para o novo cargo. Como lida com esse sentimento?",
     descricao: "Mostre como equilibraria autoconfiança com humildade sem se paralisar.",
-    criteriosAvaliacao: ["autoconhecimento", "resiliência", "maturidade"],
+    habilidades: [
+      "autoconhecimento",
+      "controle-emocional-resiliencia",
+      "responsabilidade-maturidade",
+    ],
   }),
   createOpenChallenge({
     id: "emotional-intelligence-open-2",
@@ -555,7 +580,7 @@ const CHALLENGES = [
     pergunta:
       "Seu gestor descartou publicamente uma solução técnica sua sem justificar. Como você lidaria com isso?",
     descricao: "Explique como expressaria seu ponto de vista sem comprometer o relacionamento.",
-    criteriosAvaliacao: ["controle emocional", "assertividade", "maturidade"],
+    habilidades: ["controle-emocional-resiliencia", "assertividade", "responsabilidade-maturidade"],
   }),
   createOpenChallenge({
     id: "emotional-intelligence-open-3",
@@ -564,7 +589,7 @@ const CHALLENGES = [
     pergunta:
       "Você percebe que um colega está sobrecarregado e mostrando sinais claros de esgotamento. O que você faz?",
     descricao: "Descreva como apoiaria a pessoa e, se necessário, escalaria a situação.",
-    criteriosAvaliacao: ["empatia", "responsabilidade", "comunicação"],
+    habilidades: ["empatia", "responsabilidade-maturidade", "clareza-objetividade"],
   }),
 ];
 

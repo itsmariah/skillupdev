@@ -1,9 +1,10 @@
-// Integridade do conteúdo: os desafios ainda estão fixos no código (auditoria, item 13),
+// Integridade do conteúdo e da taxonomia: os desafios ainda estão fixos no código (auditoria, item 13),
 // então estes testes evitam que uma edição quebre as regras de XP ou as badges.
 const test = require("node:test");
 const assert = require("node:assert/strict");
 
 const { CHALLENGES, ALL_CATEGORIES } = require("../src/content/challenges");
+const { COMPETENCIES, SKILLS, getSkillById } = require("../src/content/competencies");
 const { BADGE_DEFINITIONS, BADGE_XP } = require("../src/services/gamification");
 
 test("há 30 desafios com ids únicos", () => {
@@ -72,5 +73,57 @@ test("badges têm id único e raridade com XP definido", () => {
 
   for (const definition of BADGE_DEFINITIONS) {
     assert.ok(definition.rarity in BADGE_XP, definition.id);
+  }
+});
+
+test("taxonomia: as competências são as 5 categorias, com 3 a 4 habilidades cada", () => {
+  assert.deepEqual(
+    COMPETENCIES.map((competency) => competency.nome).sort(),
+    [...ALL_CATEGORIES].sort(),
+  );
+  assert.equal(new Set(SKILLS.map((skill) => skill.id)).size, SKILLS.length);
+  assert.equal(new Set(SKILLS.map((skill) => skill.nome)).size, SKILLS.length);
+
+  for (const competency of COMPETENCIES) {
+    assert.ok(
+      competency.habilidades.length >= 3 && competency.habilidades.length <= 4,
+      competency.id,
+    );
+  }
+
+  for (const skill of SKILLS) {
+    assert.ok(skill.descricao, skill.id);
+    assert.ok(
+      skill.rubrica.fraca && skill.rubrica.boa && skill.rubrica.ideal,
+      `${skill.id}: rubrica`,
+    );
+    assert.ok(skill.palavrasChave.length >= 5, `${skill.id}: palavras-chave`);
+  }
+});
+
+test("todo desafio exercita de 1 a 3 habilidades que existem na taxonomia", () => {
+  for (const challenge of CHALLENGES) {
+    assert.ok(challenge.habilidades.length >= 1 && challenge.habilidades.length <= 3, challenge.id);
+    assert.equal(new Set(challenge.habilidades).size, challenge.habilidades.length, challenge.id);
+    for (const skillId of challenge.habilidades) {
+      assert.ok(getSkillById(skillId), `${challenge.id}: habilidade ${skillId} não existe`);
+    }
+  }
+});
+
+test("nos abertos, os critérios da IA são os nomes das habilidades", () => {
+  for (const challenge of CHALLENGES.filter((item) => item.tipo === "aberto")) {
+    assert.deepEqual(
+      challenge.criteriosAvaliacao,
+      challenge.habilidades.map((skillId) => getSkillById(skillId).nome),
+      challenge.id,
+    );
+  }
+});
+
+test("toda habilidade é exercitada por pelo menos um desafio", () => {
+  const used = new Set(CHALLENGES.flatMap((challenge) => challenge.habilidades));
+  for (const skill of SKILLS) {
+    assert.ok(used.has(skill.id), `${skill.id}: nenhum desafio usa`);
   }
 });

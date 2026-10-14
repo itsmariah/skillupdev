@@ -320,11 +320,13 @@
       );
     }
 
-    if (challenge.tipo === "aberto" && Array.isArray(challenge.criteriosAvaliacao)) {
-      const criteria = challenge.criteriosAvaliacao.filter(Boolean);
-      if (criteria.length > 0) {
-        parts.push(`IA avalia: ${criteria.join(", ")}.`);
-      }
+    const skills = (challenge.habilidades || []).map((skill) => skill.nome);
+    if (skills.length > 0) {
+      parts.push(
+        challenge.tipo === "aberto"
+          ? `A IA avalia cada habilidade: ${skills.join(", ")}.`
+          : `Habilidades trabalhadas: ${skills.join(", ")}.`,
+      );
     }
 
     return parts.join(" ");

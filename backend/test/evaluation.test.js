@@ -12,7 +12,8 @@ const {
 } = require("../src/services/evaluation");
 const { CHALLENGES } = require("../src/content/challenges");
 
-const challenge = CHALLENGES.find((item) => item.id === "communication-open-1");
+// Desafio com três habilidades avaliadas (Transparência, Responsabilidade, Clareza).
+const challenge = CHALLENGES.find((item) => item.id === "communication-open-2");
 const [firstCriterion, secondCriterion, thirdCriterion] = challenge.criteriosAvaliacao;
 const answer =
   "Eu chamaria o time e o cliente para uma conversa curta, mostraria as duas interpretações com exemplos e registraria o combinado antes de seguir.";

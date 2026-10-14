@@ -218,6 +218,12 @@ test("lista de desafios não traz a dica e informa as recompensas reais", async 
   const { data } = await api("GET", "/api/challenges", { session: sessionOf(response) });
 
   assert.ok(data.challenges.every((challenge) => !("dica" in challenge)));
+  assert.ok(data.challenges.every((challenge) => challenge.habilidades.length > 0));
+  assert.deepEqual(Object.keys(data.challenges[0].habilidades[0]).sort(), [
+    "competencia",
+    "id",
+    "nome",
+  ]);
 
   const closed = data.challenges.find((challenge) => challenge.tipo === "fechado");
   const open = data.challenges.find((challenge) => challenge.tipo === "aberto");
@@ -259,4 +265,14 @@ test("quem continua logado recebe o bônus diário ao abrir a plataforma, uma ve
   assert.equal(rewards.length, 1);
   assert.equal(rewards[0].xp, 20);
   assert.equal((await db.findUserById(id)).xp, response.data.user.xp + 20);
+});
+
+test("taxonomia pública traz competências, habilidades e rubricas, sem as palavras-chave", async () => {
+  const { status, data } = await api("GET", "/api/competencies");
+
+  assert.equal(status, 200);
+  assert.equal(data.competencias.length, 5);
+  const skill = data.competencias[0].habilidades[0];
+  assert.ok(skill.nome && skill.descricao && skill.rubrica.ideal);
+  assert.equal("palavrasChave" in skill, false);
 });
