@@ -1,0 +1,99 @@
+{
+  "lote": "01 - Comunicação",
+  "desafios": [
+    {
+      "tipo": "fechado",
+      "categoria": "Comunicação",
+      "dificuldade": "basico",
+      "habilidades": ["clareza-objetividade", "transparencia"],
+      "titulo": "Bloqueio na Daily",
+      "pergunta": "Na reunião diária, chega a sua vez. Você está há dois dias travado numa integração porque depende de uma credencial que ainda não recebeu. O que você diz?",
+      "descricao": "Escolha a fala que mais ajuda o time a entender onde você está.",
+      "dica": "A daily serve para tirar bloqueios do caminho. Diga o que fez, onde travou e de quem precisa, em poucas frases.",
+      "respostas": [
+        {
+          "texto": "Digo em poucas frases o que avancei, que estou travado esperando a credencial e peço ajuda para destravar.",
+          "xp": 100,
+          "feedback": "Ótimo. Você foi direto, deixou o bloqueio visível e deu ao time a chance de agir sobre ele."
+        },
+        {
+          "texto": "Conto em detalhes tudo o que tentei nos dois dias, para mostrar que não fiquei parado.",
+          "xp": 40,
+          "feedback": "O esforço aparece, mas o bloqueio fica escondido no meio dos detalhes e a reunião se alonga. Comece pelo que você precisa."
+        },
+        {
+          "texto": "Digo que está tudo andando e resolvo a questão da credencial sozinho depois.",
+          "xp": 5,
+          "feedback": "Esconder o bloqueio atrasa a entrega e impede que alguém com acesso resolva em minutos o que está parado há dois dias."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Comunicação",
+      "dificuldade": "intermediario",
+      "habilidades": ["transparencia", "clareza-objetividade"],
+      "titulo": "Correção Pela Metade",
+      "pergunta": "Um cliente relatou um erro no checkout. Você corrigiu a parte principal, mas um caso específico (pagamento com dois cartões) ainda falha e vai levar mais dois dias. O suporte pede uma mensagem para responder ao cliente. O que você escreve?",
+      "descricao": "O suporte quer encerrar o chamado; você sabe que ainda falta uma parte.",
+      "dica": "Correção parcial comunicada com clareza gera mais confiança do que um 'resolvido' que volta a quebrar. Diga o que funciona, o que falta e quando.",
+      "respostas": [
+        {
+          "texto": "Explico o que já foi corrigido, o caso que ainda falha, como contorná-lo por enquanto e quando volto com a correção completa.",
+          "xp": 100,
+          "feedback": "Perfeito. O cliente sabe o que já pode usar, como evitar o problema que resta e quando esperar a solução final."
+        },
+        {
+          "texto": "Digo que o problema foi corrigido e, se o cliente perguntar sobre os dois cartões, explico o restante.",
+          "xp": 40,
+          "feedback": "A mensagem é curta e positiva, mas deixa o cliente descobrir o caso que ainda falha sozinho, o que costuma doer mais que a notícia."
+        },
+        {
+          "texto": "Peço ao suporte que responda que está tudo resolvido, para encerrar logo o chamado.",
+          "xp": 5,
+          "feedback": "Fechar o chamado com uma informação falsa quase garante um cliente mais irritado quando o erro aparecer de novo."
+        }
+      ]
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Comunicação",
+      "dificuldade": "intermediario",
+      "habilidades": ["adaptacao-publico", "clareza-objetividade"],
+      "titulo": "Outro Time Vai Usar a Sua API",
+      "pergunta": "O time de aplicativos, em outro fuso horário, vai começar a usar uma API que o seu time criou. Eles não conhecem o seu domínio e só vão conseguir falar com você por mensagem. O que você escreve para eles começarem sem ficar bloqueados?",
+      "descricao": "Escreva a mensagem (ou o roteiro do documento) que você enviaria.",
+      "dica": "Escreva para quem não está na sua cabeça: comece pelo objetivo, mostre um exemplo funcionando e antecipe as dúvidas mais prováveis."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Comunicação",
+      "dificuldade": "avancado",
+      "habilidades": ["transparencia", "adaptacao-publico", "clareza-objetividade"],
+      "titulo": "Incidente com Muitos Públicos",
+      "pergunta": "Há uma hora parte dos usuários não consegue fazer login. A causa ainda não está clara. Ao mesmo tempo, a diretoria pede atualizações, o suporte recebe dezenas de reclamações e dois clientes grandes cobram uma posição. Você é quem coordena a comunicação. Como faz isso?",
+      "descricao": "Explique o que diria a cada público, com que frequência e como lidaria com a falta de informação.",
+      "dica": "Num incidente, ritmo previsível vale mais que certeza: diga o que se sabe, o que ainda não se sabe e quando vem a próxima atualização, no nível de detalhe de cada público."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Comunicação",
+      "dificuldade": "avancado",
+      "habilidades": ["empatia", "transparencia", "clareza-objetividade"],
+      "titulo": "Reclamação no Canal Compartilhado",
+      "pergunta": "Num canal de mensagens compartilhado com o cliente, o gerente do lado dele escreve, marcando todo o seu time, que a última entrega 'veio cheia de bugs' e que está 'repensando o contrato'. Parte da crítica procede; parte vem de uma mudança de escopo que ele mesmo pediu. Como você responde?",
+      "descricao": "Escreva a resposta e explique o que faria em seguida, fora do canal.",
+      "dica": "Em público, reconheça e organize; os detalhes e a discordância vão para uma conversa direta. Separe o que é falha do time do que é mudança de escopo sem soar defensivo."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Comunicação",
+      "dificuldade": "avancado",
+      "habilidades": ["transparencia", "assertividade", "adaptacao-publico"],
+      "titulo": "Mudança que Ninguém Quer",
+      "pergunta": "A liderança decidiu que o time passará a ter plantão de fim de semana. Você participou da decisão, entende os motivos, mas sabe que a maior parte do time vai reagir mal. Cabe a você comunicar. Como conduz essa conversa?",
+      "descricao": "Descreva como prepararia e conduziria a comunicação, e o que faria com as objeções.",
+      "dica": "Mudança impopular não se vende: explique o porquê com honestidade, diga o que está e o que não está em aberto, ouça as objeções e mostre o que será feito com elas."
+    }
+  ]
+}

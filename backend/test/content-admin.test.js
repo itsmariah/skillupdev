@@ -92,7 +92,7 @@ test("a semente grava os 30 desafios como versão 1 publicada", async () => {
   assert.ok(
     data.challenges.every((item) => item.status === "publicado" && item.publishedVersion === 1),
   );
-  assert.equal(data.competencias.length, 5);
+  assert.equal(data.competencias.length, 10);
   assert.equal((await userChallenges()).length, 30);
 });
 

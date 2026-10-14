@@ -8,6 +8,11 @@
     "Resolução de Problemas": "puzzle",
     "Gestão de Tempo": "clock",
     "Inteligência Emocional": "heart",
+    Liderança: "compass",
+    "Adaptabilidade e Aprendizado": "refresh",
+    "Pensamento Crítico": "lightbulb",
+    "Ética Profissional": "shield",
+    "Feedback e Conflitos": "messages",
   };
 
   // Decorativo por padrão (aria-hidden); o texto ao lado é que dá o significado.

@@ -271,7 +271,7 @@ test("taxonomia pública traz competências, habilidades e rubricas, sem as pala
   const { status, data } = await api("GET", "/api/competencies");
 
   assert.equal(status, 200);
-  assert.equal(data.competencias.length, 5);
+  assert.equal(data.competencias.length, 10);
   const skill = data.competencias[0].habilidades[0];
   assert.ok(skill.nome && skill.descricao && skill.rubrica.ideal);
   assert.equal("palavrasChave" in skill, false);

@@ -4,7 +4,7 @@
 // desafios fechados não entram nos números.
 const {
   getChallenges,
-  getCategories,
+  getActiveCategories,
   getChallengeVersion,
   countPublishedByCategory,
   isPublished,
@@ -92,7 +92,8 @@ function skillScoreOf(attempt, skill) {
 
 // Nível atual em cada habilidade: média das últimas tentativas dos desafios que a exercitam.
 function buildSkillScores(currentAttempts) {
-  return COMPETENCIES.map((competency) => {
+  const active = new Set(getActiveCategories());
+  return COMPETENCIES.filter((competency) => active.has(competency.nome)).map((competency) => {
     const habilidades = competency.habilidades.map((skill) => {
       const scores = currentAttempts
         .filter((attempt) => challengeOf(attempt)?.habilidades?.includes(skill.id))
@@ -121,7 +122,7 @@ function buildEvolution(attempts) {
     totalChallenges: getChallenges().length,
     averageScore: average(current.map((attempt) => attempt.score)),
     trend: buildTrend(chronological),
-    byCategory: getCategories().map((categoria) => {
+    byCategory: getActiveCategories().map((categoria) => {
       const inCategory = (attempt) => challengeOf(attempt)?.categoria === categoria;
       const scores = current.filter(inCategory).map((attempt) => attempt.score);
       const bestScores = best.filter(inCategory).map((attempt) => attempt.score);

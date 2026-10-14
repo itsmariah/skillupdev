@@ -76,11 +76,13 @@ test("badges têm id único e raridade com XP definido", () => {
   }
 });
 
-test("taxonomia: as competências são as 5 categorias, com 3 a 4 habilidades cada", () => {
-  assert.deepEqual(
-    COMPETENCIES.map((competency) => competency.nome).sort(),
-    [...ALL_CATEGORIES].sort(),
-  );
+test("taxonomia: 10 competências (as 5 da semente e mais 5), com 3 a 4 habilidades cada", () => {
+  const names = COMPETENCIES.map((competency) => competency.nome);
+  assert.equal(names.length, 10);
+  assert.equal(new Set(names).size, names.length);
+  for (const category of ALL_CATEGORIES) {
+    assert.ok(names.includes(category), `${category}: falta na taxonomia`);
+  }
   assert.equal(new Set(SKILLS.map((skill) => skill.id)).size, SKILLS.length);
   assert.equal(new Set(SKILLS.map((skill) => skill.nome)).size, SKILLS.length);
 
@@ -121,9 +123,15 @@ test("nos abertos, os critérios da IA são os nomes das habilidades", () => {
   }
 });
 
-test("toda habilidade é exercitada por pelo menos um desafio", () => {
+test("toda habilidade das competências da semente é exercitada por algum desafio", () => {
+  // As competências novas ganham desafios pelo painel, em lotes.
+  const seedCompetencies = new Set(
+    COMPETENCIES.filter((competency) => ALL_CATEGORIES.includes(competency.nome)).map(
+      (competency) => competency.id,
+    ),
+  );
   const used = new Set(CHALLENGES.flatMap((challenge) => challenge.habilidades));
-  for (const skill of SKILLS) {
+  for (const skill of SKILLS.filter((item) => seedCompetencies.has(item.competencia))) {
     assert.ok(used.has(skill.id), `${skill.id}: nenhum desafio usa`);
   }
 });

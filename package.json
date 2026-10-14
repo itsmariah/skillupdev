@@ -12,7 +12,8 @@
     "test": "node --test",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "content:import": "node backend/scripts/import-challenge-drafts.js"
   },
   "repository": {
     "type": "git",

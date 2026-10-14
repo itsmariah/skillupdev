@@ -131,20 +131,22 @@ async function findChallengeForAdmin(id, db = getClient()) {
   };
 }
 
-async function insertChallengeDraft({ id, tipo, content, createdBy }, db = getClient()) {
-  await db.transaction(async (tx) => {
-    const { rows } = await tx.query(
-      "SELECT COALESCE(MAX(position), 0) + 1 AS next FROM challenges",
-    );
-    await tx.query(
-      "INSERT INTO challenges (id, tipo, status, position) VALUES ($1, $2, 'rascunho', $3)",
-      [id, tipo, rows[0].next],
-    );
-    await tx.query(
-      "INSERT INTO challenge_versions (challenge_id, version, content, created_by) VALUES ($1, 1, $2, $3)",
-      [id, JSON.stringify(content), createdBy],
-    );
-  });
+// Grava um desafio novo como rascunho (versão 1). Dentro de uma transação já aberta (tx),
+// use insertChallengeDraftRows; insertChallengeDraft abre a própria transação.
+async function insertChallengeDraftRows({ id, tipo, content, createdBy }, tx) {
+  const { rows } = await tx.query("SELECT COALESCE(MAX(position), 0) + 1 AS next FROM challenges");
+  await tx.query(
+    "INSERT INTO challenges (id, tipo, status, position) VALUES ($1, $2, 'rascunho', $3)",
+    [id, tipo, rows[0].next],
+  );
+  await tx.query(
+    "INSERT INTO challenge_versions (challenge_id, version, content, created_by) VALUES ($1, 1, $2, $3)",
+    [id, JSON.stringify(content), createdBy],
+  );
+}
+
+async function insertChallengeDraft(draft, db = getClient()) {
+  await db.transaction((tx) => insertChallengeDraftRows(draft, tx));
 }
 
 // Atualiza o rascunho existente ou cria um novo (próxima versão) a partir do publicado.
@@ -235,6 +237,7 @@ module.exports = {
   reloadCatalog,
   listChallengesForAdmin,
   findChallengeForAdmin,
+  insertChallengeDraftRows,
   insertChallengeDraft,
   saveChallengeDraft,
   publishChallengeDraft,

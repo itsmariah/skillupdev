@@ -306,7 +306,10 @@ test("histórico traz os feedbacks do mais recente ao mais antigo, com a evoluç
   );
 
   const skills = data.evolution.competencias.flatMap((competency) => competency.habilidades);
+  // As 5 competências novas ainda não têm desafio publicado: ficam escondidas.
   assert.equal(data.evolution.competencias.length, 5);
+  assert.equal(data.evolution.byCategory.length, 5);
+  assert.ok(!data.evolution.competencias.some((competency) => competency.nome === "Liderança"));
   assert.ok(skills.find((skill) => skill.id === "empatia").score !== null);
 });
 

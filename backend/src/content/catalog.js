@@ -111,8 +111,15 @@ function isPublished(id) {
   return publishedById.has(id);
 }
 
+// Todas as competências da taxonomia (validação do painel e regras de badges).
 function getCategories() {
   return CATEGORIES;
+}
+
+// Competências com pelo menos um desafio publicado: as que aparecem para quem usa a
+// plataforma. Uma competência nova fica escondida até ganhar o primeiro desafio.
+function getActiveCategories() {
+  return CATEGORIES.filter((categoria) => countPublishedByCategory(categoria) > 0);
 }
 
 function countPublishedByCategory(categoria) {
@@ -129,5 +136,6 @@ module.exports = {
   getChallengeVersion,
   isPublished,
   getCategories,
+  getActiveCategories,
   countPublishedByCategory,
 };

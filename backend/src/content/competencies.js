@@ -1,4 +1,4 @@
-// Taxonomia de soft skills: 5 competências (as categorias dos desafios), cada uma com suas
+// Taxonomia de soft skills: 10 competências (as categorias dos desafios), cada uma com suas
 // habilidades. Cada habilidade tem uma rubrica em três faixas, usada no prompt da IA, e
 // palavras-chave para a análise automática de reserva (quando a IA está indisponível).
 // Um desafio de qualquer categoria pode exercitar habilidades de outras competências.
@@ -363,6 +363,386 @@ const COMPETENCIES = [
           "compromisso",
           "corrigir",
         ],
+      },
+    ],
+  },
+  {
+    id: "lideranca",
+    nome: "Liderança",
+    descricao: "Fazer o time andar bem, com ou sem cargo de liderança.",
+    habilidades: [
+      {
+        id: "delegacao",
+        nome: "Delegação",
+        descricao:
+          "Distribuir o trabalho pelo que cada pessoa pode assumir, com clareza e autonomia.",
+        rubrica: {
+          fraca: "Faz tudo sozinho ou repassa a tarefa sem contexto nem acompanhamento.",
+          boa: "Delega com contexto, mas sem combinar resultado esperado ou ponto de apoio.",
+          ideal:
+            "Delega pelo que a pessoa pode assumir, combina o resultado e acompanha sem microgerenciar.",
+        },
+        palavrasChave: ["delegar", "responsavel", "autonomia", "combinar", "acompanhar", "dividir"],
+      },
+      {
+        id: "desenvolvimento-pessoas",
+        nome: "Desenvolvimento de pessoas",
+        descricao: "Ajudar colegas a crescer com mentoria, desafios e espaço para errar.",
+        rubrica: {
+          fraca: "Resolve pelos outros ou ignora a evolução de quem está ao lado.",
+          boa: "Ajuda quando pedem, sem um plano para a pessoa evoluir.",
+          ideal: "Orienta com perguntas, dá desafios do tamanho certo e acompanha a evolução.",
+        },
+        palavrasChave: [
+          "mentoria",
+          "ensinar",
+          "crescer",
+          "orientar",
+          "pair",
+          "evolucao",
+          "desafio",
+        ],
+      },
+      {
+        id: "conducao-decisoes",
+        nome: "Condução de decisões",
+        descricao: "Levar o grupo a uma decisão clara, no tempo certo, mesmo sem consenso total.",
+        rubrica: {
+          fraca: "Adia a decisão ou decide sozinho sem ouvir quem é afetado.",
+          boa: "Ouve as partes, mas a decisão fica vaga ou sem dono.",
+          ideal:
+            "Ouve, explicita os critérios, decide (ou define quem decide) e registra o porquê.",
+        },
+        palavrasChave: [
+          "decidir",
+          "criterio",
+          "consenso",
+          "registrar",
+          "prazo",
+          "opcoes",
+          "responsavel",
+        ],
+      },
+      {
+        id: "visao-alinhamento",
+        nome: "Visão e alinhamento do time",
+        descricao: "Conectar o trabalho do dia a dia ao objetivo e manter todos na mesma direção.",
+        rubrica: {
+          fraca: "Cada pessoa trabalha sem saber para onde o time vai.",
+          boa: "Comunica o objetivo, mas sem ligá-lo às prioridades de cada um.",
+          ideal: "Explica o porquê, liga cada entrega ao objetivo e revisa o rumo com o time.",
+        },
+        palavrasChave: [
+          "objetivo",
+          "porque",
+          "alinhar",
+          "prioridade",
+          "direcao",
+          "proposito",
+          "meta",
+        ],
+      },
+    ],
+  },
+  {
+    id: "adaptabilidade",
+    nome: "Adaptabilidade e Aprendizado",
+    descricao: "Aprender e se ajustar quando tecnologia, prioridade ou contexto mudam.",
+    habilidades: [
+      {
+        id: "aprender-rapido",
+        nome: "Aprender rápido",
+        descricao: "Ganhar autonomia num assunto novo com um plano de estudo enxuto.",
+        rubrica: {
+          fraca: "Trava diante do desconhecido ou tenta aprender tudo de uma vez.",
+          boa: "Estuda o assunto, mas sem foco no que a tarefa exige.",
+          ideal: "Define o mínimo necessário, aprende fazendo e valida com quem sabe.",
+        },
+        palavrasChave: [
+          "estudar",
+          "documentacao",
+          "prototipo",
+          "testar",
+          "aprender",
+          "praticar",
+          "exemplo",
+        ],
+      },
+      {
+        id: "lidar-mudancas",
+        nome: "Lidar com mudanças",
+        descricao:
+          "Reorganizar o trabalho quando prioridades ou planos mudam, sem perder o essencial.",
+        rubrica: {
+          fraca: "Resiste à mudança ou segue o plano antigo como se nada tivesse acontecido.",
+          boa: "Aceita a mudança, mas sem reavaliar o impacto no que já estava em andamento.",
+          ideal: "Entende o motivo, reavalia o impacto, ajusta o plano e comunica o que muda.",
+        },
+        palavrasChave: [
+          "mudanca",
+          "ajustar",
+          "replanejar",
+          "impacto",
+          "adaptar",
+          "prioridade",
+          "motivo",
+        ],
+      },
+      {
+        id: "pedir-ajuda",
+        nome: "Pedir ajuda",
+        descricao: "Reconhecer quando parar de tentar sozinho e pedir ajuda do jeito certo.",
+        rubrica: {
+          fraca: "Fica dias travado em silêncio ou pede ajuda sem ter tentado nada.",
+          boa: "Pede ajuda, mas sem contar o que já tentou ou o que precisa.",
+          ideal: "Pede no momento certo, mostra o que tentou e diz exatamente onde travou.",
+        },
+        palavrasChave: ["ajuda", "perguntar", "tentei", "travado", "duvida", "contexto", "colega"],
+      },
+      {
+        id: "aprender-erros",
+        nome: "Aprender com erros",
+        descricao: "Transformar um erro em mudança concreta na forma de trabalhar.",
+        rubrica: {
+          fraca: "Esconde o erro ou culpa o contexto e segue igual.",
+          boa: "Reconhece o erro, mas sem mudar nada no processo.",
+          ideal: "Assume o erro, investiga a causa e muda o processo para não repetir.",
+        },
+        palavrasChave: [
+          "erro",
+          "causa",
+          "licao",
+          "post-mortem",
+          "processo",
+          "prevenir",
+          "melhorar",
+        ],
+      },
+    ],
+  },
+  {
+    id: "pensamento-critico",
+    nome: "Pensamento Crítico",
+    descricao: "Pensar antes de aceitar: requisitos, soluções e números.",
+    habilidades: [
+      {
+        id: "questionar-premissas",
+        nome: "Questionar premissas",
+        descricao: "Perguntar o porquê de um pedido antes de aceitar a solução que veio junto.",
+        rubrica: {
+          fraca: "Implementa o pedido sem entender o problema por trás.",
+          boa: "Pergunta sobre o pedido, mas aceita a primeira resposta.",
+          ideal:
+            "Investiga o problema real, separa necessidade de solução e propõe o caminho certo.",
+        },
+        palavrasChave: [
+          "porque",
+          "problema",
+          "necessidade",
+          "objetivo",
+          "perguntar",
+          "premissa",
+          "entender",
+        ],
+      },
+      {
+        id: "avaliar-evidencias",
+        nome: "Avaliar evidências",
+        descricao: "Separar fato de opinião e checar se os dados sustentam a conclusão.",
+        rubrica: {
+          fraca: "Aceita a opinião mais forte ou o primeiro número que aparece.",
+          boa: "Busca dados, mas não checa se eles respondem à pergunta.",
+          ideal: "Confere a fonte, a amostra e se os dados realmente sustentam a conclusão.",
+        },
+        palavrasChave: [
+          "dado",
+          "evidencia",
+          "fonte",
+          "metrica",
+          "amostra",
+          "verificar",
+          "comparar",
+        ],
+      },
+      {
+        id: "considerar-alternativas",
+        nome: "Considerar alternativas",
+        descricao: "Comparar mais de um caminho antes de escolher.",
+        rubrica: {
+          fraca: "Segue a primeira ideia sem comparar.",
+          boa: "Lista alternativas, mas sem critério para escolher entre elas.",
+          ideal: "Compara caminhos por critérios explícitos e justifica a escolha.",
+        },
+        palavrasChave: [
+          "alternativa",
+          "opcao",
+          "comparar",
+          "criterio",
+          "trade-off",
+          "pros",
+          "contras",
+        ],
+      },
+      {
+        id: "antecipar-consequencias",
+        nome: "Antecipar consequências",
+        descricao: "Pensar nos efeitos de segunda ordem de uma decisão antes de tomá-la.",
+        rubrica: {
+          fraca: "Olha só o efeito imediato da decisão.",
+          boa: "Prevê alguns riscos, sem plano para eles.",
+          ideal: "Mapeia os efeitos para usuários, time e sistema e prepara como mitigar.",
+        },
+        palavrasChave: [
+          "consequencia",
+          "risco",
+          "efeito",
+          "impacto",
+          "mitigar",
+          "longo prazo",
+          "cenario",
+        ],
+      },
+    ],
+  },
+  {
+    id: "etica-profissional",
+    nome: "Ética Profissional",
+    descricao: "Fazer o certo quando ninguém está olhando e quando há pressão para o contrário.",
+    habilidades: [
+      {
+        id: "integridade",
+        nome: "Integridade",
+        descricao: "Ser honesto sobre o próprio trabalho, mesmo quando custa.",
+        rubrica: {
+          fraca: "Maquia resultados, omite falhas ou leva crédito que não é seu.",
+          boa: "É honesto quando perguntado, sem tomar a iniciativa de contar.",
+          ideal: "Conta a verdade por iniciativa própria, inclusive sobre os próprios erros.",
+        },
+        palavrasChave: [
+          "honesto",
+          "verdade",
+          "transparente",
+          "credito",
+          "assumir",
+          "reconhecer",
+          "informar",
+        ],
+      },
+      {
+        id: "dados-privacidade",
+        nome: "Cuidado com dados e privacidade",
+        descricao: "Tratar dados de pessoas com o mínimo de acesso e o máximo de cuidado.",
+        rubrica: {
+          fraca: "Usa ou expõe dados pessoais por conveniência.",
+          boa: "Protege os dados, mas sem questionar se eles são necessários.",
+          ideal: "Usa só o necessário, protege, anonimiza quando dá e segue a LGPD.",
+        },
+        palavrasChave: [
+          "dados",
+          "privacidade",
+          "lgpd",
+          "anonimizar",
+          "acesso",
+          "consentimento",
+          "proteger",
+        ],
+      },
+      {
+        id: "impacto-usuario",
+        nome: "Impacto no usuário",
+        descricao: "Considerar quem usa o produto, inclusive quem não está na sala.",
+        rubrica: {
+          fraca: "Decide sem pensar em quem será afetado.",
+          boa: "Pensa no usuário típico, mas esquece grupos vulneráveis ou casos extremos.",
+          ideal:
+            "Considera quem pode ser prejudicado (acessibilidade, vieses, segurança) e ajusta a solução.",
+        },
+        palavrasChave: [
+          "usuario",
+          "acessibilidade",
+          "vies",
+          "seguranca",
+          "prejudicar",
+          "inclusao",
+          "pessoas",
+        ],
+      },
+      {
+        id: "recusa-responsavel",
+        nome: "Recusa responsável",
+        descricao: "Dizer não a um pedido antiético ou inseguro e propor um caminho correto.",
+        rubrica: {
+          fraca: "Cumpre o pedido antiético para evitar conflito.",
+          boa: "Recusa, mas sem explicar o risco nem oferecer alternativa.",
+          ideal: "Recusa explicando o risco, propõe uma alternativa e escala se for preciso.",
+        },
+        palavrasChave: [
+          "recusar",
+          "risco",
+          "alternativa",
+          "escalar",
+          "nao posso",
+          "politica",
+          "correto",
+        ],
+      },
+    ],
+  },
+  {
+    id: "feedback-conflitos",
+    nome: "Feedback e Conflitos",
+    descricao: "Dar e receber retorno sobre o trabalho e transformar conflitos em acordos.",
+    habilidades: [
+      {
+        id: "dar-feedback",
+        nome: "Dar feedback",
+        descricao: "Falar sobre o trabalho de alguém de forma específica, respeitosa e útil.",
+        rubrica: {
+          fraca: "Critica a pessoa, generaliza ou evita falar.",
+          boa: "Fala do comportamento, mas sem exemplo concreto ou próximo passo.",
+          ideal:
+            "Dá exemplo concreto, explica o impacto, ouve o outro lado e combina o próximo passo.",
+        },
+        palavrasChave: [
+          "exemplo",
+          "impacto",
+          "privado",
+          "sugerir",
+          "combinar",
+          "percebi",
+          "respeito",
+        ],
+      },
+      {
+        id: "receber-feedback",
+        nome: "Receber feedback",
+        descricao: "Ouvir críticas sem se defender e extrair o que é útil.",
+        rubrica: {
+          fraca: "Se defende, justifica tudo ou ignora o retorno.",
+          boa: "Ouve com calma, mas não transforma o retorno em ação.",
+          ideal: "Ouve, pergunta para entender, agradece e define o que vai mudar.",
+        },
+        palavrasChave: [
+          "ouvir",
+          "perguntar",
+          "entender",
+          "agradecer",
+          "melhorar",
+          "acao",
+          "exemplo",
+        ],
+      },
+      {
+        id: "mediacao-conflitos",
+        nome: "Mediação de conflitos",
+        descricao: "Ajudar pessoas em conflito a chegar a um acordo baseado em interesses comuns.",
+        rubrica: {
+          fraca: "Toma partido, ignora o conflito ou impõe uma solução.",
+          boa: "Junta as partes para conversar, sem buscar o interesse por trás das posições.",
+          ideal:
+            "Ouve cada lado, encontra o interesse comum e conduz a um acordo com próximos passos.",
+        },
+        palavrasChave: ["mediar", "ouvir", "lados", "interesse", "acordo", "neutro", "conversa"],
       },
     ],
   },

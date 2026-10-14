@@ -3,6 +3,7 @@ const {
   getChallenges,
   getChallengeById,
   getCategories,
+  getActiveCategories,
   isPublished,
   countPublishedByCategory,
 } = require("../content/catalog");
@@ -518,7 +519,7 @@ function syncBadges(user, userAttempts) {
 }
 
 function buildCategoryProgress(attempts) {
-  return getCategories().map((categoria) => {
+  return getActiveCategories().map((categoria) => {
     const total = countPublishedByCategory(categoria);
     const completed = countAttemptsByCategory(attempts, categoria);
 
