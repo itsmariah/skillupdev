@@ -1,0 +1,99 @@
+{
+  "lote": "04 - Gestão de Tempo",
+  "desafios": [
+    {
+      "tipo": "fechado",
+      "categoria": "Gestão de Tempo",
+      "dificuldade": "basico",
+      "habilidades": ["negociacao-prazos", "transparencia"],
+      "titulo": "O Prazo que Não Vai Fechar",
+      "pergunta": "É terça-feira. Você se comprometeu a entregar uma tarefa na sexta, mas acabou de perceber que ela é maior do que parecia e deve ficar pronta só na segunda ou terça seguinte. O que você faz?",
+      "descricao": "Escolha a atitude que você tomaria.",
+      "dica": "Atraso avisado cedo é um ajuste de plano; avisado na última hora é um problema. Diga o quanto antes o que mudou, a nova estimativa e as opções.",
+      "respostas": [
+        {
+          "texto": "Aviso hoje quem depende da entrega, explico o que descobri, dou a nova estimativa e pergunto se vale entregar uma parte na sexta.",
+          "xp": 100,
+          "feedback": "Ótimo. Com três dias de antecedência, as pessoas ainda conseguem se reorganizar, e oferecer uma entrega parcial abre espaço para decidirem juntos o que importa mais."
+        },
+        {
+          "texto": "Trabalho até mais tarde para tentar cumprir a sexta e, se não der, aviso na quinta.",
+          "xp": 40,
+          "feedback": "O esforço é legítimo, mas esperar até quinta tira das pessoas o tempo de se planejar. Avise agora; se conseguir adiantar, melhor ainda."
+        },
+        {
+          "texto": "Não comento nada e entrego quando ficar pronto. Um ou dois dias de atraso não fazem diferença.",
+          "xp": 5,
+          "feedback": "Você não sabe o que depende da sua entrega. Um atraso de dois dias sem aviso pode travar outra pessoa ou furar um compromisso com um cliente."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Gestão de Tempo",
+      "dificuldade": "intermediario",
+      "habilidades": ["foco", "priorizacao"],
+      "titulo": "Agenda Tomada por Reuniões",
+      "pergunta": "Você abre a agenda da semana e vê 22 horas de reuniões. Ao mesmo tempo, precisa terminar a principal entrega do mês, que exige concentração. Muitas reuniões são recorrentes e você foi incluído por hábito. O que você faz?",
+      "descricao": "Você não quer sumir das conversas importantes, mas também precisa entregar.",
+      "dica": "Agenda cheia não é sinal de prioridade. Avalie para que cada reunião precisa de você, troque presença por contribuição escrita quando der e proteja blocos de foco, avisando quem precisa saber.",
+      "respostas": [
+        {
+          "texto": "Reviso cada reunião: recuso as que não precisam de mim, pedindo o resumo, mando minha contribuição por escrito quando possível, bloqueio horários de foco e aviso meu líder.",
+          "xp": 100,
+          "feedback": "Perfeito. Você decidiu com critério, continua informado e contribuindo, e quem organiza as reuniões entende por que você não está lá."
+        },
+        {
+          "texto": "Recuso todas as reuniões da semana sem explicar, para conseguir focar na entrega.",
+          "xp": 40,
+          "feedback": "Você ganha tempo de foco, mas pode faltar justo numa conversa em que sua opinião era necessária, e recusar sem explicar gera ruído. Escolha com critério e comunique."
+        },
+        {
+          "texto": "Participo de todas e trabalho na entrega à noite.",
+          "xp": 5,
+          "feedback": "Isso funciona por uma semana e cobra o preço depois. Além disso, mostra a todos que a agenda pode continuar como está, e a próxima semana vai ser igual."
+        }
+      ]
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Gestão de Tempo",
+      "dificuldade": "intermediario",
+      "habilidades": ["priorizacao", "negociacao-prazos", "transparencia"],
+      "titulo": "Dois Projetos, Uma Semana",
+      "pergunta": "Você divide o seu tempo entre dois projetos, metade em cada um. Nesta semana, as líderes dos dois pediram, cada uma, uma entrega 'para quinta'. Somadas, elas exigem quase o dobro das horas que você tem, e nenhuma das duas sabe do pedido da outra. Como você lida com isso?",
+      "descricao": "Explique o que faria, com quem falaria e como chegaria a uma decisão.",
+      "dica": "Quando duas prioridades disputam o mesmo tempo, não cabe a você escolher em silêncio nem prometer tudo. Torne o conflito visível para as duas partes, com estimativas e opções, e peça uma decisão a quem pode tomá-la."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Gestão de Tempo",
+      "dificuldade": "avancado",
+      "habilidades": ["negociacao-prazos", "priorizacao", "planejamento-organizacao"],
+      "titulo": "A Data do Evento Não Muda",
+      "pergunta": "A empresa vai lançar uma nova funcionalidade num evento com clientes daqui a quatro semanas. Na metade do caminho, o time tem cerca de 40% do escopo pronto e estima que o restante levaria mais sete semanas. A data é fixa porque o evento já foi divulgado. Você é responsável técnico pela entrega. O que você faz?",
+      "descricao": "Descreva como decidiria o que entra, com quem negociaria e como replanejaria as próximas semanas.",
+      "dica": "Com data fixa, quem se mexe é o escopo. Descubra o mínimo que torna a demonstração valiosa, negocie cortes com quem decide o produto em termos de impacto para o cliente e replaneje com marcos curtos para descobrir cedo se o novo plano também escorrega."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Gestão de Tempo",
+      "dificuldade": "avancado",
+      "habilidades": ["priorizacao", "planejamento-organizacao", "proatividade"],
+      "titulo": "O Suporte que Engole a Sprint",
+      "pergunta": "Há três sprints o seu time não termina o que planejou. Olhando de perto, você percebe que chamados de suporte, pedidos urgentes de outras áreas e pequenos incidentes ocupam boa parte do tempo de todos, mas nada disso é registrado nem entra no planejamento. A gestão começa a questionar a produtividade do time. Como você aborda o problema?",
+      "descricao": "Explique como entenderia o tamanho do problema, o que proporia ao time e à gestão e como acompanharia o resultado.",
+      "dica": "Trabalho invisível não se gerencia. Comece medindo para onde o tempo está indo, mostre os dados à gestão e proponha regras concretas, como capacidade reservada para o imprevisto, rodízio de quem atende e critérios do que é urgente de verdade."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Gestão de Tempo",
+      "dificuldade": "avancado",
+      "habilidades": ["autoconhecimento", "negociacao-prazos", "pedir-ajuda"],
+      "titulo": "Sobrecarga Silenciosa",
+      "pergunta": "Há um mês você trabalha onze horas por dia para dar conta das suas tarefas e, mesmo assim, as pendências só aumentam. Você está cansado, começou a errar coisas simples e a avaliação de desempenho é no mês que vem. Você tem receio de que, se falar sobre a carga, pareça incapaz. O que você faz?",
+      "descricao": "Explique como entenderia a própria situação, o que levaria à liderança e como conduziria essa conversa.",
+      "dica": "Sobrecarga escondida aparece como queda de qualidade, que pesa mais na avaliação do que o pedido de ajuda. Junte fatos (o que está com você, quanto tempo leva, o que está atrasando), leve à liderança propostas de prioridade e redistribuição e cuide do que está ao seu alcance para se recuperar."
+    }
+  ]
+}
