@@ -11,6 +11,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 
 const app = require("../src/app");
+const catalog = require("../src/content/catalog");
 const db = require("../src/db");
 const { SESSION_COOKIE } = require("../src/middleware/auth");
 
@@ -38,8 +39,23 @@ async function api(method, url, body) {
 
 const submit = (texto) => api("POST", `/api/challenges/${CHALLENGE}/submit`, { texto });
 
+// Este arquivo não testa as trilhas (test/trails.test.js testa): com todos os desafios no
+// nível básico, nenhum fica bloqueado e as contagens daqui não dependem do desbloqueio.
+function unlockAllLevels() {
+  catalog.setCatalog(
+    catalog.seedEntries().map((entry) => ({
+      ...entry,
+      versions: entry.versions.map((version) => ({
+        ...version,
+        content: { ...version.content, dificuldade: "basico" },
+      })),
+    })),
+  );
+}
+
 test.before(async () => {
   await db.initDatabase();
+  unlockAllLevels();
   server = app.listen(0);
   baseUrl = `http://localhost:${server.address().port}`;
 

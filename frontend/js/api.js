@@ -112,6 +112,9 @@
     getChallenges() {
       return request("/api/challenges");
     },
+    getTrails() {
+      return request("/api/trails");
+    },
     login(credentials) {
       return request("/api/auth/login", {
         method: "POST",

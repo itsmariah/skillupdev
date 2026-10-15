@@ -19,6 +19,7 @@ const assert = require("node:assert/strict");
 const crypto = require("crypto");
 
 const app = require("../src/app");
+const catalog = require("../src/content/catalog");
 const { TERMS_VERSION } = require("../src/config");
 const db = require("../src/db");
 const { SESSION_COOKIE } = require("../src/middleware/auth");
@@ -28,8 +29,23 @@ const { DEFAULT_AVATAR, createDefaultGamificationState } = require("../src/servi
 let server;
 let baseUrl;
 
+// Este arquivo não testa as trilhas (test/trails.test.js testa): com todos os desafios no
+// nível básico, nenhum fica bloqueado e as contagens daqui não dependem do desbloqueio.
+function unlockAllLevels() {
+  catalog.setCatalog(
+    catalog.seedEntries().map((entry) => ({
+      ...entry,
+      versions: entry.versions.map((version) => ({
+        ...version,
+        content: { ...version.content, dificuldade: "basico" },
+      })),
+    })),
+  );
+}
+
 test.before(async () => {
   await db.initDatabase();
+  unlockAllLevels();
   await db.insertUser({
     id: crypto.randomUUID(),
     nome: "Administrador",

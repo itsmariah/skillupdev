@@ -42,7 +42,7 @@ const sessionOf = (response) =>
 
 const openContent = (overrides = {}) => ({
   categoria: "Comunicação",
-  dificuldade: "intermediario",
+  dificuldade: "basico",
   habilidades: ["clareza-objetividade", "empatia"],
   titulo: "Reunião Atrasada",
   pergunta: "A reunião com o cliente começou e o time ainda não chegou. O que você diz?",
@@ -157,7 +157,7 @@ test("desafio novo nasce como rascunho e só aparece depois de publicado", async
 
   const listed = (await userChallenges()).find((item) => item.id === createdId);
   assert.equal(listed.titulo, "Reunião Atrasada");
-  assert.equal(listed.dificuldade, "intermediario");
+  assert.equal(listed.dificuldade, "basico");
   assert.deepEqual(
     listed.habilidades.map((skill) => skill.id),
     ["clareza-objetividade", "empatia"],

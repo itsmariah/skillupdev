@@ -152,7 +152,7 @@
       list.innerHTML = `
         <p class="dashboard-empty">
           Você ainda não concluiu nenhum desafio. Os feedbacks aparecem aqui assim que você responder o primeiro.
-          <a href="challenges.html">Começar agora</a>
+          <a href="trails.html">Começar agora</a>
         </p>
       `;
       return;

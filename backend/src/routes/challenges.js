@@ -17,11 +17,12 @@ const {
   buildRetryResult,
   isReviewAttempt,
 } = require("../services/gamification");
+const { buildTrails, getUnlockedChallengeIds } = require("../services/trails");
 const { buildUserResponse } = require("../services/users");
 
 const router = express.Router();
 
-function buildPublicChallenge(challenge, attempts) {
+function buildPublicChallenge(challenge, attempts, unlockedIds) {
   const counted = attempts.filter((attempt) => !isReviewAttempt(attempt));
   const latest = attempts[attempts.length - 1];
   const best = counted.reduce(
@@ -53,6 +54,8 @@ function buildPublicChallenge(challenge, attempts) {
           }))
         : [],
     completed: counted.length > 0,
+    // Nível da trilha liberado (ou desafio já respondido, que sempre pode ser refeito).
+    liberado: unlockedIds.has(challenge.id),
     tentativas: attempts.length,
     melhorNota: best ? best.score : null,
     // Abertos: refazer pode render XP pela melhora. Fechados: refazer é só revisão.
@@ -77,15 +80,23 @@ router.get("/api/competencies", (_req, res) => {
 
 router.get("/api/challenges", authenticateRequest, async (req, res) => {
   const userAttempts = await db.listAttemptsByUser(req.user.id);
+  const unlockedIds = getUnlockedChallengeIds(userAttempts);
 
   res.json({
     challenges: getChallenges().map((challenge) =>
       buildPublicChallenge(
         challenge,
         userAttempts.filter((attempt) => attempt.challengeId === challenge.id),
+        unlockedIds,
       ),
     ),
   });
+});
+
+// Trilhas por competência: progresso por nível e o que está liberado.
+router.get("/api/trails", authenticateRequest, async (req, res) => {
+  const userAttempts = await db.listAttemptsByUser(req.user.id);
+  res.json({ trilhas: buildTrails(userAttempts) });
 });
 
 // Envios em andamento por usuário+desafio. O número da tentativa é único no banco, então dois
@@ -101,6 +112,15 @@ router.post("/api/challenges/:challengeId/submit", submitGuards, async (req, res
 
   if (!challenge) {
     return res.status(404).json({ message: "Desafio não encontrado." });
+  }
+
+  // A trava da trilha vale no servidor também, não só na interface.
+  const unlockedIds = getUnlockedChallengeIds(await db.listAttemptsByUser(req.user.id));
+  if (!unlockedIds.has(challenge.id)) {
+    return res.status(403).json({
+      message:
+        "Este desafio ainda está bloqueado. Conclua mais desafios do nível anterior da trilha.",
+    });
   }
 
   const submissionKey = `${req.user.id}:${challenge.id}`;

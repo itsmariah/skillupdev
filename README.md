@@ -154,7 +154,7 @@ Passar de "responder uma vez" para "praticar e evoluir".
 - [x] Conteúdo gerenciado pelo painel admin, sem precisar de deploy
 - [x] Várias tentativas por desafio e nota por critério
 - [x] Diário de reflexão após o feedback
-- [ ] Trilhas por competência com dificuldade progressiva
+- [x] Trilhas por competência com dificuldade progressiva
 - [ ] Badges por regras configuráveis
 
 ### Fase 4 — IA `P2`

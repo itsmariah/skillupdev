@@ -1,8 +1,18 @@
 (function () {
   let challenges = [];
   let currentChallengeIndex = 0;
-  // ?desafio=ID abre um desafio específico (inclusive já respondido) para refazer.
+  // Modos da página:
+  // - ?desafio=ID abre um desafio específico (refazer pelo histórico ou escolher na trilha);
+  // - ?trilha=ID segue a trilha de uma competência, do básico ao avançado;
+  // - sem parâmetro, o treino livre sorteia entre os desafios liberados.
+  const params = new URLSearchParams(window.location.search);
+  const requestedId = params.get("desafio");
+  const trailId = params.get("trilha");
+  let singleMode = false;
   let retryMode = false;
+  let trail = null;
+  // Aviso de nível recém-liberado, mostrado acima do próximo desafio da trilha.
+  let levelNotice = "";
 
   const DIFFICULTY_LABEL = {
     basico: "Básico",
@@ -27,51 +37,126 @@
 
   async function loadChallenges() {
     try {
+      if (trailId) {
+        await loadTrailQueue();
+        return;
+      }
+
       const payload = await window.skillUpApi.getChallenges();
-      const requestedId = new URLSearchParams(window.location.search).get("desafio");
-      const requested = payload.challenges.find((challenge) => challenge.id === requestedId);
 
-      if (requested) {
-        retryMode = true;
-        challenges = [requested];
-        currentChallengeIndex = 0;
-        renderCurrentChallenge();
+      if (requestedId) {
+        loadSingleChallenge(payload.challenges.find((item) => item.id === requestedId));
         return;
       }
 
-      const filtered = payload.challenges.filter((challenge) => !challenge.completed);
-      const closed = filtered.filter((c) => c.tipo === "fechado").sort(() => Math.random() - 0.5);
-      const open = filtered.filter((c) => c.tipo === "aberto").sort(() => Math.random() - 0.5);
-      challenges = [];
-      let ci = 0,
-        oi = 0;
-      while (ci < closed.length || oi < open.length) {
-        if (ci < closed.length) challenges.push(closed[ci++]);
-        if (ci < closed.length) challenges.push(closed[ci++]);
-        if (oi < open.length) challenges.push(open[oi++]);
-      }
-      currentChallengeIndex = 0;
-
-      if (!challenges.length) {
-        renderFinishedState();
-        return;
-      }
-
-      renderCurrentChallenge();
+      loadFreePractice(payload.challenges);
     } catch (error) {
       renderError(`Não foi possível carregar os desafios. ${error.message}`);
     }
+  }
+
+  function loadSingleChallenge(requested) {
+    singleMode = true;
+
+    if (!requested) {
+      renderError("Desafio não encontrado. Ele pode ter sido arquivado.");
+      return;
+    }
+
+    if (!requested.liberado) {
+      renderLockedState(requested);
+      return;
+    }
+
+    retryMode = requested.tentativas > 0;
+    challenges = [requested];
+    currentChallengeIndex = 0;
+    renderCurrentChallenge();
+  }
+
+  // Treino livre: intercala dois fechados e um aberto, só entre os desafios liberados.
+  function loadFreePractice(allChallenges) {
+    const filtered = allChallenges.filter(
+      (challenge) => challenge.liberado && !challenge.completed,
+    );
+    const closed = filtered.filter((c) => c.tipo === "fechado").sort(() => Math.random() - 0.5);
+    const open = filtered.filter((c) => c.tipo === "aberto").sort(() => Math.random() - 0.5);
+    challenges = [];
+    let ci = 0,
+      oi = 0;
+    while (ci < closed.length || oi < open.length) {
+      if (ci < closed.length) challenges.push(closed[ci++]);
+      if (ci < closed.length) challenges.push(closed[ci++]);
+      if (oi < open.length) challenges.push(open[oi++]);
+    }
+    currentChallengeIndex = 0;
+
+    if (!challenges.length) {
+      renderFinishedState();
+      return;
+    }
+
+    renderCurrentChallenge();
+  }
+
+  // Trilha: a fila é recalculada a cada desafio, porque responder pode liberar o próximo nível.
+  async function loadTrailQueue() {
+    const [trailsPayload, challengesPayload] = await Promise.all([
+      window.skillUpApi.getTrails(),
+      window.skillUpApi.getChallenges(),
+    ]);
+    const previous = trail;
+    trail = trailsPayload.trilhas.find((item) => item.id === trailId) || null;
+
+    if (!trail) {
+      renderError("Trilha não encontrada.");
+      return;
+    }
+
+    levelNotice = describeNewLevels(previous, trail);
+
+    const byId = new Map(challengesPayload.challenges.map((item) => [item.id, item]));
+    challenges = trail.niveis
+      .flatMap((nivel) => nivel.desafios)
+      .filter((desafio) => desafio.liberado && !desafio.concluido)
+      .map((desafio) => byId.get(desafio.id))
+      .filter(Boolean);
+    currentChallengeIndex = 0;
+
+    if (!challenges.length) {
+      renderFinishedState();
+      return;
+    }
+
+    renderCurrentChallenge();
+  }
+
+  function describeNewLevels(before, after) {
+    if (!before) {
+      return "";
+    }
+
+    const unlocked = after.niveis.filter(
+      (nivel, index) => nivel.liberado && !before.niveis[index]?.liberado,
+    );
+    return unlocked.length
+      ? `Nível ${unlocked.map((nivel) => nivel.nome).join(" e ")} liberado na trilha de ${after.nome}.`
+      : "";
   }
 
   function renderProgress() {
     const el = document.getElementById("challengeProgress");
     if (!el) return;
     const total = challenges.length;
-    if (!total || retryMode) {
+    if (trail) {
+      el.textContent = `Trilha ${trail.nome}: ${trail.concluidos} de ${trail.total} concluídos`;
+      return;
+    }
+    if (!total || singleMode) {
       el.textContent = "";
       return;
     }
-    el.textContent = `Desafio ${currentChallengeIndex + 1} de ${total}`;
+    el.textContent = `Treino livre: desafio ${currentChallengeIndex + 1} de ${total}`;
   }
 
   function renderCurrentChallenge() {
@@ -97,7 +182,11 @@
     answersContainer.innerHTML = "";
     feedbackElement.innerHTML = "";
     nextButton.classList.add("d-none");
-    nextButton.textContent = retryMode ? "Voltar ao histórico" : "Próximo desafio";
+    nextButton.textContent = retryMode
+      ? "Voltar ao histórico"
+      : singleMode
+        ? "Voltar às trilhas"
+        : "Próximo desafio";
 
     if (challenge.tipo === "fechado") {
       renderClosedChallenge(challenge, answersContainer);
@@ -106,6 +195,20 @@
     }
 
     renderRetryNotice(challenge, answersContainer);
+    renderLevelNotice(answersContainer);
+  }
+
+  function renderLevelNotice(container) {
+    if (!levelNotice) {
+      return;
+    }
+
+    const notice = document.createElement("p");
+    notice.className = "level-notice";
+    notice.setAttribute("role", "status");
+    notice.textContent = levelNotice;
+    container.prepend(notice);
+    levelNotice = "";
   }
 
   // Aviso antes de refazer: o que a nova tentativa vale.
@@ -410,13 +513,19 @@
       return;
     }
 
-    const progressEl = document.getElementById("challengeProgress");
-    if (progressEl) progressEl.textContent = "";
+    renderProgress();
 
-    categoryElement.textContent = "Missão concluída";
-    questionElement.textContent = "Você finalizou todos os desafios disponíveis.";
-    descriptionElement.textContent =
-      "Volte ao dashboard para acompanhar níveis, badges, avatar e a sua evolução por categoria.";
+    if (trail) {
+      categoryElement.textContent = "Trilha concluída";
+      questionElement.textContent = `Você concluiu a trilha de ${trail.nome}.`;
+      descriptionElement.textContent =
+        "Escolha outra competência nas trilhas ou refaça os desafios abertos para melhorar suas notas.";
+    } else {
+      categoryElement.textContent = "Missão concluída";
+      questionElement.textContent = "Você respondeu todos os desafios liberados.";
+      descriptionElement.textContent =
+        "Os próximos níveis abrem conforme você avança em cada trilha. Veja o que falta em Trilhas.";
+    }
     answersContainer.innerHTML = "";
 
     if (feedbackElement) {
@@ -428,17 +537,51 @@
     }
 
     if (nextButton) {
-      nextButton.textContent = "Voltar ao dashboard";
+      nextButton.textContent = "Ver trilhas";
       nextButton.classList.remove("d-none");
       nextButton.onclick = () => {
-        window.location.href = "dashboard.html";
+        window.location.href = "trails.html";
       };
     }
   }
 
-  function goToNextChallenge() {
+  // Desafio de nível ainda bloqueado (link direto ou trilha desatualizada).
+  function renderLockedState(challenge) {
+    const level = DIFFICULTY_LABEL[challenge.dificuldade] || "";
+    document.getElementById("categoria").textContent = [challenge.categoria, level]
+      .filter(Boolean)
+      .join(" | ");
+    document.getElementById("pergunta").textContent = "Este desafio ainda está bloqueado.";
+    document.getElementById("descricao").textContent =
+      `Conclua mais desafios do nível anterior da trilha de ${challenge.categoria} para liberar o nível ${level}.`;
+
+    const nextButton = document.getElementById("nextBtn");
+    if (nextButton) {
+      nextButton.textContent = "Ver trilhas";
+      nextButton.classList.remove("d-none");
+      nextButton.onclick = () => {
+        window.location.href = "trails.html";
+      };
+    }
+  }
+
+  async function goToNextChallenge() {
     if (retryMode) {
       window.location.href = "history.html";
+      return;
+    }
+
+    if (singleMode) {
+      window.location.href = "trails.html";
+      return;
+    }
+
+    if (trail) {
+      try {
+        await loadTrailQueue();
+      } catch (error) {
+        renderError(`Não foi possível carregar a trilha. ${error.message}`);
+      }
       return;
     }
 
