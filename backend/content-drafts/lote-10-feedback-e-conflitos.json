@@ -1,0 +1,210 @@
+{
+  "lote": "10 - Feedback e Conflitos",
+  "desafios": [
+    {
+      "tipo": "fechado",
+      "categoria": "Feedback e Conflitos",
+      "dificuldade": "basico",
+      "habilidades": ["dar-feedback"],
+      "titulo": "Uma Revisão com Vários Problemas",
+      "pergunta": "Você está revisando o código de um colega e encontrou vários problemas: uma consulta sem tratamento de erro, nomes confusos e uma função duplicada. Como você escreve os comentários?",
+      "descricao": "Escolha a forma de comentar que você usaria.",
+      "dica": "Um bom comentário de revisão aponta o trecho, explica por que é um problema e sugere um caminho. Separe o que é obrigatório do que é sugestão.",
+      "respostas": [
+        {
+          "texto": "Comento cada ponto no trecho certo, explico o risco ou o motivo, sugiro uma alternativa e indico o que é obrigatório e o que é sugestão.",
+          "xp": 100,
+          "feedback": "Ótimo. O colega sabe exatamente o que mudar, entende o porquê e consegue priorizar. A revisão vira aprendizado, não uma lista de defeitos."
+        },
+        {
+          "texto": "Deixo um comentário geral: 'Tem alguns problemas de tratamento de erro e nomes, dá uma revisada.'",
+          "xp": 40,
+          "feedback": "O tom é tranquilo, mas o comentário obriga o colega a adivinhar onde estão os problemas e o que você espera. A próxima rodada de revisão vai repetir a conversa."
+        },
+        {
+          "texto": "Reprovo a revisão com o comentário: 'Precisa de mais cuidado antes de pedir revisão.'",
+          "xp": 5,
+          "feedback": "O comentário fala da pessoa, não do código, e não diz o que mudar. O colega fica desmotivado e sem saber por onde começar."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Feedback e Conflitos",
+      "dificuldade": "basico",
+      "habilidades": ["receber-feedback"],
+      "titulo": "Crítica na Retrospectiva",
+      "pergunta": "Na retrospectiva, uma colega diz que as suas revisões de código costumam ser grandes demais e que isso atrasa o time. Você não tinha percebido. Como você reage?",
+      "descricao": "Escolha a reação que você teria.",
+      "dica": "Receber um retorno bem é ouvir até o fim, perguntar para entender e transformá-lo numa mudança concreta, mesmo que você não concorde com tudo.",
+      "respostas": [
+        {
+          "texto": "Agradeço, peço um exemplo recente para entender melhor e combino com o time um tamanho máximo para as próximas revisões.",
+          "xp": 100,
+          "feedback": "Perfeito. Você entende o problema na prática e sai da retrospectiva com uma mudança concreta, que o time consegue acompanhar."
+        },
+        {
+          "texto": "Agradeço o retorno e digo que vou prestar mais atenção nisso.",
+          "xp": 40,
+          "feedback": "A reação é respeitosa, mas sem entender o problema e sem uma mudança concreta, é provável que tudo continue igual."
+        },
+        {
+          "texto": "Explico que as revisões ficam grandes porque as tarefas já chegam grandes.",
+          "xp": 5,
+          "feedback": "Pode até haver verdade nisso, mas começar pela justificativa mostra que você não ouviu. O problema das tarefas grandes merece outra conversa, depois de acolher o retorno."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Feedback e Conflitos",
+      "dificuldade": "basico",
+      "habilidades": ["mediacao-conflitos"],
+      "titulo": "Discussão Esquentando no Canal",
+      "pergunta": "Dois colegas discutem no canal do time sobre a forma de organizar as pastas do projeto. As mensagens estão cada vez mais longas e irônicas e outras pessoas começam a tomar partido. O que você faz?",
+      "descricao": "Escolha a atitude que você tomaria.",
+      "dica": "Discussões escritas tendem a esquentar. Proponha levar a conversa para uma chamada curta, ajude a combinar critérios e registre a decisão no canal.",
+      "respostas": [
+        {
+          "texto": "Sugiro que os dois façam uma chamada rápida, me ofereço para participar e ajudar a combinar critérios, e peço que o resultado seja registrado no canal.",
+          "xp": 100,
+          "feedback": "Ótimo. A conversa sai do terreno da ironia, a decisão é tomada com critério e o time fica sabendo do resultado."
+        },
+        {
+          "texto": "Dou a minha opinião sobre qual organização é melhor, para ajudar a encerrar a discussão.",
+          "xp": 40,
+          "feedback": "A sua opinião pode até ser boa, mas entrar como mais um lado tende a alongar a discussão em vez de encerrá-la."
+        },
+        {
+          "texto": "Não me envolvo. Eles são adultos e vão se resolver.",
+          "xp": 5,
+          "feedback": "Discussões públicas que esquentam costumam deixar marcas e dividir o time. Uma intervenção leve agora evita um conflito maior depois."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Feedback e Conflitos",
+      "dificuldade": "basico",
+      "habilidades": ["dar-feedback"],
+      "titulo": "Um Colega Pede a Sua Opinião",
+      "pergunta": "Depois de apresentar uma proposta técnica para outro time, um colega pergunta o que você achou. A ideia era boa, mas a apresentação teve slides cheios de texto e ele não respondeu bem a uma pergunta importante. O que você diz?",
+      "descricao": "Escolha a resposta que você daria.",
+      "dica": "Um retorno útil é honesto, específico e equilibrado: diga o que funcionou, um ou dois pontos para melhorar com exemplos e uma sugestão prática.",
+      "respostas": [
+        {
+          "texto": "Digo que a proposta foi bem fundamentada e aponto dois pontos para melhorar, os slides com muito texto e a resposta à pergunta, com uma sugestão para cada um.",
+          "xp": 100,
+          "feedback": "Perfeito. Ele sabe o que manter, o que mudar e como mudar. É um retorno honesto que ajuda a próxima apresentação."
+        },
+        {
+          "texto": "Digo que foi ótima, porque ele parecia nervoso e não quero desanimá-lo.",
+          "xp": 40,
+          "feedback": "A intenção é gentil, mas ele perguntou para melhorar e vai repetir os mesmos problemas. É possível ser honesto e cuidadoso ao mesmo tempo."
+        },
+        {
+          "texto": "Digo que a apresentação foi confusa e que ele precisa praticar mais.",
+          "xp": 5,
+          "feedback": "O comentário é vago e só aponta o que deu errado. Ele não sabe o que foi confuso, o que funcionou nem o que praticar."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Feedback e Conflitos",
+      "dificuldade": "intermediario",
+      "habilidades": ["receber-feedback", "assertividade"],
+      "titulo": "Um Retorno do Qual Você Discorda",
+      "pergunta": "Na conversa individual, sua gestora diz que você é 'pouco proativo'. Você não concorda: lembra de várias vezes em que tomou a iniciativa. Ela não deu exemplos. O que você faz?",
+      "descricao": "Você quer entender o retorno sem simplesmente aceitar algo de que discorda.",
+      "dica": "Discordar de um retorno não impede você de entendê-lo. Peça exemplos, entenda o que a pessoa espera, apresente a sua visão com fatos e combinem como acompanhar.",
+      "respostas": [
+        {
+          "texto": "Peço exemplos de situações em que ela esperava mais iniciativa, conto as situações que eu lembro e combinamos o que ela espera e como vamos acompanhar.",
+          "xp": 100,
+          "feedback": "Ótimo. Você entende o que ela vê, coloca o seu ponto com fatos e sai com uma expectativa clara, em vez de uma etiqueta vaga."
+        },
+        {
+          "texto": "Aceito o retorno e digo que vou tentar ser mais proativo.",
+          "xp": 40,
+          "feedback": "A postura é aberta, mas você não sabe o que 'ser mais proativo' significa para ela. Sem exemplos, é difícil saber o que mudar."
+        },
+        {
+          "texto": "Discordo e listo todas as vezes em que fui proativo nos últimos meses.",
+          "xp": 5,
+          "feedback": "Você pode ter razão, mas começar se defendendo faz a conversa virar disputa e você não descobre o que motivou a percepção dela."
+        }
+      ]
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Feedback e Conflitos",
+      "dificuldade": "intermediario",
+      "habilidades": ["dar-feedback", "assertividade"],
+      "titulo": "O Colega que Interrompe",
+      "pergunta": "Um colega do seu nível costuma interromper você e outras pessoas nas reuniões e, às vezes, apresenta como dele uma ideia que alguém acabou de dar. Ninguém fala nada e você percebe que duas pessoas mais novas pararam de falar nas reuniões. Como você lida com isso?",
+      "descricao": "Explique o que faria nas reuniões e como conduziria uma conversa com ele.",
+      "dica": "Fale do comportamento, com exemplos concretos, e do impacto no time, em particular. Nas reuniões, você também pode agir na hora: retomar quem foi interrompido e dar o crédito a quem teve a ideia."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Feedback e Conflitos",
+      "dificuldade": "intermediario",
+      "habilidades": ["mediacao-conflitos", "visao-tecnica"],
+      "titulo": "Frontend Contra Backend",
+      "pergunta": "Uma revisão está parada há uma semana porque o desenvolvedor de frontend e a desenvolvedora de backend discordam sobre onde validar os dados de um formulário. Os dois têm argumentos técnicos, a conversa virou disputa e a funcionalidade está atrasando. Pediram que você ajude. Como você conduz?",
+      "descricao": "Explique como ouviria os dois e como chegariam a uma decisão.",
+      "dica": "Por trás de cada posição técnica há uma preocupação legítima, como segurança, experiência do usuário ou manutenção. Ouça cada lado, encontre o interesse comum e decida com critérios, registrando o acordo."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Feedback e Conflitos",
+      "dificuldade": "intermediario",
+      "habilidades": ["receber-feedback", "controle-emocional-resiliencia", "autoconhecimento"],
+      "titulo": "Uma Avaliação que Pegou de Surpresa",
+      "pergunta": "Na avaliação anual, você recebe a nota 'abaixo do esperado'. Você achava que estava indo bem e ninguém tinha dito nada ao longo do ano. Os pontos citados são comunicação com outras áreas e atrasos que você não sabia que incomodavam. Como você lida com isso?",
+      "descricao": "Explique como reagiria na conversa e o que faria nos meses seguintes.",
+      "dica": "Uma surpresa assim dói e vale separar a reação da conversa. Peça exemplos, entenda o que se espera e combine acompanhamentos frequentes. Também vale dizer, com calma, que retornos ao longo do ano teriam ajudado."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Feedback e Conflitos",
+      "dificuldade": "avancado",
+      "habilidades": ["dar-feedback", "assertividade", "empatia"],
+      "titulo": "Um Retorno para a Sua Gestora",
+      "pergunta": "Sua gestora acompanha cada detalhe do trabalho do time: pede atualizações várias vezes ao dia, refaz partes do código sem conversar e decide sozinha coisas que o time poderia decidir. O time está desmotivado e duas pessoas comentaram que pensam em sair. Na sua conversa individual, ela pergunta se há algo que poderia melhorar. O que você diz?",
+      "descricao": "Explique o que diria, como diria e o que proporia.",
+      "dica": "Retorno para quem lidera também precisa ser específico e respeitoso. Fale de situações concretas e do impacto no trabalho, tente entender o que leva ela a agir assim e proponha um combinado, sem expor as pessoas que comentaram com você."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Feedback e Conflitos",
+      "dificuldade": "avancado",
+      "habilidades": ["mediacao-conflitos", "conducao-decisoes", "empatia"],
+      "titulo": "O Conflito que Dividiu o Time",
+      "pergunta": "Duas pessoas seniores do seu time estão em conflito há meses. Começou com uma discordância técnica e virou desgaste pessoal: elas evitam trabalhar juntas, criticam uma à outra em conversas paralelas e o time passou a tomar partido. Você é a liderança técnica e a situação está afetando as entregas. O que você faz?",
+      "descricao": "Explique como abordaria cada pessoa, como conduziria uma conversa entre elas e o que faria se não houvesse acordo.",
+      "dica": "Comece com conversas individuais para entender cada lado. Depois, junte as duas para combinar a forma de trabalhar, focando no futuro e no interesse comum. Se não houver mudança, é sua responsabilidade agir e envolver a gestão."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Feedback e Conflitos",
+      "dificuldade": "avancado",
+      "habilidades": ["dar-feedback", "empatia", "desenvolvimento-pessoas"],
+      "titulo": "Feedback Difícil para um Amigo",
+      "pergunta": "Você lidera o time e um dos seus melhores amigos faz parte dele. Há dois meses ele entrega com atraso e com qualidade abaixo do normal, e outras pessoas já começaram a reclamar com você. Você sabe que ele está passando por uma separação. Como você conduz a situação?",
+      "descricao": "Explique como prepararia e conduziria a conversa e o que combinaria com ele.",
+      "dica": "Amizade não dispensa o retorno; ela pede cuidado. Fale dos fatos com clareza, ouça e reconheça o momento dele, combine apoio concreto e expectativas, e trate-o como trataria qualquer outra pessoa do time."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Feedback e Conflitos",
+      "dificuldade": "avancado",
+      "habilidades": ["mediacao-conflitos", "colaboracao", "negociacao-prazos"],
+      "titulo": "Vendas Contra Tecnologia",
+      "pergunta": "O time comercial prometeu a clientes funcionalidades com prazo sem consultar a tecnologia. Quando o prazo não é cumprido, as duas áreas trocam acusações em reuniões e mensagens. A situação já fez a empresa perder um cliente. Pediram que você, como representante da tecnologia, ajude a resolver a relação entre as áreas. Como você conduz?",
+      "descricao": "Explique como entenderia o lado de cada área e que acordos proporia.",
+      "dica": "Conflitos entre áreas costumam vir de incentivos e processos, não de pessoas ruins. Entenda a pressão de cada lado, encontre o objetivo comum e proponha acordos concretos, como uma consulta rápida antes de prometer prazos."
+    }
+  ]
+}

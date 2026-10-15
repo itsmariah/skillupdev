@@ -1,0 +1,99 @@
+{
+  "lote": "05 - Inteligência Emocional",
+  "desafios": [
+    {
+      "tipo": "fechado",
+      "categoria": "Inteligência Emocional",
+      "dificuldade": "basico",
+      "habilidades": ["controle-emocional-resiliencia", "empatia"],
+      "titulo": "Mensagem Escrita no Calor",
+      "pergunta": "Um colega escreve no canal do time: 'Quem subiu esse código quebrou o build de novo. Assim não dá.' O commit é seu, mas você não tem certeza de que foi ele que causou a falha. Você sente o sangue subir. O que você faz?",
+      "descricao": "Escolha a reação que você teria.",
+      "dica": "Responder no impulso costuma transformar um problema técnico num conflito pessoal. Respire, confira os fatos e responda ao problema, não ao tom.",
+      "respostas": [
+        {
+          "texto": "Espero alguns minutos, confiro se o meu commit causou a falha e respondo com o que encontrei e o que vou fazer para resolver.",
+          "xp": 100,
+          "feedback": "Ótimo. Você não deixou o tom ditar a sua resposta, trouxe fatos e levou a conversa de volta para o que importa: o build voltar a funcionar."
+        },
+        {
+          "texto": "Respondo na hora que o commit é meu, mas que não precisava desse tom no canal.",
+          "xp": 40,
+          "feedback": "Você assumiu a autoria, e o incômodo com o tom é legítimo. Mas responder no calor, antes de saber a causa, abre uma discussão pública. Sobre o tom, vale conversar depois, em particular."
+        },
+        {
+          "texto": "Respondo que o build já estava instável antes e que o problema não deve ser meu.",
+          "xp": 5,
+          "feedback": "Defender-se sem verificar é a reação que o impulso pede, e a que mais desgasta. Se o commit for mesmo a causa, você perde a confiança do time duas vezes."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Inteligência Emocional",
+      "dificuldade": "intermediario",
+      "habilidades": ["responsabilidade-maturidade", "transparencia"],
+      "titulo": "Talvez Tenha Sido Eu",
+      "pergunta": "Uma colega está há duas horas investigando uma falha no envio de e-mails, achando que é um problema de infraestrutura. Lendo o relato dela, você desconfia que a causa pode ser uma mudança que você subiu ontem, mas ainda não tem certeza. O que você faz?",
+      "descricao": "Você não quer atrapalhar a investigação com um palpite, mas também não quer que ela perca mais tempo.",
+      "dica": "Assumir a responsabilidade não exige certeza. Uma suspeita compartilhada cedo economiza horas de investigação; esconder a dúvida até ter certeza deixa os outros procurando no lugar errado.",
+      "respostas": [
+        {
+          "texto": "Escrevo agora que a minha mudança de ontem pode ser a causa, explico o porquê e me ofereço para verificar junto com ela.",
+          "xp": 100,
+          "feedback": "Perfeito. Mesmo sem certeza, você deu a ela uma pista concreta e assumiu a sua parte. Se não for a causa, descartar a hipótese também ajuda."
+        },
+        {
+          "texto": "Verifico sozinho, sem falar nada, e só aviso se tiver certeza de que a falha é minha.",
+          "xp": 40,
+          "feedback": "Você quer evitar um alarme falso, o que faz sentido, mas enquanto isso ela continua procurando no lugar errado. Uma frase de aviso não atrapalha a investigação e pode encurtá-la muito."
+        },
+        {
+          "texto": "Espero para ver se ela encontra outra causa. Se não encontrar, conto depois.",
+          "xp": 5,
+          "feedback": "Esperar que a culpa seja de outra coisa custa horas do time e, se a causa for mesmo a sua mudança, a demora pesa mais que o erro em si."
+        }
+      ]
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Inteligência Emocional",
+      "dificuldade": "intermediario",
+      "habilidades": ["controle-emocional-resiliencia", "empatia", "clareza-objetividade"],
+      "titulo": "Cliente Exaltado na Chamada",
+      "pergunta": "Você entrou numa chamada para ajudar o suporte com um cliente. Logo no início, ele começa a gritar que o sistema 'não serve para nada', que perdeu um dia de trabalho e que a culpa é 'desses programadores'. Parte da reclamação procede: houve mesmo uma falha ontem. Como você conduz a conversa?",
+      "descricao": "Explique o que diria, como lidaria com o tom e como encerraria a chamada.",
+      "dica": "Raiva costuma ser frustração com um problema real. Mantenha a calma, reconheça o impacto antes de explicar qualquer coisa e leve a conversa para o que dá para fazer agora."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Inteligência Emocional",
+      "dificuldade": "avancado",
+      "habilidades": ["autoconhecimento", "controle-emocional-resiliencia", "transparencia"],
+      "titulo": "Quando a Vida Pessoal Pesa",
+      "pergunta": "Um familiar seu foi hospitalizado esta semana e você está dividindo o tempo entre o hospital e o trabalho. Ao mesmo tempo, você é responsável por uma entrega importante para a próxima sexta. Você está dormindo mal, com dificuldade de concentração, e não sabe quanto o time sabe ou deveria saber. O que você faz?",
+      "descricao": "Explique como avaliaria o seu próprio estado, o que contaria e para quem, e o que faria com a entrega.",
+      "dica": "Reconhecer o próprio limite é parte do trabalho. Você não precisa contar detalhes pessoais, mas precisa dizer a quem depende de você que a sua capacidade mudou, para que o plano mude junto."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Inteligência Emocional",
+      "dificuldade": "avancado",
+      "habilidades": ["controle-emocional-resiliencia", "empatia", "responsabilidade-maturidade"],
+      "titulo": "Depois do Corte",
+      "pergunta": "A empresa demitiu 20% das pessoas, incluindo uma amiga próxima do seu time. Quem ficou está ansioso, há boatos de uma nova rodada e você recebeu o projeto que era dela, com prazo mantido. Você também está abalado e com medo. Como você lida com esse momento?",
+      "descricao": "Explique como cuidaria de você, como agiria com o time e com a sua amiga e como conduziria o projeto herdado.",
+      "dica": "Num momento assim, ninguém precisa fingir que está tudo bem. Reconheça o que sente, apoie quem saiu e quem ficou sem alimentar boatos e peça clareza sobre o que se espera do projeto herdado."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Inteligência Emocional",
+      "dificuldade": "avancado",
+      "habilidades": ["autoconhecimento", "responsabilidade-maturidade", "receber-feedback"],
+      "titulo": "O Gatilho Conhecido",
+      "pergunta": "Você sabe que fica na defensiva quando questionam as suas decisões de arquitetura. Numa revisão de design, um engenheiro sênior de outro time criticou sua proposta na frente de todos, com um tom de superioridade. Alguns pontos eram válidos. Você respondeu de forma ríspida e a reunião terminou tensa. O que você faz agora?",
+      "descricao": "Explique o que faria nos próximos dias com as pessoas envolvidas, com a proposta e com o seu gatilho.",
+      "dica": "Conhecer o próprio gatilho permite agir depois e preparar-se para a próxima vez. Separe o tom da crítica do conteúdo, assuma a sua reação sem se humilhar e aproveite o que era válido."
+    }
+  ]
+}

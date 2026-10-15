@@ -1,0 +1,210 @@
+{
+  "lote": "07 - Adaptabilidade e Aprendizado",
+  "desafios": [
+    {
+      "tipo": "fechado",
+      "categoria": "Adaptabilidade e Aprendizado",
+      "dificuldade": "basico",
+      "habilidades": ["aprender-rapido"],
+      "titulo": "Linguagem Nova na Segunda",
+      "pergunta": "A partir da semana que vem, você vai trabalhar num serviço escrito em Go, uma linguagem que você nunca usou. A primeira tarefa é corrigir um bug pequeno. Como você se prepara?",
+      "descricao": "Escolha a forma de aprender que você usaria.",
+      "dica": "Aprender rápido é aprender o necessário para a próxima tarefa e completar o resto fazendo. Leia o código real, comece por algo pequeno e valide com quem já conhece.",
+      "respostas": [
+        {
+          "texto": "Estudo o básico da linguagem por algumas horas, leio o código do serviço em torno do bug e peço a alguém do time para revisar a minha primeira correção.",
+          "xp": 100,
+          "feedback": "Ótimo. Você aprende o que a tarefa exige, no contexto real do projeto, e usa a revisão para acelerar o aprendizado."
+        },
+        {
+          "texto": "Faço um curso completo da linguagem antes de abrir o código do serviço.",
+          "xp": 40,
+          "feedback": "A base fica sólida, mas você gasta dias aprendendo coisas que a tarefa não exige e demora a ter contato com o código real. Comece pelo mínimo e aprofunde conforme precisar."
+        },
+        {
+          "texto": "Não me preparo. Na segunda eu vejo o que fazer.",
+          "xp": 5,
+          "feedback": "Chegar sem preparo transforma a primeira tarefa numa sequência de tropeços. Algumas horas antes poupam dias depois."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Adaptabilidade e Aprendizado",
+      "dificuldade": "basico",
+      "habilidades": ["pedir-ajuda"],
+      "titulo": "Travado Há Horas",
+      "pergunta": "Há quatro horas você tenta resolver um erro de configuração que impede o projeto de subir na sua máquina. Já pesquisou, tentou várias soluções e nada funcionou. Como você pede ajuda?",
+      "descricao": "Escolha a mensagem que você mandaria para o time.",
+      "dica": "Um bom pedido de ajuda mostra o objetivo, o erro, o que você já tentou e onde travou. Assim, quem lê consegue ajudar em minutos.",
+      "respostas": [
+        {
+          "texto": "Escrevo no canal o que estou tentando fazer, a mensagem de erro, o que já tentei e o que aconteceu em cada tentativa.",
+          "xp": 100,
+          "feedback": "Perfeito. Com esse contexto, quem lê não precisa repetir o que você já fez e consegue apontar o problema rapidamente."
+        },
+        {
+          "texto": "Escrevo no canal: 'Alguém sabe por que o projeto não sobe na minha máquina?'",
+          "xp": 40,
+          "feedback": "Pedir ajuda já é um bom passo, mas sem o erro e o que você tentou, quem quer ajudar precisa começar com várias perguntas. A conversa vai demorar mais do que precisava."
+        },
+        {
+          "texto": "Continuo tentando sozinho. Pedir ajuda por um erro de configuração vai pegar mal.",
+          "xp": 5,
+          "feedback": "Quatro horas travado custam mais ao time do que uma pergunta. Erros de configuração são justamente o tipo de problema que alguém do time resolve em minutos."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Adaptabilidade e Aprendizado",
+      "dificuldade": "basico",
+      "habilidades": ["lidar-mudancas"],
+      "titulo": "A Prioridade Mudou Ontem",
+      "pergunta": "Você está no meio de uma tarefa quando a pessoa responsável pelo produto avisa que um pedido de um cliente grande passou na frente e que a sua tarefa vai ficar parada por algumas semanas. O que você faz?",
+      "descricao": "Escolha a forma de lidar com a mudança.",
+      "dica": "Mudança de prioridade faz parte do trabalho. Entenda o motivo, deixe o trabalho interrompido em condições de ser retomado e confirme o que muda antes de começar o novo.",
+      "respostas": [
+        {
+          "texto": "Pergunto o motivo, registro em que ponto parei e o que falta e confirmo o que fica parado antes de começar a nova tarefa.",
+          "xp": 100,
+          "feedback": "Ótimo. Você entende a mudança e deixa o trabalho pronto para ser retomado, por você ou por outra pessoa, sem precisar redescobrir tudo."
+        },
+        {
+          "texto": "Mudo de tarefa na hora e deixo a anterior como está.",
+          "xp": 40,
+          "feedback": "Você se adapta rápido, mas daqui a algumas semanas ninguém vai lembrar em que pé a tarefa estava. Alguns minutos de registro poupam horas na retomada."
+        },
+        {
+          "texto": "Termino a minha tarefa antes, já que estava quase pronta, e depois começo a nova.",
+          "xp": 5,
+          "feedback": "Ignorar a nova prioridade coloca a sua agenda à frente da decisão do time. Se acha que vale terminar, diga isso e negocie, mas não decida sozinho."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Adaptabilidade e Aprendizado",
+      "dificuldade": "basico",
+      "habilidades": ["aprender-erros"],
+      "titulo": "A Variável Errada",
+      "pergunta": "Você publicou uma versão com uma variável de ambiente errada e o sistema ficou fora do ar por vinte minutos. Você corrigiu rápido e tudo voltou ao normal. O que você faz depois?",
+      "descricao": "Escolha a atitude que você tomaria.",
+      "dica": "Pedir desculpas resolve o momento; mudar o processo evita a próxima vez. Conte o que aconteceu e proponha uma verificação que torne esse erro difícil de repetir.",
+      "respostas": [
+        {
+          "texto": "Conto ao time o que aconteceu e proponho uma checagem automática das variáveis antes da publicação.",
+          "xp": 100,
+          "feedback": "Perfeito. Você assumiu o erro e o transformou numa proteção para todo o time, não só para você."
+        },
+        {
+          "texto": "Peço desculpas ao time e prometo prestar mais atenção nas próximas publicações.",
+          "xp": 40,
+          "feedback": "Assumir o erro é importante, mas 'prestar mais atenção' depende de memória e cansaço. O mesmo erro pode acontecer com qualquer pessoa do time."
+        },
+        {
+          "texto": "Não comento nada. Já está corrigido e foram só vinte minutos.",
+          "xp": 5,
+          "feedback": "Esconder o erro impede o time de aprender com ele e deixa a mesma armadilha armada para a próxima pessoa."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Adaptabilidade e Aprendizado",
+      "dificuldade": "intermediario",
+      "habilidades": ["lidar-mudancas", "assertividade"],
+      "titulo": "A Ferramenta Nova que Você Não Escolheria",
+      "pergunta": "A empresa decidiu trocar a ferramenta de gestão de tarefas por outra. Você acha a nova pior em vários pontos e a migração vai atrapalhar o time por algumas semanas. A decisão já foi tomada. O que você faz?",
+      "descricao": "Você discorda, mas a mudança vai acontecer.",
+      "dica": "Discordar e se adaptar não são opostos. Entenda o motivo, dê o seu retorno de forma concreta para quem pode agir e ajude a mudança a funcionar, em vez de resistir em paralelo.",
+      "respostas": [
+        {
+          "texto": "Pergunto o motivo da troca, envio a quem decidiu os problemas concretos que vejo, com sugestões, e começo a usar a nova ferramenta.",
+          "xp": 100,
+          "feedback": "Ótimo. Você se adapta sem calar a sua opinião, e o seu retorno chega a quem pode corrigir os problemas da migração."
+        },
+        {
+          "texto": "Uso a nova ferramenta, mas mantenho as minhas tarefas também na antiga, por segurança.",
+          "xp": 40,
+          "feedback": "A cautela é compreensível, mas manter dois sistemas cria informação duplicada e desatualizada. Se algo na nova ferramenta não atende, é melhor dizer isso de forma clara."
+        },
+        {
+          "texto": "Continuo usando a ferramenta antiga enquanto ela estiver disponível.",
+          "xp": 5,
+          "feedback": "Resistir em silêncio deixa o seu trabalho invisível para o time e não muda a decisão. A sua discordância só tem efeito se for dita a quem decide."
+        }
+      ]
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Adaptabilidade e Aprendizado",
+      "dificuldade": "intermediario",
+      "habilidades": ["aprender-rapido", "pedir-ajuda"],
+      "titulo": "Um Domínio que Você Não Conhece",
+      "pergunta": "Você foi transferido para o time que cuida do cálculo de impostos das notas fiscais. As regras tributárias são complexas, mudam com frequência e você nunca trabalhou com isso. Em um mês, espera-se que você assuma tarefas sozinho. Como você organiza esse aprendizado?",
+      "descricao": "Descreva o plano para o primeiro mês e como saberia que está no caminho certo.",
+      "dica": "Num domínio novo, comece pelo vocabulário e pelos casos mais comuns, aprenda com tarefas reais e use quem conhece o assunto, inclusive fora do time de tecnologia. Combine com o time como medir o seu progresso."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Adaptabilidade e Aprendizado",
+      "dificuldade": "intermediario",
+      "habilidades": ["pedir-ajuda", "autoconhecimento"],
+      "titulo": "Quando Pedir Ajuda Parece Fraqueza",
+      "pergunta": "Você é a pessoa mais experiente do time e todos costumam recorrer a você. Há dois dias você está travado num problema de configuração de containers, assunto que uma pessoa júnior recém-contratada domina bem. Você hesita em pedir ajuda a ela. O que você faz e por quê?",
+      "descricao": "Explique o que pensa da situação e como agiria.",
+      "dica": "Experiência não significa saber tudo. Pedir ajuda a alguém menos experiente desbloqueia você, valoriza o conhecimento da outra pessoa e mostra ao time que perguntar é normal."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Adaptabilidade e Aprendizado",
+      "dificuldade": "intermediario",
+      "habilidades": ["aprender-erros", "planejamento-organizacao"],
+      "titulo": "A Estimativa que Triplicou",
+      "pergunta": "Você estimou uma funcionalidade em uma semana e ela levou três. O atraso empurrou outras entregas e o time teve que se reorganizar. Na retrospectiva, pedem que você conte o que aconteceu. Como você analisa o erro e o que muda daqui para frente?",
+      "descricao": "Explique o que investigaria sobre a estimativa e que mudanças concretas proporia.",
+      "dica": "Entender por que a estimativa errou vale mais do que pedir desculpas pelo atraso. Encontre o que ficou de fora, quando o desvio apareceu e por que não foi avisado antes, e mude algo concreto no jeito de estimar e acompanhar."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Adaptabilidade e Aprendizado",
+      "dificuldade": "avancado",
+      "habilidades": ["lidar-mudancas", "aprender-rapido", "antecipar-consequencias"],
+      "titulo": "IA no Fluxo de Trabalho",
+      "pergunta": "A empresa liberou assistentes de programação com IA para todos e pediu que cada time defina como vai usá-los. Parte do seu time já usa tudo, inclusive em código sensível; outra parte se recusa a usar. Você tem dúvidas sobre qualidade, segurança e aprendizado dos mais novos. Pediram que você proponha as regras do time. Como você faz isso?",
+      "descricao": "Explique como aprenderia sobre o assunto, como envolveria o time e o que a proposta deveria cobrir.",
+      "dica": "Uma mudança assim pede experimentar antes de opinar. Teste as ferramentas em casos reais, ouça quem usa e quem resiste, pense nos riscos para o código, os dados e o aprendizado e proponha regras que possam ser revistas."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Adaptabilidade e Aprendizado",
+      "dificuldade": "avancado",
+      "habilidades": ["aprender-rapido", "investigacao", "pedir-ajuda"],
+      "titulo": "O Sistema Herdado",
+      "pergunta": "Você herdou um sistema legado de faturamento. Quem o construiu saiu da empresa, a documentação é quase inexistente e o código mistura regras de negócio com acesso ao banco. Na sua segunda semana, chega um bug crítico: alguns clientes estão recebendo cobranças em dobro. Como você age?",
+      "descricao": "Explique como lidaria com o bug urgente e como ganharia domínio do sistema depois.",
+      "dica": "Primeiro, contenha o dano e entenda só o necessário para corrigir com segurança. Busque quem conhece o negócio, mesmo fora do time. Depois, documente o que aprendeu, para que a próxima pessoa não comece do zero."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Adaptabilidade e Aprendizado",
+      "dificuldade": "avancado",
+      "habilidades": ["lidar-mudancas", "autoconhecimento", "aprender-rapido"],
+      "titulo": "Um Papel Novo Depois da Reestruturação",
+      "pergunta": "Depois de uma reestruturação, o seu cargo mudou: você deixa de desenvolver funcionalidades e passa a cuidar da plataforma de infraestrutura que os outros times usam. Você não pediu a mudança, gosta do que fazia e sente que vai começar do zero. Ao mesmo tempo, a nova área é estratégica. Como você encara essa transição?",
+      "descricao": "Explique como lidaria com o que sente, o que conversaria com a liderança e como faria os primeiros meses.",
+      "dica": "Reconhecer o que você sente é o primeiro passo para decidir com clareza. Pergunte o porquê e o que se espera de você, identifique o que da sua experiência se aproveita e faça um plano de aprendizado com prazo para reavaliar."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Adaptabilidade e Aprendizado",
+      "dificuldade": "avancado",
+      "habilidades": ["aprender-erros", "integridade", "transparencia"],
+      "titulo": "O Erro que Afetou Clientes",
+      "pergunta": "Investigando outro assunto, você descobre que uma migração de dados que você escreveu há duas semanas gravou o CEP errado em cerca de 2% dos cadastros. Alguns pedidos podem ter sido enviados para endereços incorretos. Ninguém percebeu ainda. O que você faz?",
+      "descricao": "Explique o que faria imediatamente, como corrigiria os dados e o que mudaria no processo.",
+      "dica": "Conte primeiro, antes de qualquer correção silenciosa. Descubra o tamanho do impacto, corrija os dados com cuidado, apoie quem vai falar com os clientes e mude o processo de migração para pegar esse tipo de erro antes."
+    }
+  ]
+}

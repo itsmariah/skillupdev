@@ -1,0 +1,210 @@
+{
+  "lote": "06 - Liderança",
+  "desafios": [
+    {
+      "tipo": "fechado",
+      "categoria": "Liderança",
+      "dificuldade": "basico",
+      "habilidades": ["delegacao"],
+      "titulo": "A Primeira Tarefa Delegada",
+      "pergunta": "É a sua primeira semana como referência técnica do time e você precisa passar uma tarefa de integração com um sistema de pagamentos para uma pessoa júnior. Como você faz isso?",
+      "descricao": "Escolha a forma de delegar que você usaria.",
+      "dica": "Delegar não é só repassar o ticket. Explique o objetivo, o que se espera no fim, o prazo e quando vocês vão conversar no meio do caminho.",
+      "respostas": [
+        {
+          "texto": "Explico o objetivo, o resultado esperado e o prazo, indico onde estão as referências e combino uma conversa rápida no meio do caminho.",
+          "xp": 100,
+          "feedback": "Ótimo. A pessoa sabe o que precisa entregar, tem por onde começar e um momento certo para tirar dúvidas, sem você precisar ficar em cima."
+        },
+        {
+          "texto": "Mando o link da tarefa e digo que, se tiver qualquer dúvida, é só me chamar.",
+          "xp": 40,
+          "feedback": "A porta aberta ajuda, mas quem é júnior muitas vezes não sabe o que perguntar nem quando. Sem contexto e sem um ponto de conversa combinado, a chance de desvio é alta."
+        },
+        {
+          "texto": "Faço a tarefa eu mesmo. Pagamento é delicado e eu termino mais rápido.",
+          "xp": 5,
+          "feedback": "Pode ser mais rápido hoje, mas você vira gargalo e a pessoa não aprende. Tarefas delicadas também se delegam, com mais acompanhamento."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Liderança",
+      "dificuldade": "basico",
+      "habilidades": ["desenvolvimento-pessoas"],
+      "titulo": "A Mesma Dúvida de Novo",
+      "pergunta": "Um estagiário pergunta, pela terceira vez na semana, como consultar os logs de um serviço. Você sabe a resposta de cor e levaria um minuto para dizer. O que você faz?",
+      "descricao": "Escolha a resposta que mais ajuda o estagiário a evoluir.",
+      "dica": "Quem sempre recebe a resposta pronta volta com a próxima dúvida. Pergunte o que a pessoa já tentou e ajude-a a chegar sozinha à resposta e a saber onde procurar.",
+      "respostas": [
+        {
+          "texto": "Pergunto o que ele já tentou, faço junto com ele dessa vez e mostro onde está a documentação para a próxima.",
+          "xp": 100,
+          "feedback": "Perfeito. Você gastou alguns minutos a mais agora para que ele não dependa de você na próxima vez, e ainda descobriu onde ele está travando."
+        },
+        {
+          "texto": "Passo o comando de novo, com uma explicação curta de como ele funciona.",
+          "xp": 40,
+          "feedback": "A explicação ajuda mais do que só o comando, mas ele continua sem saber onde encontrar a resposta sozinho. A quarta pergunta deve vir em breve."
+        },
+        {
+          "texto": "Digo que já expliquei isso duas vezes e que ele precisa prestar mais atenção.",
+          "xp": 5,
+          "feedback": "A bronca resolve a sua irritação, mas ensina ao estagiário que perguntar é arriscado. Ele vai passar a ficar travado em silêncio."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Liderança",
+      "dificuldade": "basico",
+      "habilidades": ["conducao-decisoes"],
+      "titulo": "A Reunião que Nunca Decide",
+      "pergunta": "É a terceira reunião para escolher a biblioteca de gráficos do produto. As mesmas opções voltam, cada pessoa defende a sua e a reunião termina sem decisão. Você está conduzindo a próxima. O que você faz?",
+      "descricao": "Escolha a forma de conduzir a reunião.",
+      "dica": "Discussões que não terminam costumam ter dois problemas: falta de critério e falta de alguém que decida. Combine os critérios antes de comparar as opções e deixe claro como e até quando a decisão será tomada.",
+      "respostas": [
+        {
+          "texto": "Começo combinando os critérios de escolha, comparo as opções por eles, defino quem decide se não houver acordo e registro a decisão e o motivo.",
+          "xp": 100,
+          "feedback": "Ótimo. Com critérios claros, a conversa sai da preferência pessoal, e com alguém responsável pela decisão a reunião termina com uma escolha."
+        },
+        {
+          "texto": "Coloco em votação e fico com a opção da maioria.",
+          "xp": 40,
+          "feedback": "A votação encerra a discussão, mas sem critérios a escolha pode ignorar um ponto técnico importante levantado por uma minoria. Vote depois de comparar, não no lugar disso."
+        },
+        {
+          "texto": "Marco mais uma reunião, porque ainda não há consenso.",
+          "xp": 5,
+          "feedback": "Esperar consenso total garante a quarta reunião. Adiar também é uma decisão, e aqui ela custa tempo de todo o time."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Liderança",
+      "dificuldade": "basico",
+      "habilidades": ["visao-alinhamento"],
+      "titulo": "Para que Serve Isso?",
+      "pergunta": "Durante uma migração demorada de banco de dados, uma pessoa do time comenta, desanimada: 'Sinceramente, não sei para que estamos fazendo isso. Ninguém vai ver diferença.' O que você responde?",
+      "descricao": "Escolha a resposta que você daria.",
+      "dica": "Trabalho sem propósito visível desanima. Ligue a tarefa ao objetivo do time e mostre o que muda quando ela estiver pronta.",
+      "respostas": [
+        {
+          "texto": "Explico o motivo da migração, o que ela destrava para o produto e como a parte dela contribui para isso, e pergunto o que deixaria isso mais visível para o time.",
+          "xp": 100,
+          "feedback": "Perfeito. Você deu sentido à tarefa e ainda abriu espaço para melhorar a forma como o time enxerga o próprio trabalho."
+        },
+        {
+          "texto": "Digo que a decisão veio da liderança e que deve haver um bom motivo.",
+          "xp": 40,
+          "feedback": "Você não desmereceu a pergunta, mas a resposta não dá sentido nenhum ao trabalho. Se você não sabe o motivo, vale descobrir e voltar com ele."
+        },
+        {
+          "texto": "Respondo que nem tudo precisa ser visível e que o importante é entregar.",
+          "xp": 5,
+          "feedback": "A resposta encerra a conversa, mas confirma a sensação de que o trabalho não tem propósito. O desânimo tende a crescer e a se espalhar pelo time."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Liderança",
+      "dificuldade": "intermediario",
+      "habilidades": ["delegacao", "desenvolvimento-pessoas"],
+      "titulo": "A Tarefa Delegada Saindo do Rumo",
+      "pergunta": "Você delegou uma tarefa a um colega há uma semana. Na conversa de acompanhamento, percebe que ele está atrasado e seguiu por um caminho técnico que não vai funcionar bem. A entrega é em quatro dias. O que você faz?",
+      "descricao": "Você quer garantir a entrega sem tirar do colega a responsabilidade pela tarefa.",
+      "dica": "Delegar não termina na entrega da tarefa. Quando o rumo sai do esperado, entenda o raciocínio da pessoa, ajude-a a enxergar o problema e ajuste o plano com ela, sem tomar a tarefa de volta.",
+      "respostas": [
+        {
+          "texto": "Peço que ele explique o raciocínio, mostro o problema do caminho com perguntas, combinamos juntos o novo plano e, se precisar, reduzimos o escopo para caber no prazo.",
+          "xp": 100,
+          "feedback": "Ótimo. A entrega volta para o trilho, o colega entende por que o caminho não funcionava e continua dono da tarefa."
+        },
+        {
+          "texto": "Assumo a tarefa a partir daqui para garantir o prazo e explico depois o que mudei.",
+          "xp": 40,
+          "feedback": "O prazo fica mais garantido, mas o colega perde a chance de aprender exatamente com o erro e pode entender que não é confiável. Corrija o rumo junto com ele."
+        },
+        {
+          "texto": "Deixo seguir. Ele vai perceber o problema sozinho e aprender com isso.",
+          "xp": 5,
+          "feedback": "Errar ensina, mas aqui o custo cai na entrega e o aprendizado chega tarde demais. Deixar alguém falhar sabendo do problema não é dar autonomia."
+        }
+      ]
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Liderança",
+      "dificuldade": "intermediario",
+      "habilidades": ["visao-alinhamento", "delegacao", "colaboracao"],
+      "titulo": "Liderar Sem Cargo",
+      "pergunta": "Pediram que você conduza uma iniciativa para reduzir o tempo de carregamento do aplicativo. Você vai trabalhar com três pessoas de times diferentes, que continuam respondendo aos próprios gestores e têm outras prioridades. Você não tem autoridade formal sobre ninguém. Como você organiza esse trabalho?",
+      "descricao": "Explique como começaria, como dividiria o trabalho e como manteria todos engajados.",
+      "dica": "Sem cargo, a liderança vem do objetivo claro e dos combinados. Deixe claro por que a iniciativa importa, combine o que cada pessoa assume com ela e com os gestores dela e mostre o progresso com frequência."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Liderança",
+      "dificuldade": "intermediario",
+      "habilidades": ["desenvolvimento-pessoas", "clareza-objetividade"],
+      "titulo": "O Plano de Crescimento",
+      "pergunta": "Uma pessoa júnior do time conta que quer chegar ao nível pleno no próximo ano e pede a sua ajuda. Ela é dedicada, mas tem dificuldade em quebrar problemas grandes e raramente se posiciona nas discussões técnicas. Como você a ajuda?",
+      "descricao": "Descreva o plano que montaria com ela e como acompanharia a evolução.",
+      "dica": "Crescimento precisa de alvo, prática e retorno. Combine com a pessoa o que significa ser pleno, escolha desafios do tamanho certo para os pontos a desenvolver e marque conversas regulares para olhar a evolução."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Liderança",
+      "dificuldade": "intermediario",
+      "habilidades": ["conducao-decisoes", "considerar-alternativas"],
+      "titulo": "Decisão Sem Consenso",
+      "pergunta": "O time está dividido sobre juntar todos os serviços num repositório único ou mantê-los separados. As duas metades têm argumentos razoáveis e a discussão já gerou atritos. Você é a pessoa responsável pela decisão, que precisa sair até sexta. Como você conduz?",
+      "descricao": "Explique como ouviria as partes, como chegaria à decisão e como a comunicaria.",
+      "dica": "Decidir sem consenso é parte de liderar. Ouça os dois lados, explicite os critérios, decida, explique o porquê e diga o que faria vocês revisarem a decisão. Isso ajuda quem perdeu a aderir."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Liderança",
+      "dificuldade": "avancado",
+      "habilidades": ["visao-alinhamento", "desenvolvimento-pessoas", "empatia"],
+      "titulo": "Assumir um Time Desanimado",
+      "pergunta": "Você acaba de assumir a liderança técnica de um time. O líder anterior saiu de repente, as entregas estão atrasadas há meses, duas pessoas pediram transferência e as reuniões são silenciosas. A gestão espera uma melhora em um trimestre. Como você conduz os primeiros meses?",
+      "descricao": "Descreva o que faria nas primeiras semanas, como entenderia o time e o que mudaria primeiro.",
+      "dica": "Antes de mudar, entenda: converse com cada pessoa, descubra o que pesa e o que ainda funciona. Depois, escolha poucas melhorias visíveis, deixe o rumo claro e reconheça cada avanço."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Liderança",
+      "dificuldade": "avancado",
+      "habilidades": ["desenvolvimento-pessoas", "assertividade", "empatia"],
+      "titulo": "De Colega a Líder",
+      "pergunta": "Você foi promovido a líder do time em que trabalhava. Uma das pessoas, que também se candidatou à vaga, ficou distante, responde de forma seca e começou a questionar suas decisões nas reuniões. Ela é muito competente e respeitada pelo time. Como você lida com a situação?",
+      "descricao": "Explique como abordaria essa pessoa, o que faria nas reuniões e como dividiria responsabilidades.",
+      "dica": "A frustração de quem não foi escolhido é legítima e merece uma conversa franca. Reconheça o valor da pessoa, dê espaço real para ela crescer e deixe claro, com respeito, como as discordâncias devem ser tratadas."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Liderança",
+      "dificuldade": "avancado",
+      "habilidades": ["visao-alinhamento", "lidar-mudancas", "conducao-decisoes"],
+      "titulo": "Mudança de Rumo no Meio do Trimestre",
+      "pergunta": "No meio do trimestre, a empresa muda a estratégia do produto. Metade do que o seu time construiu nas últimas seis semanas não será mais usada e as novas prioridades ainda estão pouco definidas. O time está frustrado e alguém comentou que 'não adianta se esforçar, porque tudo muda'. Você lidera o time. O que você faz?",
+      "descricao": "Explique como comunicaria a mudança, o que faria com o trabalho já feito e como reorganizaria o time.",
+      "dica": "Numa mudança de rumo, o time precisa entender o porquê, ter a frustração reconhecida e saber o que vem agora. Aproveite o que der do trabalho feito e busque clareza sobre as novas prioridades, em vez de esperar."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Liderança",
+      "dificuldade": "avancado",
+      "habilidades": ["conducao-decisoes", "aprender-erros", "responsabilidade-maturidade"],
+      "titulo": "A Decisão Errada Foi Sua",
+      "pergunta": "Há seis meses, contra a opinião de parte do time, você decidiu usar um banco de dados orientado a documentos num novo serviço. Hoje está claro que foi um erro: as consultas ficaram complexas e lentas e uma migração vai custar semanas. Quem discordou na época está ressentido. Como você conduz a situação?",
+      "descricao": "Explique como reconheceria o erro, como decidiria o próximo passo e o que mudaria na forma de decidir.",
+      "dica": "Líder que assume o erro em público ganha confiança, não perde. Reconheça a decisão e quem tinha razão, decida o próximo passo ouvindo o time e mude o processo de decisão para reduzir a chance de repetir."
+    }
+  ]
+}

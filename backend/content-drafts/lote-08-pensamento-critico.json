@@ -1,0 +1,210 @@
+{
+  "lote": "08 - Pensamento Crítico",
+  "desafios": [
+    {
+      "tipo": "fechado",
+      "categoria": "Pensamento Crítico",
+      "dificuldade": "basico",
+      "habilidades": ["questionar-premissas"],
+      "titulo": "Um Botão em Todas as Telas",
+      "pergunta": "A pessoa responsável pelo produto pede um botão 'Exportar para Excel' em todas as telas do sistema, porque um cliente importante pediu. O que você faz antes de começar?",
+      "descricao": "Escolha a atitude que você tomaria.",
+      "dica": "Um pedido costuma chegar com a solução já pronta. Antes de construir, entenda que problema a pessoa quer resolver.",
+      "respostas": [
+        {
+          "texto": "Pergunto o que o cliente faz com os dados depois de exportar, para entender qual problema ele quer resolver.",
+          "xp": 100,
+          "feedback": "Ótimo. Talvez o cliente só precise de um relatório específico, ou de um filtro que hoje não existe. Entender o problema pode poupar semanas de trabalho."
+        },
+        {
+          "texto": "Pergunto em quais telas o botão é mais urgente e começo por elas.",
+          "xp": 40,
+          "feedback": "Priorizar ajuda a entregar algo mais rápido, mas você continua construindo a solução pedida sem saber se ela resolve o problema real do cliente."
+        },
+        {
+          "texto": "Começo a implementar o botão em todas as telas, como foi pedido.",
+          "xp": 5,
+          "feedback": "Fazer exatamente o que foi pedido parece seguro, mas pode gerar muito trabalho para resolver mal um problema que ninguém entendeu."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Pensamento Crítico",
+      "dificuldade": "basico",
+      "habilidades": ["avaliar-evidencias"],
+      "titulo": "O Teste de Dois Dias",
+      "pergunta": "Um colega comemora no canal: o novo layout da página de cadastro aumentou a conversão em 30%. O teste rodou por dois dias, com cerca de 40 visitantes em cada versão. Ele propõe adotar o novo layout para todos hoje mesmo. Como você reage?",
+      "descricao": "Escolha a resposta que você daria.",
+      "dica": "Antes de comemorar um número, veja o tamanho da amostra e o período. Poucos dados e pouco tempo produzem diferenças grandes por puro acaso.",
+      "respostas": [
+        {
+          "texto": "Comento que 40 visitantes por versão é pouco para concluir e sugiro deixar o teste rodando até ter uma amostra que dê confiança no resultado.",
+          "xp": 100,
+          "feedback": "Perfeito. Com amostras tão pequenas, uma diferença de 30% pode ser só acaso. Esperar um pouco mais evita uma decisão baseada em ruído."
+        },
+        {
+          "texto": "Parabenizo o colega e sugiro adotar o novo layout, mas acompanhar a conversão nas próximas semanas.",
+          "xp": 40,
+          "feedback": "Acompanhar depois é melhor do que nada, mas sem a versão antiga para comparar, você não vai saber se alguma mudança veio do layout ou de outra coisa."
+        },
+        {
+          "texto": "Concordo. 30% é uma melhora grande demais para ser coincidência.",
+          "xp": 5,
+          "feedback": "Diferenças grandes em amostras pequenas são exatamente as que mais enganam. Com 40 pessoas, poucos cadastros a mais já geram um número impressionante."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Pensamento Crítico",
+      "dificuldade": "basico",
+      "habilidades": ["considerar-alternativas"],
+      "titulo": "A Primeira Ideia",
+      "pergunta": "Uma rota da API está lenta, levando três segundos para responder. Sua primeira ideia é colocar um serviço de cache externo na frente dela. O que você faz?",
+      "descricao": "Escolha o caminho que você seguiria.",
+      "dica": "A primeira ideia raramente é a única. Descubra onde está a lentidão e compare algumas soluções por custo e complexidade antes de escolher.",
+      "respostas": [
+        {
+          "texto": "Meço onde o tempo está sendo gasto e comparo opções, como otimizar a consulta, criar um índice ou usar cache, antes de escolher.",
+          "xp": 100,
+          "feedback": "Ótimo. Muitas vezes, um índice no banco resolve o que um cache externo só esconderia, sem adicionar uma peça nova ao sistema."
+        },
+        {
+          "texto": "Coloco o cache, mas aviso o time que talvez valha investigar a causa depois.",
+          "xp": 40,
+          "feedback": "Você reconhece que pode haver algo melhor, mas adiciona complexidade antes de saber se ela é necessária. Medir primeiro costuma levar menos tempo."
+        },
+        {
+          "texto": "Coloco o cache externo. É a solução padrão para lentidão.",
+          "xp": 5,
+          "feedback": "Não existe solução padrão sem saber a causa. O cache pode esconder o problema, trazer dados desatualizados e criar mais um serviço para manter."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Pensamento Crítico",
+      "dificuldade": "basico",
+      "habilidades": ["antecipar-consequencias"],
+      "titulo": "Um Campo a Mais no Cadastro",
+      "pergunta": "Pediram que o telefone passe a ser obrigatório no cadastro de usuários. A mudança no código parece simples: marcar o campo como obrigatório. O que você faz antes de subir a alteração?",
+      "descricao": "Escolha a atitude que você tomaria.",
+      "dica": "Uma mudança pequena no código pode ter efeitos grandes fora dele. Pense em quem já existe no sistema, em quem integra com ele e em quem vai preencher o formulário.",
+      "respostas": [
+        {
+          "texto": "Verifico o que acontece com os usuários sem telefone, com as integrações que criam cadastros e com quem preenche o formulário, e combino o tratamento de cada caso.",
+          "xp": 100,
+          "feedback": "Perfeito. Usuários antigos podem ficar impedidos de editar o perfil e integrações podem começar a falhar. Pensar nisso antes evita um incidente."
+        },
+        {
+          "texto": "Subo a alteração e acompanho os erros nos primeiros dias.",
+          "xp": 40,
+          "feedback": "Acompanhar é bom, mas você vai descobrir os problemas pelos usuários afetados. Alguns minutos pensando nos efeitos antes poupam esse custo."
+        },
+        {
+          "texto": "Marco o campo como obrigatório e subo. É uma mudança de uma linha.",
+          "xp": 5,
+          "feedback": "O tamanho da mudança no código não diz nada sobre o tamanho do impacto. Uma linha pode bloquear milhares de usuários antigos."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Pensamento Crítico",
+      "dificuldade": "intermediario",
+      "habilidades": ["avaliar-evidencias", "considerar-alternativas"],
+      "titulo": "O Benchmark do Blog",
+      "pergunta": "Um colega propõe trocar o framework web do projeto por outro, citando um artigo que mostra o novo sendo dez vezes mais rápido. A troca levaria cerca de dois meses. As maiores reclamações de lentidão vêm de relatórios que fazem consultas pesadas no banco. O que você responde?",
+      "descricao": "O colega está animado e o resultado do artigo é real.",
+      "dica": "Um benchmark só vale para o seu caso se medir o que pesa no seu sistema. Veja onde está o gargalo antes de trocar uma peça que talvez nem seja o problema.",
+      "respostas": [
+        {
+          "texto": "Pergunto se o artigo mede algo parecido com o nosso uso, proponho medir onde o tempo é gasto nos relatórios e comparar a troca com otimizar as consultas.",
+          "xp": 100,
+          "feedback": "Ótimo. Se o tempo está no banco, um framework dez vezes mais rápido mudaria quase nada. Medir antes evita dois meses de trabalho no lugar errado."
+        },
+        {
+          "texto": "Sugiro fazer a troca primeiro num serviço pequeno, para testar o ganho na prática.",
+          "xp": 40,
+          "feedback": "Testar em pequena escala é prudente, mas você ainda parte do princípio de que o framework é o problema, sem olhar para as consultas pesadas."
+        },
+        {
+          "texto": "Apoio a troca. Dez vezes mais rápido compensa os dois meses.",
+          "xp": 5,
+          "feedback": "O ganho medido no artigo vale para o cenário do artigo. Sem saber onde está o gargalo do seu sistema, a troca pode custar dois meses e não resolver a lentidão."
+        }
+      ]
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Pensamento Crítico",
+      "dificuldade": "intermediario",
+      "habilidades": ["avaliar-evidencias", "considerar-alternativas"],
+      "titulo": "A Funcionalidade que Ninguém Usa",
+      "pergunta": "Os dados mostram que só 1% dos usuários abre o módulo de relatórios avançados, e a pessoa responsável pelo produto quer removê-lo para simplificar o sistema. O time comercial protesta: diz que os maiores clientes dependem dele. Pediram a sua opinião. Como você chega a uma recomendação?",
+      "descricao": "Explique que dados buscaria, como os interpretaria e que opções consideraria.",
+      "dica": "'1% dos usuários' pode esconder uma parte grande do faturamento. Cruze o uso com quem são esses usuários, ouça os dois lados com dados e considere opções além de manter ou remover."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Pensamento Crítico",
+      "dificuldade": "intermediario",
+      "habilidades": ["questionar-premissas", "negociacao-prazos"],
+      "titulo": "O Painel para Amanhã",
+      "pergunta": "Um diretor pede, com urgência, um 'painel em tempo real com todos os indicadores da operação' para amanhã cedo. Construir algo assim levaria semanas. Você foi chamado para resolver. O que você faz?",
+      "descricao": "Explique como conduziria a conversa com o diretor e o que entregaria.",
+      "dica": "Pedidos urgentes e grandes costumam esconder uma necessidade menor e muito concreta. Descubra para que o painel será usado amanhã e entregue o que resolve isso, deixando claro o que fica para depois."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Pensamento Crítico",
+      "dificuldade": "intermediario",
+      "habilidades": ["antecipar-consequencias", "considerar-alternativas"],
+      "titulo": "Desconto Automático",
+      "pergunta": "Para acelerar as vendas, a área comercial pede que descontos de até 20% sejam aprovados automaticamente pelo sistema, sem passar pelo gerente. Hoje, a aprovação manual leva até dois dias. Você vai implementar a mudança. O que você analisa antes e o que proporia?",
+      "descricao": "Explique que efeitos você anteciparia e que alternativas levaria para a conversa.",
+      "dica": "Automatizar uma regra muda comportamentos. Pense em como as pessoas podem reagir, por exemplo se todo desconto passar a ser de 20%, e em como acompanhar e limitar os efeitos sem perder a agilidade pedida."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Pensamento Crítico",
+      "dificuldade": "avancado",
+      "habilidades": ["avaliar-evidencias", "questionar-premissas", "clareza-objetividade"],
+      "titulo": "A Causa que Todos Já Sabem",
+      "pergunta": "Os cancelamentos de assinatura dobraram em três meses. Na empresa, todos repetem que a causa é o aumento de preço, e a diretoria já discute um desconto. Olhando os dados, você percebe que os cancelamentos subiram principalmente entre quem usa o aplicativo no celular, depois de uma atualização. Como você conduz isso?",
+      "descricao": "Explique como verificaria a sua hipótese e como a apresentaria a quem já tem uma conclusão.",
+      "dica": "Uma explicação que todos repetem não precisa de prova para ser aceita, e é aí que mora o risco. Teste a sua hipótese e também a deles e apresente os dados de forma simples, sem desqualificar ninguém."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Pensamento Crítico",
+      "dificuldade": "avancado",
+      "habilidades": ["questionar-premissas", "considerar-alternativas", "antecipar-consequencias"],
+      "titulo": "Reescrever Tudo",
+      "pergunta": "O novo diretor de tecnologia anunciou que o sistema principal, um monólito de oito anos, será reescrito em microsserviços ao longo do próximo ano. O objetivo declarado é 'ganhar velocidade'. Você conhece bem o sistema e tem dúvidas se a reescrita resolve os problemas reais. Você foi convidado a opinar. O que leva a ele?",
+      "descricao": "Explique como estruturaria a sua análise e a sua contribuição.",
+      "dica": "Comece pelo problema: o que hoje deixa o time lento? Compare a reescrita com alternativas, como modularizar o monólito ou extrair só as partes críticas, e mostre os riscos de cada uma com fatos, não com preferência."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Pensamento Crítico",
+      "dificuldade": "avancado",
+      "habilidades": ["antecipar-consequencias", "questionar-premissas", "assertividade"],
+      "titulo": "Quando a Métrica Vira Meta",
+      "pergunta": "A diretoria definiu uma nova meta para os times: número de tarefas concluídas por semana, com bônus para quem bater. Você já imagina efeitos ruins, como tarefas quebradas artificialmente e menos tempo para revisão e testes. A meta começa no próximo mês. O que você faz?",
+      "descricao": "Explique que efeitos levantaria, para quem e o que proporia no lugar.",
+      "dica": "Quando um número vira meta, as pessoas otimizam o número, não o objetivo. Mostre os efeitos prováveis com exemplos, pergunte qual resultado a diretoria quer de fato e proponha indicadores mais difíceis de distorcer."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Pensamento Crítico",
+      "dificuldade": "avancado",
+      "habilidades": ["antecipar-consequencias", "impacto-usuario", "considerar-alternativas"],
+      "titulo": "Notificações para Engajar",
+      "pergunta": "O marketing quer enviar notificações diárias a todos os usuários do aplicativo para aumentar o engajamento, que caiu no último trimestre. A previsão é de um aumento rápido nas aberturas do aplicativo. Você vai implementar o envio e pediram a sua avaliação. O que você analisa e o que proporia?",
+      "descricao": "Explique os efeitos que você anteciparia e as alternativas que levaria.",
+      "dica": "Um ganho rápido numa métrica pode custar outra mais importante, como desinstalações e notificações desativadas. Pense nos efeitos ao longo do tempo, em diferentes perfis de usuário, e proponha um teste que meça os dois lados."
+    }
+  ]
+}

@@ -1,0 +1,210 @@
+{
+  "lote": "09 - Ética Profissional",
+  "desafios": [
+    {
+      "tipo": "fechado",
+      "categoria": "Ética Profissional",
+      "dificuldade": "basico",
+      "habilidades": ["dados-privacidade"],
+      "titulo": "A Base de Produção no Notebook",
+      "pergunta": "Para investigar um bug difícil de reproduzir, um colega sugere copiar o banco de produção inteiro, com nomes, CPFs e endereços dos clientes, para o notebook dele. O que você faz?",
+      "descricao": "Escolha a resposta que você daria.",
+      "dica": "Dados pessoais só devem estar onde são necessários. Para investigar, quase sempre basta um recorte pequeno e anonimizado, num ambiente controlado.",
+      "respostas": [
+        {
+          "texto": "Sugiro gerar um recorte só com os registros do bug, com os dados pessoais anonimizados, ou investigar num ambiente controlado.",
+          "xp": 100,
+          "feedback": "Ótimo. Você resolve a investigação com o mínimo de dados e evita que informações de clientes acabem num notebook que pode ser perdido ou invadido."
+        },
+        {
+          "texto": "Concordo, desde que ele apague a cópia depois de resolver o bug.",
+          "xp": 40,
+          "feedback": "Apagar depois reduz o risco, mas durante dias os dados de todos os clientes ficam num notebook. E nada garante que a cópia será mesmo apagada."
+        },
+        {
+          "texto": "Concordo. É a forma mais rápida de reproduzir o problema.",
+          "xp": 5,
+          "feedback": "A rapidez não justifica expor os dados de todos os clientes. Um notebook perdido com essa cópia seria um incidente de segurança sério, com obrigações pela LGPD."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Ética Profissional",
+      "dificuldade": "basico",
+      "habilidades": ["integridade"],
+      "titulo": "Os Testes que Ficaram para Depois",
+      "pergunta": "Você moveu uma tarefa para 'pronta' com pressa, sem testar alguns casos de erro. Na revisão, a revisora pergunta: 'Você testou os cenários de falha?'. O que você responde?",
+      "descricao": "Escolha a resposta que você daria.",
+      "dica": "Integridade é contar a verdade sobre o próprio trabalho, principalmente quando ela é desconfortável. Uma lacuna admitida pode ser corrigida; uma escondida vira bug.",
+      "respostas": [
+        {
+          "texto": "Digo que não testei os cenários de falha, peço um tempo para fazer isso e devolvo a tarefa para 'em andamento' até lá.",
+          "xp": 100,
+          "feedback": "Perfeito. Você foi honesto sobre a lacuna e corrigiu o estado da tarefa. A revisora sabe exatamente o que esperar."
+        },
+        {
+          "texto": "Digo que testei os principais e que os cenários de falha devem estar ok.",
+          "xp": 40,
+          "feedback": "Não é exatamente uma mentira, mas a frase dá a entender mais segurança do que você tem. Se um desses cenários quebrar, a confiança no seu 'pronto' cai."
+        },
+        {
+          "texto": "Respondo que sim e testo rapidamente depois, sem falar nada.",
+          "xp": 5,
+          "feedback": "Responder que sim sem ter testado é desonesto, mesmo que você teste depois. Se algo escapar, a revisora vai ter aprovado com base numa informação falsa."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Ética Profissional",
+      "dificuldade": "basico",
+      "habilidades": ["impacto-usuario"],
+      "titulo": "Um Formulário Difícil de Usar",
+      "pergunta": "Ao implementar um novo formulário, você percebe que o design usa texto cinza-claro sobre fundo branco e que os campos não têm rótulos, só um texto de exemplo que some ao digitar. A entrega é amanhã. O que você faz?",
+      "descricao": "Escolha a atitude que você tomaria.",
+      "dica": "Acessibilidade não é detalhe: quem usa leitor de tela ou tem baixa visão pode simplesmente não conseguir usar o formulário. Aponte o problema e corrija o que for simples.",
+      "respostas": [
+        {
+          "texto": "Aviso a pessoa de design sobre o contraste e os rótulos, proponho ajustes simples e implemento o que dá para fazer até amanhã.",
+          "xp": 100,
+          "feedback": "Ótimo. Rótulos e contraste são correções baratas que permitem que mais pessoas usem o formulário, e você envolveu quem pode ajustar o design."
+        },
+        {
+          "texto": "Implemento como está e anoto as melhorias de acessibilidade para uma próxima versão.",
+          "xp": 40,
+          "feedback": "Registrar é melhor do que esquecer, mas melhorias de acessibilidade anotadas para depois costumam ficar na fila para sempre. Aqui, a correção é pequena o bastante para entrar agora."
+        },
+        {
+          "texto": "Implemento como está. O design foi aprovado e não é responsabilidade minha.",
+          "xp": 5,
+          "feedback": "Quem constrói também responde por quem vai usar. Implementar um formulário que parte das pessoas não consegue usar, sabendo disso, é uma escolha."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Ética Profissional",
+      "dificuldade": "basico",
+      "habilidades": ["recusa-responsavel", "integridade"],
+      "titulo": "O Pedido para Apagar o Log",
+      "pergunta": "Na véspera de uma auditoria do cliente, seu gestor pede que você apague do sistema os registros que mostram que o time descumpriu o prazo de atendimento acordado em contrato no mês passado. O que você faz?",
+      "descricao": "Escolha a resposta que você daria.",
+      "dica": "Recusar um pedido antiético é mais eficaz quando vem acompanhado do risco e de uma alternativa. Uma explicação honesta sobre a falha costuma custar menos do que ser pego escondendo.",
+      "respostas": [
+        {
+          "texto": "Recuso, explico que apagar os registros pode ser visto como fraude e proponho preparar com ele uma explicação do que aconteceu e do que foi corrigido.",
+          "xp": 100,
+          "feedback": "Perfeito. Você não cumpre o pedido, explica o risco para ele e para a empresa e oferece um caminho que protege a relação com o cliente."
+        },
+        {
+          "texto": "Recuso e digo que não vou fazer isso.",
+          "xp": 40,
+          "feedback": "Recusar é o principal, mas sem explicar o risco nem oferecer saída, o gestor pode pedir a outra pessoa. Ajude-o a ver um caminho melhor."
+        },
+        {
+          "texto": "Apago os registros. A ordem veio do gestor e a responsabilidade é dele.",
+          "xp": 5,
+          "feedback": "Cumprir uma ordem antiética não transfere a responsabilidade: foi você quem apagou. Se a auditoria descobrir, as consequências também são suas."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Ética Profissional",
+      "dificuldade": "intermediario",
+      "habilidades": ["dados-privacidade", "recusa-responsavel"],
+      "titulo": "Uma Lista para o Marketing",
+      "pergunta": "O marketing pede, com urgência, uma planilha com nome, e-mail e histórico de compras de todos os clientes para uma campanha. Você sabe que parte deles não autorizou receber comunicações de marketing. O que você faz?",
+      "descricao": "A campanha começa amanhã e a pessoa que pediu é de uma área com muita influência na empresa.",
+      "dica": "Atender bem uma área não significa entregar tudo o que ela pede. Entregue só os dados necessários, de quem autorizou, por um canal seguro, e explique o porquê.",
+      "respostas": [
+        {
+          "texto": "Explico a questão do consentimento, entrego só os clientes que autorizaram e só os campos necessários, por um canal aprovado, e envolvo quem cuida da privacidade se houver dúvida.",
+          "xp": 100,
+          "feedback": "Ótimo. A campanha sai e a empresa respeita a escolha dos clientes e a LGPD. Você atende a área sem expor dados desnecessários."
+        },
+        {
+          "texto": "Envio a planilha completa, mas aviso o marketing que parte dos clientes não autorizou contato.",
+          "xp": 40,
+          "feedback": "O aviso é honesto, mas os dados de quem não autorizou já saíram e a decisão de usá-los ficou com outra pessoa. O cuidado precisa estar no que você entrega."
+        },
+        {
+          "texto": "Envio a planilha completa por e-mail. A responsabilidade pelo uso é do marketing.",
+          "xp": 5,
+          "feedback": "Uma planilha com dados de todos os clientes, enviada por e-mail e incluindo quem não consentiu, é um risco de vazamento e de descumprimento da LGPD. Quem extraiu os dados também responde."
+        }
+      ]
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Ética Profissional",
+      "dificuldade": "intermediario",
+      "habilidades": ["integridade", "recusa-responsavel", "assertividade"],
+      "titulo": "O Relatório Maquiado",
+      "pergunta": "Na preparação do relatório trimestral para a diretoria, seu gestor sugere reclassificar parte dos bugs do período como 'melhorias', para que o número de bugs pareça menor. Ele diz que 'todo mundo faz isso' e que não é mentira, só uma questão de nome. Como você responde?",
+      "descricao": "Explique o que diria ao gestor e o que proporia no lugar.",
+      "dica": "Maquiar um número tira da diretoria a informação de que ela precisa para decidir. Explique o risco com respeito e proponha mostrar os números reais junto com o contexto e o plano para melhorá-los."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Ética Profissional",
+      "dificuldade": "intermediario",
+      "habilidades": ["impacto-usuario", "recusa-responsavel"],
+      "titulo": "Cancelar Não Pode Ser Fácil",
+      "pergunta": "A pessoa responsável pelo produto pede que o cancelamento da assinatura passe a exigir cinco etapas, com o botão de cancelar escondido e mensagens que fazem o usuário duvidar da decisão. O objetivo é reduzir cancelamentos. Você vai implementar. Como você responde?",
+      "descricao": "Explique o que levaria para a conversa e o que proporia.",
+      "dica": "Dificultar de propósito a saída do usuário é um padrão enganoso, prejudica a confiança e pode contrariar o Código de Defesa do Consumidor. Mostre o risco e proponha formas legítimas de reter clientes."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Ética Profissional",
+      "dificuldade": "intermediario",
+      "habilidades": ["dados-privacidade", "transparencia", "proatividade"],
+      "titulo": "Um Vazamento Pequeno",
+      "pergunta": "Testando uma tela, você percebe que uma rota da API devolve, junto com os dados do pedido, o e-mail e o telefone de outros clientes que compraram o mesmo produto. A tela não mostra esses dados, mas qualquer pessoa que olhe a resposta da API consegue vê-los. Ninguém relatou nada. O que você faz?",
+      "descricao": "Explique o que faria agora e depois de corrigir.",
+      "dica": "Dado exposto é incidente mesmo que ninguém tenha visto. Avise imediatamente quem cuida da segurança, corrija com prioridade, verifique se houve acesso e ajude a decidir se clientes e autoridades precisam ser comunicados."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Ética Profissional",
+      "dificuldade": "avancado",
+      "habilidades": ["impacto-usuario", "avaliar-evidencias", "recusa-responsavel"],
+      "titulo": "O Modelo que Discrimina",
+      "pergunta": "Você trabalha num sistema que usa um modelo para aprovar crédito automaticamente. Analisando os resultados, percebe que pessoas de alguns bairros são recusadas com muito mais frequência, mesmo com renda e histórico parecidos. O modelo usa o CEP como uma das variáveis. O lançamento para todos os clientes está marcado para o mês que vem. O que você faz?",
+      "descricao": "Explique como confirmaria o problema, com quem falaria e o que proporia.",
+      "dica": "Um modelo pode discriminar sem que ninguém tenha querido. Confirme o padrão com dados, leve-o a quem decide com clareza sobre o impacto nas pessoas e os riscos legais e proponha corrigir antes de ampliar o uso."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Ética Profissional",
+      "dificuldade": "avancado",
+      "habilidades": ["recusa-responsavel", "antecipar-consequencias", "assertividade"],
+      "titulo": "Lançar com a Falha Conhecida",
+      "pergunta": "Na véspera de um grande lançamento, você descobre uma falha de segurança: num fluxo pouco usado, é possível acessar a conta de outra pessoa sem senha. A correção leva três dias. O diretor diz que o lançamento não pode atrasar, que o fluxo é raro e que vocês corrigem depois. Como você conduz a situação?",
+      "descricao": "Explique como argumentaria, que alternativas levaria e o que faria se a decisão fosse mantida.",
+      "dica": "Uma falha conhecida e não corrigida é um risco assumido em nome dos usuários. Explique o impacto concreto, ofereça saídas como desligar o fluxo afetado e, se a decisão for mantida, registre o risco e leve-o a quem responde pela segurança."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Ética Profissional",
+      "dificuldade": "avancado",
+      "habilidades": ["integridade", "responsabilidade-maturidade", "transparencia"],
+      "titulo": "O Erro que Ninguém Percebeu",
+      "pergunta": "Revisando um código antigo, você descobre que um erro de arredondamento que você introduziu há oito meses cobrou alguns centavos a mais de milhares de clientes. Somado, o valor é significativo. Ninguém reclamou e ninguém mais sabe. Contar pode gerar reembolsos, desgaste e uma conversa difícil sobre o seu trabalho. O que você faz?",
+      "descricao": "Explique o que faria, em que ordem e como conduziria as conversas.",
+      "dica": "O fato de ninguém saber não muda o que é certo. Conte por iniciativa própria, com o levantamento do impacto e uma proposta de correção e reembolso. Assumir cedo pesa menos do que ser descoberto depois."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Ética Profissional",
+      "dificuldade": "avancado",
+      "habilidades": ["dados-privacidade", "impacto-usuario", "questionar-premissas"],
+      "titulo": "Localização para Uso Futuro",
+      "pergunta": "Na próxima versão do aplicativo, a liderança quer começar a coletar a localização dos usuários o tempo todo, mesmo com o aplicativo fechado, 'para usar em funcionalidades futuras e em parcerias'. Ainda não há nenhuma funcionalidade que use esse dado. Você vai implementar. Como você responde?",
+      "descricao": "Explique as questões que levantaria e o que proporia no lugar.",
+      "dica": "Coletar 'para o caso de precisar' contraria o princípio da necessidade da LGPD e cria um risco sem benefício para o usuário. Pergunte qual é a finalidade, proponha coletar só quando houver uso claro e com consentimento informado."
+    }
+  ]
+}
