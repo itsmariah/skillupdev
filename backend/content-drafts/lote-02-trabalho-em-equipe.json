@@ -1,0 +1,99 @@
+{
+  "lote": "02 - Trabalho em Equipe",
+  "desafios": [
+    {
+      "tipo": "fechado",
+      "categoria": "Trabalho em Equipe",
+      "dificuldade": "basico",
+      "habilidades": ["acolhimento", "comunicacao-assincrona"],
+      "titulo": "Pergunta Sem Resposta no Canal",
+      "pergunta": "Uma colega que entrou no time há duas semanas perguntou no canal do time como rodar os testes de integração. Já faz três horas e ninguém respondeu. Você sabe o caminho, mas está no meio de uma tarefa. O que você faz?",
+      "descricao": "Escolha a atitude que mais ajuda a colega e o time.",
+      "dica": "Uma pergunta ignorada ensina a quem chegou que não vale a pena perguntar. Uma resposta curta agora, de preferência num lugar que outros também encontrem, resolve mais do que uma ajuda perfeita mais tarde.",
+      "respostas": [
+        {
+          "texto": "Respondo no próprio canal com os passos principais e o link da documentação, e me ofereço para ajudar se travar.",
+          "xp": 100,
+          "feedback": "Ótimo. Ela destrava em minutos, sabe que pode contar com você, e a resposta fica no canal para a próxima pessoa que tiver a mesma dúvida."
+        },
+        {
+          "texto": "Mando uma mensagem privada para ela explicando o passo a passo.",
+          "xp": 40,
+          "feedback": "Você ajudou, mas a resposta ficou escondida numa conversa privada. Respondendo no canal, o time inteiro aprende e ela vê que perguntar em público funciona."
+        },
+        {
+          "texto": "Deixo para lá. Se fosse urgente, ela perguntaria de novo ou chamaria alguém.",
+          "xp": 5,
+          "feedback": "Quem é novo raramente insiste: costuma ficar travado em silêncio. Três horas sem resposta já mostram que ela precisa de alguém que tome a iniciativa."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Trabalho em Equipe",
+      "dificuldade": "intermediario",
+      "habilidades": ["colaboracao", "comunicacao-assincrona"],
+      "titulo": "Duas Pessoas, a Mesma Tarefa",
+      "pergunta": "Revisando o quadro de outro time, você percebe que um colega de lá está implementando um filtro de busca praticamente igual ao que você está fazendo há três dias. Cada um tem metade pronta, de jeitos diferentes. O que você faz?",
+      "descricao": "Os dois times entregam na mesma sprint e nenhum dos líderes percebeu a duplicação.",
+      "dica": "Trabalho duplicado se resolve cedo e em conjunto: junte as pessoas, compare as abordagens com critérios e registre a decisão para que não se repita.",
+      "respostas": [
+        {
+          "texto": "Chamo o colega para comparar as duas versões, decidimos juntos qual seguir (ou como unir) e avisamos os dois times com a decisão e o motivo.",
+          "xp": 100,
+          "feedback": "Perfeito. A decisão é técnica e compartilhada, ninguém é pego de surpresa e os dois times ficam sabendo que precisam combinar melhor o que cada um assume."
+        },
+        {
+          "texto": "Termino a minha versão o mais rápido possível, já que comecei antes, e aviso o outro time quando estiver pronta.",
+          "xp": 40,
+          "feedback": "Você evita que a duplicação continue do seu lado, mas transforma o problema numa corrida e descarta o trabalho do colega sem conversa. Talvez a versão dele fosse a melhor."
+        },
+        {
+          "texto": "Não comento nada. Cada time cuida do próprio quadro, e no fim o melhor código entra.",
+          "xp": 5,
+          "feedback": "Ficar calado garante dias de trabalho jogados fora e um conflito na hora de integrar. Quem percebe a duplicação é quem tem a chance mais barata de resolver."
+        }
+      ]
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Trabalho em Equipe",
+      "dificuldade": "intermediario",
+      "habilidades": ["comunicacao-assincrona", "colaboracao"],
+      "titulo": "Passagem de Bastão Antes das Férias",
+      "pergunta": "Você entra de férias em dois dias e vai ficar três semanas fora, sem acesso a mensagens. Uma funcionalidade sua está pela metade e um colega vai assumir. Ele conhece o sistema, mas não acompanhou nenhuma das decisões dessa entrega. Como você faz a passagem?",
+      "descricao": "Explique o que registraria, como conduziria a conversa e o que combinaria com o time.",
+      "dica": "Uma boa passagem não depende de você estar disponível: registre o estado atual, as decisões e os porquês, os riscos e os próximos passos, e confirme com quem assume o que ficou claro."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Trabalho em Equipe",
+      "dificuldade": "avancado",
+      "habilidades": ["colaboracao", "assertividade", "priorizacao"],
+      "titulo": "Dependência de Outro Time",
+      "pergunta": "A entrega que o seu time prometeu a um cliente em três semanas depende de uma mudança na API de outro time. Você pediu há um mês, mas a mudança não está no planejamento deles, que também estão sobrecarregados. Na última conversa, a líder de lá respondeu que 'o problema de prazo é de vocês'. Como você conduz a situação?",
+      "descricao": "Descreva os próximos passos, com quem falaria e o que proporia.",
+      "dica": "Dependência entre times se resolve com interesse comum, não com pressão: entenda as prioridades do outro lado, ofereça formas concretas de reduzir o esforço deles e leve a escolha para quem decide prioridades quando os dois times não conseguem resolver sozinhos."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Trabalho em Equipe",
+      "dificuldade": "avancado",
+      "habilidades": ["colaboracao", "acolhimento", "comunicacao-assincrona"],
+      "titulo": "Dois Times Viram Um",
+      "pergunta": "Depois de uma reestruturação, o seu time foi unido a outro. Vocês fazem revisão de código detalhada e documentam tudo; eles trabalham em dupla, com pouca documentação, e entregam mais rápido. Nas primeiras semanas surgiram piadas dos dois lados, reuniões tensas e pessoas que só pedem ajuda a quem já conheciam. Você é uma das pessoas mais antigas e a gestão pediu que você ajude a fazer o novo time funcionar. O que você faz?",
+      "descricao": "Explique como abordaria as pessoas, as práticas diferentes e os combinados do novo time.",
+      "dica": "Juntar times não é escolher o lado vencedor: reconheça o que cada forma de trabalhar faz bem, crie situações em que as pessoas trabalhem juntas de verdade e construa os novos combinados com os dois lados."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Trabalho em Equipe",
+      "dificuldade": "avancado",
+      "habilidades": ["colaboracao", "acolhimento", "assertividade"],
+      "titulo": "O Crédito da Entrega",
+      "pergunta": "Na apresentação de resultados para a diretoria, um colega mostrou a nova funcionalidade do time falando quase só do que ele fez. A parte mais difícil, a migração de dados, foi feita por uma colega mais reservada, que não foi citada e saiu da reunião visivelmente desanimada. A diretoria elogiou o colega pelo nome. O que você faz?",
+      "descricao": "Diga com quem falaria, em que ordem e o que diria a cada pessoa.",
+      "dica": "Reconhecimento justo sustenta a confiança do time. Valorize publicamente quem não foi visto, converse em particular com quem apresentou (sem humilhar) e proponha um jeito de as próximas apresentações mostrarem o trabalho de todos."
+    }
+  ]
+}
