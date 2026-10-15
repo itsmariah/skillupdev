@@ -1,12 +1,13 @@
 const { APP_TIMEZONE } = require("../config");
 const {
-  getChallenges,
   getChallengeById,
-  getCategories,
   getActiveCategories,
   isPublished,
   countPublishedByCategory,
 } = require("../content/catalog");
+const { BADGE_XP } = require("../content/badges");
+const { getBadges, getActiveBadges } = require("../content/badgeCatalog");
+const { evaluateRule } = require("../content/badgeRules");
 
 // XP por conclusão de desafio (base, antes de qualidade e multiplicador)
 const CHALLENGE_COMPLETION_XP = 40;
@@ -99,137 +100,6 @@ const AVATAR_CATALOG = {
     { id: "surprised", label: "Surpreso", minLevel: 3 },
   ],
 };
-
-const BADGE_XP = { comum: 50, raro: 100, epico: 200, lendario: 400 };
-
-const BADGE_DEFINITIONS = [
-  // ── Comum ─────────────────────────────────────────────────────────────────
-  {
-    id: "first-mission",
-    name: "Primeira Missão",
-    description: "Conclua seu primeiro desafio na plataforma.",
-    theme: "beginner",
-    rarity: "comum",
-    predicate(context) {
-      return context.attempts.length >= 1;
-    },
-  },
-  {
-    id: "communicator-beginner",
-    name: "Comunicador Iniciante",
-    description: "Complete 3 desafios de Comunicação.",
-    theme: "communication",
-    rarity: "comum",
-    predicate(context) {
-      return countAttemptsByCategory(context.attempts, "Comunicação") >= 3;
-    },
-  },
-  {
-    id: "explorer",
-    name: "Explorador",
-    description: "Complete ao menos 1 desafio em 3 categorias diferentes.",
-    theme: "exploration",
-    rarity: "comum",
-    predicate(context) {
-      return countCategoriesWithAttempts(context.attempts) >= 3;
-    },
-  },
-  // ── Raro ──────────────────────────────────────────────────────────────────
-  {
-    id: "collaborative-dev",
-    name: "Dev Colaborativo",
-    description: "Complete todos os desafios de Trabalho em Equipe.",
-    theme: "teamwork",
-    rarity: "raro",
-    predicate(context) {
-      return isCategoryComplete(context.attempts, "Trabalho em Equipe");
-    },
-  },
-  {
-    id: "time-master",
-    name: "Mestre do Tempo",
-    description: "Complete todos os desafios de Gestão de Tempo.",
-    theme: "time",
-    rarity: "raro",
-    predicate(context) {
-      return isCategoryComplete(context.attempts, "Gestão de Tempo");
-    },
-  },
-  {
-    id: "conflict-mediator",
-    name: "Mediador de Conflitos",
-    description: "Obtenha resposta ideal nos dois desafios de conflito entre colegas.",
-    theme: "teamwork",
-    rarity: "raro",
-    // Desafios específicos de que a badge depende (o painel avisa antes de arquivá-los).
-    requiresChallenges: ["teamwork-closed-2", "teamwork-open-2"],
-    predicate(context) {
-      return this.requiresChallenges.every((id) => hasIdealAttempt(context.attempts, id));
-    },
-  },
-  // ── Épico ─────────────────────────────────────────────────────────────────
-  {
-    id: "specialist",
-    name: "Especialista",
-    description: "Complete todos os desafios de 4 categorias diferentes.",
-    theme: "mastery",
-    rarity: "epico",
-    predicate(context) {
-      return countCompletedCategories(context.attempts) >= 4;
-    },
-  },
-  {
-    id: "perfectionist",
-    name: "Perfeccionista",
-    description: "Acumule 15 respostas ideais no total.",
-    theme: "quality",
-    rarity: "epico",
-    predicate(context) {
-      return countIdealAttempts(context.attempts) >= 15;
-    },
-  },
-  {
-    id: "leader-in-formation",
-    name: "Líder em Formação",
-    description: "Alcance o nível 3.",
-    theme: "leadership",
-    rarity: "epico",
-    predicate(context) {
-      return context.level >= 3;
-    },
-  },
-  // ── Lendário ──────────────────────────────────────────────────────────────
-  {
-    id: "legendary-streak",
-    name: "Sequência Lendária",
-    description: `Alcance ${PERFECT_STREAK_TARGET} respostas ideais consecutivas.`,
-    theme: "streak",
-    rarity: "lendario",
-    predicate(context) {
-      return (context.gamification.perfectStreak || 0) >= PERFECT_STREAK_TARGET;
-    },
-  },
-  {
-    id: "full-dev",
-    name: "360° Dev",
-    description: "Complete todos os desafios da plataforma.",
-    theme: "master",
-    rarity: "lendario",
-    predicate(context) {
-      return getChallenges().length > 0 && context.attempts.length >= getChallenges().length;
-    },
-  },
-  {
-    id: "soft-skill-master",
-    name: "Soft Skill Master",
-    description: "Alcance o nível máximo da plataforma.",
-    theme: "legendary",
-    rarity: "lendario",
-    predicate(context) {
-      return context.level >= 5;
-    },
-  },
-];
 
 // Data (AAAA-MM-DD) no fuso da aplicação: o "dia" do bônus diário vira à meia-noite local,
 // não à meia-noite UTC (21h em Brasília).
@@ -403,28 +273,6 @@ function countAttemptsByCategory(attempts, category) {
   return attempts.filter((attempt) => attempt.category === category).length;
 }
 
-function hasIdealAttempt(attempts, challengeId) {
-  return attempts.some((attempt) => attempt.challengeId === challengeId && attempt.wasIdeal);
-}
-
-function countIdealAttempts(attempts) {
-  return attempts.filter((attempt) => attempt.wasIdeal).length;
-}
-
-function countCategoriesWithAttempts(attempts) {
-  return getCategories().filter((cat) => countAttemptsByCategory(attempts, cat) >= 1).length;
-}
-
-// Categoria completa = todos os desafios publicados dela respondidos (o total vem do catálogo).
-function isCategoryComplete(attempts, category) {
-  const total = countPublishedByCategory(category);
-  return total > 0 && countAttemptsByCategory(attempts, category) >= total;
-}
-
-function countCompletedCategories(attempts) {
-  return getCategories().filter((cat) => isCategoryComplete(attempts, cat)).length;
-}
-
 function getProgress(xp) {
   const safeXp = Math.max(Number(xp) || 0, 0);
   const currentLevel = getLevelDetails(safeXp);
@@ -464,20 +312,22 @@ function buildBadgeCatalog(user, userAttempts) {
   const savedBadges = new Map((user.badges || []).map((badge) => [badge.id, badge]));
   const context = { attempts, level, gamification: user.gamification || {} };
 
-  return BADGE_DEFINITIONS.map((definition) => {
-    const savedBadge = savedBadges.get(definition.id);
-    const unlocked = Boolean(savedBadge) || definition.predicate(context);
+  // Ativas, e as desativadas que a pessoa já ganhou (conquista não se perde).
+  return getBadges()
+    .filter((badge) => badge.active || savedBadges.has(badge.id))
+    .map((badge) => {
+      const savedBadge = savedBadges.get(badge.id);
+      const unlocked = Boolean(savedBadge) || (badge.active && evaluateRule(badge.rule, context));
 
-    return {
-      id: definition.id,
-      name: definition.name,
-      description: definition.description,
-      theme: definition.theme,
-      rarity: definition.rarity || "comum",
-      unlocked,
-      earnedAt: savedBadge?.earnedAt || null,
-    };
-  });
+      return {
+        id: badge.id,
+        name: badge.name,
+        description: badge.description,
+        rarity: badge.rarity,
+        unlocked,
+        earnedAt: savedBadge?.earnedAt || null,
+      };
+    });
 }
 
 function syncBadges(user, userAttempts) {
@@ -487,8 +337,8 @@ function syncBadges(user, userAttempts) {
   const unlockedNow = [];
   const context = { attempts, level, gamification: user.gamification || {} };
 
-  for (const definition of BADGE_DEFINITIONS) {
-    if (definition.predicate(context) && !existingIds.has(definition.id)) {
+  for (const definition of getActiveBadges()) {
+    if (!existingIds.has(definition.id) && evaluateRule(definition.rule, context)) {
       const rarity = definition.rarity || "comum";
       const xpBonus = BADGE_XP[rarity] || 0;
 
@@ -506,7 +356,6 @@ function syncBadges(user, userAttempts) {
         id: definition.id,
         name: definition.name,
         description: definition.description,
-        theme: definition.theme,
         rarity,
         xpBonus,
         unlocked: true,
@@ -677,11 +526,11 @@ function buildRetryResult({ challenge, score, feedback, previousAttempts }) {
   };
 }
 
-// Badges que deixam de ser alcançáveis se este desafio sair do catálogo.
+// Badges ativas que deixam de ser alcançáveis se este desafio sair do catálogo.
 function findBadgesRequiringChallenge(challengeId) {
-  return BADGE_DEFINITIONS.filter((badge) => badge.requiresChallenges?.includes(challengeId)).map(
-    (badge) => ({ id: badge.id, name: badge.name }),
-  );
+  return getActiveBadges()
+    .filter((badge) => badge.rule?.desafios?.includes(challengeId))
+    .map((badge) => ({ id: badge.id, name: badge.name }));
 }
 
 module.exports = {
@@ -698,7 +547,6 @@ module.exports = {
   DEFAULT_AVATAR,
   AVATAR_CATALOG,
   BADGE_XP,
-  BADGE_DEFINITIONS,
   getTodayKey,
   isYesterdayKey,
   getLevelDetails,
@@ -717,10 +565,6 @@ module.exports = {
   tierXp,
   buildRetryResult,
   countAttemptsByCategory,
-  hasIdealAttempt,
-  countIdealAttempts,
-  countCategoriesWithAttempts,
-  countCompletedCategories,
   getProgress,
   buildBadgeCatalog,
   syncBadges,

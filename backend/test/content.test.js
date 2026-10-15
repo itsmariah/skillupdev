@@ -5,7 +5,8 @@ const assert = require("node:assert/strict");
 
 const { CHALLENGES, ALL_CATEGORIES } = require("../src/content/challenges");
 const { COMPETENCIES, SKILLS, getSkillById } = require("../src/content/competencies");
-const { BADGE_DEFINITIONS, BADGE_XP } = require("../src/services/gamification");
+const { BADGE_XP, SEED_BADGES } = require("../src/content/badges");
+const { validateBadge } = require("../src/services/badges");
 
 test("há 30 desafios com ids únicos", () => {
   assert.equal(CHALLENGES.length, 30);
@@ -55,25 +56,24 @@ test("todo desafio é aberto ou fechado", () => {
   }
 });
 
-test("badges citam apenas desafios que existem", () => {
+test("semente de badges: regras válidas que citam só desafios existentes", () => {
   const ids = new Set(CHALLENGES.map((challenge) => challenge.id));
 
-  for (const definition of BADGE_DEFINITIONS) {
-    const referencedIds =
-      definition.predicate.toString().match(/[a-z]+(?:-[a-z]+)*-(?:open|closed)-\d+/g) || [];
-
-    for (const referencedId of referencedIds) {
-      assert.ok(ids.has(referencedId), `${definition.id} cita ${referencedId}`);
-    }
+  for (const badge of SEED_BADGES) {
+    const { errors, badge: normalized } = validateBadge(badge, ids);
+    assert.deepEqual(errors, [], badge.id);
+    assert.deepEqual(normalized.rule, badge.rule, `${badge.id}: regra muda ao validar`);
   }
 });
 
-test("badges têm id único e raridade com XP definido", () => {
-  assert.equal(new Set(BADGE_DEFINITIONS.map((badge) => badge.id)).size, BADGE_DEFINITIONS.length);
+test("semente de badges: id único, raridade com XP e as 12 originais ativas", () => {
+  assert.equal(new Set(SEED_BADGES.map((badge) => badge.id)).size, SEED_BADGES.length);
 
-  for (const definition of BADGE_DEFINITIONS) {
-    assert.ok(definition.rarity in BADGE_XP, definition.id);
+  for (const badge of SEED_BADGES) {
+    assert.ok(badge.rarity in BADGE_XP, badge.id);
   }
+
+  assert.equal(SEED_BADGES.filter((badge) => badge.active).length, 12);
 });
 
 test("taxonomia: 10 competências (as 5 da semente e mais 5), com 3 a 4 habilidades cada", () => {

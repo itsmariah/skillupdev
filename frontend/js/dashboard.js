@@ -383,6 +383,7 @@
       return;
     }
 
+    // Nome e descrição vêm do painel admin: sempre escapar.
     const badgeCatalog = Array.isArray(user.badgeCatalog) ? user.badgeCatalog : [];
 
     if (badgeCatalog.length === 0) {
@@ -401,13 +402,13 @@
         const statusLabel = badge.unlocked ? "Desbloqueada" : "Bloqueada";
         const rarityLabel = RARITY_LABEL[rarity] || rarity;
         return `
-          <article class="badge-card ${badge.unlocked ? "unlocked" : "locked"} rarity-${rarity}">
-            <div class="badge-mark">${badge.name.charAt(0)}</div>
+          <article class="badge-card ${badge.unlocked ? "unlocked" : "locked"} rarity-${escapeHtml(rarity)}">
+            <div class="badge-mark" aria-hidden="true">${escapeHtml(badge.name.charAt(0))}</div>
             <div class="badge-body">
-              <h3 class="h4">${badge.name}</h3>
-              <p>${badge.description}</p>
+              <h3 class="h4">${escapeHtml(badge.name)}</h3>
+              <p>${escapeHtml(badge.description)}</p>
               <div class="badge-footer">
-                <span class="badge-rarity rarity-${rarity}">${rarityLabel}</span>
+                <span class="badge-rarity rarity-${escapeHtml(rarity)}">${escapeHtml(rarityLabel)}</span>
                 <span class="badge-status">${statusLabel}</span>
               </div>
             </div>

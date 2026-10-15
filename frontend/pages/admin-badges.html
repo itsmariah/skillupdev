@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+  <title>Badges - Painel Admin - SkillUp Dev</title>
+
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="../js/api.js" defer></script>
+  <script src="../js/main.js" defer></script>
+  <script src="../js/auth.js" defer></script>
+  <script src="../js/admin-badges.js" defer></script>
+</head>
+<body data-page="admin-badges">
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div id="code-particles" aria-hidden="true"></div>
+
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark navbar-custom">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="../index.html">
+        <img src="../assets/images/SkillUpDevLogoSemNome.webp" width="52" height="35" class="me-2" alt="">
+        <span>SkillUp Dev</span>
+      </a>
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <a class="nav-link text-white" href="admin.html">Estudo</a>
+        <a class="nav-link text-white" href="admin-content.html">Conteúdo</a>
+        <a class="nav-link text-white me-2" href="admin-badges.html" aria-current="page">Badges</a>
+        <button id="logoutBtn" class="btn btn-outline-light">Sair</button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo" class="dashboard-section" tabindex="-1">
+    <div class="container">
+      <div class="dashboard-header">
+        <div>
+          <p class="dashboard-kicker">Painel do administrador</p>
+          <h1 class="h2">Badges</h1>
+          <p>Badges nascem desativadas. Ao ativar, quem já cumpre a regra recebe a badge na próxima resposta ou no próximo acesso do dia. Quem já ganhou uma badge nunca a perde.</p>
+        </div>
+        <button id="newBadgeBtn" class="btn btn-primary dashboard-cta" type="button">Nova badge</button>
+      </div>
+
+      <div id="badgeFeedback" class="alert d-none mt-3" role="alert"></div>
+
+      <!-- Lista -->
+      <section id="listView" class="dashboard-panel mt-4" aria-labelledby="listTitle">
+        <h2 id="listTitle" class="visually-hidden">Badges</h2>
+        <form id="listFilters" class="history-filters" aria-label="Filtrar badges">
+          <div>
+            <label for="filterActive" class="form-label">Status</label>
+            <select id="filterActive" class="form-select">
+              <option value="">Todas</option>
+              <option value="ativa">Ativas</option>
+              <option value="inativa">Desativadas</option>
+            </select>
+          </div>
+        </form>
+
+        <p id="listCount" class="history-count" aria-live="polite"></p>
+        <div class="table-responsive">
+          <table class="table admin-table content-table mb-0">
+            <thead>
+              <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Regra</th>
+                <th scope="col">Raridade</th>
+                <th scope="col">Status</th>
+                <th scope="col">Conquistas</th>
+                <th scope="col"><span class="visually-hidden">Ações</span></th>
+              </tr>
+            </thead>
+            <tbody id="badgeRows">
+              <tr><td colspan="6">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Editor -->
+      <section id="editorView" class="mt-4 d-none" aria-labelledby="editorTitle">
+        <button id="backToListBtn" class="btn btn-light mb-3" type="button">← Voltar para a lista</button>
+
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <div class="dashboard-panel">
+              <div class="dashboard-panel-header">
+                <div>
+                  <h2 id="editorTitle" class="h3">Nova badge</h2>
+                  <p id="editorStatus"></p>
+                </div>
+              </div>
+
+              <div id="editorErrors" class="alert alert-danger d-none" role="alert" tabindex="-1"></div>
+
+              <form id="badgeForm" class="account-form" novalidate>
+                <div class="mb-3">
+                  <label for="fieldName" class="form-label">Nome</label>
+                  <input id="fieldName" class="form-control" maxlength="60" required>
+                </div>
+
+                <div class="mb-3">
+                  <label for="fieldDescription" class="form-label">Descrição</label>
+                  <textarea id="fieldDescription" class="form-control" rows="2" maxlength="200" required
+                    aria-describedby="descriptionHint"></textarea>
+                  <p id="descriptionHint" class="form-hint">O que a pessoa precisa fazer, do jeito que aparece no dashboard.</p>
+                </div>
+
+                <div class="mb-3">
+                  <label for="fieldRarity" class="form-label">Raridade</label>
+                  <select id="fieldRarity" class="form-select" required aria-describedby="rarityHint"></select>
+                  <p id="rarityHint" class="form-hint">A raridade define o XP bônus de quem conquista.</p>
+                </div>
+
+                <fieldset class="mb-3">
+                  <legend class="form-label fs-6">Regra</legend>
+                  <label for="fieldRuleType" class="visually-hidden">Tipo de regra</label>
+                  <select id="fieldRuleType" class="form-select" aria-describedby="ruleTypeHint"></select>
+                  <p id="ruleTypeHint" class="form-hint"></p>
+                  <div id="ruleParams" class="rule-params"></div>
+                </fieldset>
+
+                <div class="d-flex flex-wrap gap-2">
+                  <button id="saveBtn" class="btn btn-primary" type="submit">Salvar</button>
+                  <button id="toggleActiveBtn" class="btn btn-success d-none" type="button">Ativar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="col-lg-5">
+            <div class="dashboard-panel">
+              <div class="dashboard-panel-header">
+                <div>
+                  <h2 class="h3">Prévia</h2>
+                  <p>Como a badge aparece no dashboard, já conquistada.</p>
+                </div>
+              </div>
+              <div id="preview" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

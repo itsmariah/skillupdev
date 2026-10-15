@@ -155,7 +155,7 @@ Passar de "responder uma vez" para "praticar e evoluir".
 - [x] Várias tentativas por desafio e nota por critério
 - [x] Diário de reflexão após o feedback
 - [x] Trilhas por competência com dificuldade progressiva
-- [ ] Badges por regras configuráveis
+- [x] Badges por regras configuráveis
 
 ### Fase 4 — IA `P2`
 
