@@ -1,0 +1,99 @@
+{
+  "lote": "03 - Resolução de Problemas",
+  "desafios": [
+    {
+      "tipo": "fechado",
+      "categoria": "Resolução de Problemas",
+      "dificuldade": "basico",
+      "habilidades": ["proatividade", "investigacao"],
+      "titulo": "O Alerta que Ninguém Olha",
+      "pergunta": "Olhando o painel de monitoramento por outro motivo, você percebe que o disco do servidor de banco de dados está em 85% e subiu um pouco a cada semana do último mês. Ninguém comentou nada e o servidor não é responsabilidade sua. O que você faz?",
+      "descricao": "Escolha a atitude que você tomaria.",
+      "dica": "Quem vê um problema chegando tem a chance mais barata de evitá-lo. Leve os dados a quem pode agir e mostre quando ele vira urgente.",
+      "respostas": [
+        {
+          "texto": "Abro um chamado para o time responsável com o gráfico, a taxa de crescimento e uma estimativa de quando o disco enche, e aviso a pessoa de plantão.",
+          "xp": 100,
+          "feedback": "Ótimo. Você transformou uma observação num aviso que ninguém pode ignorar: com a estimativa de prazo, o time sabe quanto tempo tem para agir."
+        },
+        {
+          "texto": "Comento no canal geral que o disco parece estar enchendo, para quem for responsável ver.",
+          "xp": 40,
+          "feedback": "Você não ficou calado, mas um aviso solto no canal geral, sem dados nem dono, costuma se perder. Dirija ao time certo e mostre o tamanho do risco."
+        },
+        {
+          "texto": "Não faço nada. Se fosse um problema, o time de infraestrutura já teria visto.",
+          "xp": 5,
+          "feedback": "Supor que alguém já viu é o motivo mais comum de alertas ignorados. Quando o disco encher, o banco para e o problema vira incidente."
+        }
+      ]
+    },
+    {
+      "tipo": "fechado",
+      "categoria": "Resolução de Problemas",
+      "dificuldade": "intermediario",
+      "habilidades": ["visao-tecnica", "proatividade"],
+      "titulo": "Correção Rápida ou Correção Certa",
+      "pergunta": "Um cliente reportou datas aparecendo no formato errado na fatura. Investigando, você descobre que cada parte do sistema formata datas do seu jeito: corrigir só a fatura leva uma hora; centralizar a formatação leva um dia e mexe em várias telas. A versão sai amanhã. O que você faz?",
+      "descricao": "O cliente está esperando a correção e a equipe está com a agenda cheia.",
+      "dica": "Nem sempre dá para fazer a correção certa agora, mas dá para não esquecê-la. Resolva o que o cliente sente, verifique se o mesmo problema já aparece em outro lugar e registre a correção definitiva com o que você descobriu.",
+      "respostas": [
+        {
+          "texto": "Corrijo a fatura para a versão de amanhã, verifico se outras telas já mostram datas erradas e registro a centralização como tarefa, com os pontos que encontrei.",
+          "xp": 100,
+          "feedback": "Perfeito. O cliente é atendido no prazo, você confere se o problema já afeta outros usuários e a causa estrutural vira trabalho planejado em vez de surpresa futura."
+        },
+        {
+          "texto": "Faço a centralização completa agora, mesmo que precise adiar a versão, porque é a solução correta.",
+          "xp": 40,
+          "feedback": "A solução é tecnicamente melhor, mas uma mudança que mexe em várias telas às vésperas da versão aumenta o risco e atrasa o que o cliente pediu. Dá para ter as duas coisas em etapas."
+        },
+        {
+          "texto": "Corrijo só a fatura e sigo para a próxima tarefa. As outras telas não foram reportadas.",
+          "xp": 5,
+          "feedback": "Você resolveu o sintoma e guardou a causa só para você. O próximo erro de data vai custar uma nova investigação do zero."
+        }
+      ]
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Resolução de Problemas",
+      "dificuldade": "intermediario",
+      "habilidades": ["investigacao", "metodo-raciocinio"],
+      "titulo": "O Número que Não Bate",
+      "pergunta": "O painel de vendas que o seu time mantém mostra um faturamento 8% menor que a planilha do financeiro para o mês passado. O financeiro diz que a planilha deles está certa e quer saber, até sexta, qual número usar na reunião com a diretoria. Como você investiga a diferença?",
+      "descricao": "Explique por onde começaria, que hipóteses testaria e como apresentaria o resultado.",
+      "dica": "Diferença entre dois números se resolve comparando definições antes de procurar bugs: o que cada um conta, em que período, em que fuso, com quais cancelamentos. Depois, reduza a diferença por partes até sobrar a causa."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Resolução de Problemas",
+      "dificuldade": "avancado",
+      "habilidades": ["investigacao", "metodo-raciocinio", "proatividade"],
+      "titulo": "O Problema que Volta Toda Sexta",
+      "pergunta": "Há dois meses, quase toda sexta à noite, a fila de processamento de pedidos trava e alguém de plantão reinicia o serviço. Já foram quatro remendos diferentes e ninguém encontrou a causa. O time está cansado dos plantões e a gestão pediu que você resolva de vez. Como você conduz isso?",
+      "descricao": "Descreva o plano de investigação, o que faria enquanto a causa não aparece e como evitaria que o problema voltasse.",
+      "dica": "Problema recorrente pede dados de várias ocorrências, não de uma: compare o que as sextas têm em comum, registre mais informação na próxima falha, alivie quem está de plantão enquanto investiga e só declare o problema resolvido quando entender por que ele acontecia."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Resolução de Problemas",
+      "dificuldade": "avancado",
+      "habilidades": ["visao-tecnica", "considerar-alternativas", "clareza-objetividade"],
+      "titulo": "Construir ou Contratar",
+      "pergunta": "A busca do produto é lenta e os clientes reclamam. Há duas propostas: construir uma solução própria com um motor de busca de código aberto (o time acha que leva dois meses) ou contratar um serviço pronto (rápido de integrar, mas com custo mensal que cresce com o uso e dependência de um fornecedor). O time está dividido e a decisão precisa sair em uma semana. Você ficou responsável pela recomendação. Como chega a ela?",
+      "descricao": "Explique o que levantaria, como compararia as opções e como apresentaria a recomendação.",
+      "dica": "Uma boa recomendação técnica compara as opções pelos mesmos critérios (custo ao longo do tempo, risco, esforço de manutenção, prazo), testa as premissas mais incertas com algo pequeno e deixa claro o que faria você mudar de ideia."
+    },
+    {
+      "tipo": "aberto",
+      "categoria": "Resolução de Problemas",
+      "dificuldade": "avancado",
+      "habilidades": ["investigacao", "proatividade", "aprender-erros"],
+      "titulo": "Análise Pós-Incidente Sem Culpados",
+      "pergunta": "Um script de limpeza que deveria rodar no ambiente de testes foi executado na produção e apagou registros de clientes. Os dados foram recuperados do backup, mas houve seis horas de transtorno. Você vai conduzir a análise do incidente. Parte da gestão quer saber 'quem rodou o script', e a pessoa que rodou está abalada. Como você conduz a análise?",
+      "descricao": "Descreva como investigaria o que aconteceu, como lidaria com a pressão por um culpado e o que sairia da análise.",
+      "dica": "Se um erro humano conseguiu apagar a produção, o problema é o sistema que permitiu isso. Reconstrua a linha do tempo, pergunte por que cada barreira falhou e saia com ações concretas, com dono e prazo, que tornem o mesmo erro impossível ou inofensivo."
+    }
+  ]
+}
