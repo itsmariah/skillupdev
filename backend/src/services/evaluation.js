@@ -284,17 +284,20 @@ function interpretEvaluation(parsed, criteria) {
   };
 }
 
+// A reserva aplica o mesmo limite de nota da IA quando detecta tentativa de manipulação.
 function heuristicEvaluation(resposta, criteria, fallbackReason) {
   const result = buildHeuristicFeedback(resposta, criteria);
+  const flaggedManipulation = detectManipulation(resposta);
 
   return {
     ...result,
+    nota: flaggedManipulation ? Math.min(result.nota, MANIPULATION_SCORE_CAP) : result.nota,
     evaluation: {
       evaluator: "heuristic",
       model: null,
       promptVersion: null,
       fallbackReason,
-      flaggedManipulation: detectManipulation(resposta),
+      flaggedManipulation,
     },
   };
 }

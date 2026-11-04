@@ -13,7 +13,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "content:import": "node backend/scripts/import-challenge-drafts.js"
+    "content:import": "node backend/scripts/import-challenge-drafts.js",
+    "eval:ai": "node backend/scripts/eval-evaluator.js"
   },
   "repository": {
     "type": "git",

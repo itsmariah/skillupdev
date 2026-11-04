@@ -7,3 +7,5 @@ package-lock.json
 *.html
 *.css
 *.md
+# Gerado pelo npm run eval:ai -- --salvar-base
+backend/evals/baseline.json
