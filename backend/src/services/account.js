@@ -5,7 +5,13 @@ const { getChallengeVersion } = require("../content/catalog");
 
 const EXPORT_FORMAT_VERSION = 1;
 
-function buildAccountExport({ user, attempts, studyResponses, exportedAt = new Date() }) {
+function buildAccountExport({
+  user,
+  attempts,
+  studyResponses,
+  coachSummary = null,
+  exportedAt = new Date(),
+}) {
   return {
     formato: { nome: "skillupdev-export", versao: EXPORT_FORMAT_VERSION },
     exportadoEm: exportedAt.toISOString(),
@@ -50,6 +56,13 @@ function buildAccountExport({ user, attempts, studyResponses, exportedAt = new D
         ? { texto: attempt.reflection, atualizadaEm: attempt.reflectionUpdatedAt }
         : null,
     })),
+    resumoDoCoach: coachSummary
+      ? {
+          ...coachSummary.summary,
+          geradoEm: coachSummary.generatedAt,
+          avaliador: coachSummary.evaluator,
+        }
+      : null,
     estudoPiloto: studyResponses.map((response) => ({
       questionario: response.type,
       versaoDoEstudo: response.studyVersion,

@@ -78,6 +78,14 @@ const challengeSubmitLimiter = createLimiter({
   message: "Muitos envios em pouco tempo. Aguarde alguns minutos e tente de novo.",
 });
 
+// Por conta: cada resumo de evolução gerado pode custar uma chamada à OpenAI.
+const coachSummaryLimiter = createLimiter({
+  windowMs: 60 * MINUTE,
+  limit: 10,
+  keyGenerator: byUser,
+  message: "Muitos pedidos de resumo. Tente novamente mais tarde.",
+});
+
 // Por conta: só tentativas com senha errada contam, para não virar teste de senha.
 const accountSecurityLimiter = createLimiter({
   windowMs: 15 * MINUTE,
@@ -97,4 +105,5 @@ module.exports = {
   resetPasswordLimiter,
   challengeSubmitLimiter,
   accountSecurityLimiter,
+  coachSummaryLimiter,
 };

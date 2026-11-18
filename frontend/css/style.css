@@ -2565,6 +2565,66 @@
       }
 /* FIM VÁRIAS TENTATIVAS */
 
+/* COACH: PRÓXIMO PASSO E RESUMO */
+      .coach-recommendations {
+         display: grid;
+         gap: var(--space-3);
+      }
+
+      .coach-recommendation {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         gap: var(--space-3);
+         padding: 14px 16px;
+         border-radius: var(--radius-md);
+         background: var(--color-surface-soft);
+         border: 1px solid transparent;
+      }
+
+      .coach-recommendation-main {
+         border-color: var(--color-primary-soft);
+      }
+
+      .coach-recommendation-body {
+         min-width: 0;
+      }
+
+      .coach-recommendation .recent-feedback-meta {
+         display: flex;
+         align-items: center;
+         gap: 6px;
+         margin-bottom: 2px;
+      }
+
+      .coach-recommendation-reason {
+         margin: 4px 0 0;
+         color: var(--color-ink-soft);
+         font-size: var(--font-size-sm);
+      }
+
+      .coach-recommendation .btn {
+         flex-shrink: 0;
+      }
+
+      .coach-summary p {
+         margin-bottom: var(--space-2);
+      }
+
+      .coach-summary-note {
+         margin-top: var(--space-3);
+         font-size: 0.85rem;
+         color: var(--color-text-muted);
+      }
+
+      @media (max-width: 575px) {
+         .coach-recommendation {
+            flex-direction: column;
+            align-items: stretch;
+         }
+      }
+/* FIM COACH */
+
 /* DIÁRIO DE REFLEXÃO */
       .reflection-box {
          margin-top: var(--space-4);

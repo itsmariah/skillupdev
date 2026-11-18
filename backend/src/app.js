@@ -7,6 +7,7 @@ const { createSameOriginCheck } = require("./middleware/origin");
 const { apiLimiter } = require("./middleware/rateLimits");
 const authRoutes = require("./routes/auth");
 const meRoutes = require("./routes/me");
+const coachRoutes = require("./routes/coach");
 const challengeRoutes = require("./routes/challenges");
 const studyRoutes = require("./routes/study");
 const adminRoutes = require("./routes/admin");
@@ -59,6 +60,7 @@ app.get("/api/config", (_req, res) => {
 
 app.use(authRoutes);
 app.use(meRoutes);
+app.use(coachRoutes);
 app.use(challengeRoutes);
 app.use(studyRoutes);
 app.use(adminRoutes);

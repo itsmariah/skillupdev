@@ -115,6 +115,12 @@
     getTrails() {
       return request("/api/trails");
     },
+    getCoach() {
+      return request("/api/me/coach");
+    },
+    generateCoachSummary() {
+      return request("/api/me/coach/summary", { method: "POST" });
+    },
     login(credentials) {
       return request("/api/auth/login", {
         method: "POST",

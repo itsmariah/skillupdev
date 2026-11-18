@@ -27,4 +27,5 @@ module.exports = {
   ...require("./studyResponses"),
   ...require("./challenges"),
   ...require("./badges"),
+  ...require("./coachSummaries"),
 };

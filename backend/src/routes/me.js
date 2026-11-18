@@ -150,14 +150,17 @@ router.post("/api/me/password", passwordProtected, async (req, res) => {
 
 router.get("/api/me/export", authenticateRequest, async (req, res) => {
   const exportedAt = new Date();
-  const [attempts, studyResponses] = await Promise.all([
+  const [attempts, studyResponses, coachSummary] = await Promise.all([
     db.listAttemptsByUser(req.user.id),
     db.listStudyResponsesByUser(req.user.id),
+    db.findCoachSummary(req.user.id),
   ]);
 
   res.setHeader("Content-Disposition", `attachment; filename=${exportFileName(exportedAt)}`);
   res.setHeader("Cache-Control", "no-store");
-  res.json(buildAccountExport({ user: req.user, attempts, studyResponses, exportedAt }));
+  res.json(
+    buildAccountExport({ user: req.user, attempts, studyResponses, coachSummary, exportedAt }),
+  );
 });
 
 router.delete("/api/me", passwordProtected, async (req, res) => {

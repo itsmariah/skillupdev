@@ -523,13 +523,136 @@
       .join("");
   }
 
-  function renderDashboard(user, history, visitReward) {
+  const DIFFICULTY_LABELS = {
+    basico: "Básico",
+    intermediario: "Intermediário",
+    avancado: "Avançado",
+  };
+  const RECOMMENDATION_ACTIONS = { refazer: "Refazer", comecar: "Começar" };
+
+  function renderRecommendations(coach) {
+    const container = document.getElementById("coachRecommendations");
+    if (!container) {
+      return;
+    }
+
+    if (!coach) {
+      container.innerHTML =
+        '<p class="dashboard-empty">Não foi possível carregar as sugestões agora.</p>';
+      return;
+    }
+
+    if (coach.recomendacoes.length === 0) {
+      container.innerHTML =
+        '<p class="dashboard-empty">Você respondeu todos os desafios liberados. Refaça os abertos para melhorar suas notas.</p>';
+      return;
+    }
+
+    container.innerHTML = coach.recomendacoes
+      .map((item, index) => {
+        const icon = window.skillUpIcons?.categoryIcon(item.trilha.nome, "category-icon") || "";
+        const meta = [
+          item.trilha.nome,
+          DIFFICULTY_LABELS[item.desafio.dificuldade] || item.desafio.dificuldade,
+          item.desafio.tipo === "aberto" ? "Resposta aberta" : "Múltipla escolha",
+        ].join(" · ");
+        const action = RECOMMENDATION_ACTIONS[item.tipo] || "Praticar";
+        const main = index === 0;
+        const href = `challenges.html?desafio=${encodeURIComponent(item.desafio.id)}`;
+        return `
+          <article class="coach-recommendation${main ? " coach-recommendation-main" : ""}">
+            <div class="coach-recommendation-body">
+              <p class="recent-feedback-meta">${icon}${escapeHtml(meta)}</p>
+              <strong>${escapeHtml(item.desafio.titulo)}</strong>
+              <p class="coach-recommendation-reason">${escapeHtml(item.motivo)}</p>
+            </div>
+            <a class="btn btn-sm ${main ? "btn-primary" : "btn-outline-primary"}" href="${href}">
+              ${action}<span class="visually-hidden">: ${escapeHtml(item.desafio.titulo)}</span>
+            </a>
+          </article>
+        `;
+      })
+      .join("");
+  }
+
+  function formatDate(value) {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString("pt-BR");
+  }
+
+  function renderCoachSummary(coach, errorMessage = "") {
+    const container = document.getElementById("coachSummary");
+    if (!container) {
+      return;
+    }
+
+    if (!coach) {
+      container.innerHTML =
+        '<p class="dashboard-empty">Não foi possível carregar o resumo agora.</p>';
+      return;
+    }
+
+    if (!coach.podeGerarResumo) {
+      container.innerHTML = `<p class="dashboard-empty">Responda pelo menos ${escapeHtml(coach.minimoDeDesafios)} desafios para receber um resumo da sua evolução.</p>`;
+      return;
+    }
+
+    const summary = coach.resumo;
+    const button = (label) =>
+      `<button type="button" id="coachSummaryBtn" class="btn btn-outline-primary w-100 mt-3">${label}</button>`;
+    const errorMarkup = errorMessage
+      ? `<p class="alert alert-warning mt-3 mb-0" role="alert">${escapeHtml(errorMessage)}</p>`
+      : "";
+
+    if (!summary) {
+      container.innerHTML = `
+        <p class="dashboard-empty">Gere um resumo com o que está indo bem e onde vale focar agora.</p>
+        ${button("Gerar resumo")}
+        <p class="coach-summary-note">Feito por IA a partir das suas notas. Suas respostas não são enviadas.</p>
+        ${errorMarkup}
+      `;
+    } else {
+      const note =
+        summary.avaliador === "heuristic"
+          ? "Resumo automático simplificado (a IA não estava disponível)."
+          : "Feito por IA a partir das suas notas. Pode errar: use como apoio.";
+      container.innerHTML = `
+        <p>${escapeHtml(summary.resumo)}</p>
+        ${summary.pontosFortes ? `<p><strong>Pontos fortes:</strong> ${escapeHtml(summary.pontosFortes)}</p>` : ""}
+        <p><strong>Foco agora:</strong> ${escapeHtml(summary.foco)}</p>
+        <p class="coach-summary-note">${escapeHtml(note)} Gerado em ${escapeHtml(formatDate(summary.geradoEm))}.</p>
+        ${coach.resumoDesatualizado ? button("Atualizar com as tentativas novas") : ""}
+        ${errorMarkup}
+      `;
+    }
+
+    document.getElementById("coachSummaryBtn")?.addEventListener("click", handleSummaryClick);
+  }
+
+  async function handleSummaryClick(event) {
+    const btn = event.currentTarget;
+    btn.disabled = true;
+    btn.textContent = "Gerando resumo...";
+
+    try {
+      const coach = await window.skillUpApi.generateCoachSummary();
+      renderRecommendations(coach);
+      renderCoachSummary(coach);
+    } catch (error) {
+      const coach = await window.skillUpApi.getCoach().catch(() => null);
+      renderCoachSummary(coach, error.message);
+    }
+  }
+
+  function renderDashboard(user, history, visitReward, coach) {
     dashboardUser = user;
     renderRewardBanner(user, visitReward);
     renderProgressSummary(user);
     renderBadgeCatalog(user);
     renderCategoryProgress(user, history?.evolution);
     renderRecentFeedback(history);
+    renderRecommendations(coach);
+    renderCoachSummary(coach);
     renderAvatarBuilder(user);
     bindAvatarControls();
   }
@@ -546,13 +669,14 @@
     document.getElementById("logoutBtn")?.addEventListener("click", () => window.logout());
 
     try {
-      // O histórico é complementar: se falhar, o dashboard abre mesmo assim.
-      const [payload, history] = await Promise.all([
+      // Histórico e coach são complementares: se falharem, o dashboard abre mesmo assim.
+      const [payload, history, coach] = await Promise.all([
         window.skillUpApi.getMe(),
         window.skillUpApi.getHistory().catch(() => null),
+        window.skillUpApi.getCoach().catch(() => null),
       ]);
       window.skillUpAuth.updateStoredUser(payload.user);
-      renderDashboard(payload.user, history, payload.dailyLoginReward);
+      renderDashboard(payload.user, history, payload.dailyLoginReward, coach);
       window.skillUpStudy?.checkAndShowPostBanner(payload.user);
     } catch (_error) {
       window.skillUpApi.clearSession();
