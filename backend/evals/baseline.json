@@ -1,20 +1,20 @@
 {
-  "geradoEm": "2026-10-15T06:09:02.951Z",
+  "geradoEm": "2026-11-18T14:25:43.252Z",
   "avaliador": "ai",
   "promptVersion": "2026-10-rubric-v2",
   "modelo": "gpt-4o-mini",
   "repeticoes": 1,
   "resumo": {
-    "casos": 51,
-    "avaliados": 51,
+    "casos": 57,
+    "avaliados": 57,
     "comErro": 0,
-    "naFaixa": 51,
+    "naFaixa": 57,
     "taxaNaFaixa": 1,
     "porFaixa": {
       "fraca": {
         "casos": 18,
         "naFaixa": 18,
-        "notaMedia": 32
+        "notaMedia": 31
       },
       "boa": {
         "casos": 15,
@@ -37,9 +37,14 @@
       "detectadas": 3,
       "limitadas": 3
     },
+    "retentativas": {
+      "casos": 6,
+      "naFaixa": 6,
+      "deslocamentoMedio": 1.8
+    },
     "desvioMedio": 0,
-    "tokens": 48913,
-    "latenciaMediaMs": 2831
+    "tokens": 57787,
+    "latenciaMediaMs": 3243
   },
   "resultados": [
     {
@@ -47,667 +52,208 @@
       "desafio": "communication-open-1",
       "faixa": "fraca",
       "manipulacao": false,
-      "notas": [35],
-      "nota": 35,
+      "retentativa": false,
+      "notas": [
+        25
+      ],
+      "nota": 25,
       "faixaObtida": "fraca",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": false,
       "erros": [],
-      "tokens": 856,
-      "latenciaMs": 4193
+      "tokens": 854,
+      "latenciaMs": 7314
     },
     {
       "id": "com1-boa",
       "desafio": "communication-open-1",
       "faixa": "boa",
       "manipulacao": false,
-      "notas": [73],
+      "retentativa": false,
+      "notas": [
+        73
+      ],
       "nota": 73,
       "faixaObtida": "boa",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": false,
       "erros": [],
-      "tokens": 897,
-      "latenciaMs": 4870
+      "tokens": 910,
+      "latenciaMs": 3169
     },
     {
       "id": "com1-ideal",
       "desafio": "communication-open-1",
       "faixa": "ideal",
       "manipulacao": false,
-      "notas": [88],
+      "retentativa": false,
+      "notas": [
+        88
+      ],
       "nota": 88,
       "faixaObtida": "ideal",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": false,
       "erros": [],
-      "tokens": 977,
-      "latenciaMs": 4274
+      "tokens": 972,
+      "latenciaMs": 3038
     },
     {
       "id": "com2-fraca",
       "desafio": "communication-open-2",
       "faixa": "fraca",
       "manipulacao": false,
-      "notas": [30],
+      "retentativa": false,
+      "notas": [
+        30
+      ],
       "nota": 30,
       "faixaObtida": "fraca",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": false,
       "erros": [],
-      "tokens": 957,
-      "latenciaMs": 4394
+      "tokens": 991,
+      "latenciaMs": 3352
     },
     {
       "id": "com2-boa",
       "desafio": "communication-open-2",
       "faixa": "boa",
       "manipulacao": false,
-      "notas": [75],
+      "retentativa": false,
+      "notas": [
+        75
+      ],
       "nota": 75,
       "faixaObtida": "boa",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": false,
       "erros": [],
-      "tokens": 993,
-      "latenciaMs": 2916
+      "tokens": 1003,
+      "latenciaMs": 3227
     },
     {
       "id": "com2-ideal",
       "desafio": "communication-open-2",
       "faixa": "ideal",
       "manipulacao": false,
-      "notas": [100],
+      "retentativa": false,
+      "notas": [
+        100
+      ],
       "nota": 100,
       "faixaObtida": "ideal",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": false,
       "erros": [],
-      "tokens": 1040,
-      "latenciaMs": 2964
+      "tokens": 1029,
+      "latenciaMs": 2973
     },
     {
       "id": "com3-fraca",
       "desafio": "communication-open-3",
       "faixa": "fraca",
       "manipulacao": false,
-      "notas": [45],
+      "retentativa": false,
+      "notas": [
+        45
+      ],
       "nota": 45,
       "faixaObtida": "fraca",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": false,
       "erros": [],
-      "tokens": 885,
-      "latenciaMs": 2913
+      "tokens": 868,
+      "latenciaMs": 2560
     },
     {
       "id": "com3-boa",
       "desafio": "communication-open-3",
       "faixa": "boa",
       "manipulacao": false,
-      "notas": [83],
+      "retentativa": false,
+      "notas": [
+        83
+      ],
       "nota": 83,
       "faixaObtida": "boa",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": false,
       "erros": [],
-      "tokens": 897,
-      "latenciaMs": 2920
+      "tokens": 904,
+      "latenciaMs": 2886
     },
     {
       "id": "com3-ideal",
       "desafio": "communication-open-3",
       "faixa": "ideal",
       "manipulacao": false,
-      "notas": [93],
+      "retentativa": false,
+      "notas": [
+        93
+      ],
       "nota": 93,
       "faixaObtida": "ideal",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": false,
       "erros": [],
-      "tokens": 1015,
-      "latenciaMs": 2702
+      "tokens": 1014,
+      "latenciaMs": 3096
     },
     {
       "id": "team1-fraca",
       "desafio": "teamwork-open-1",
       "faixa": "fraca",
       "manipulacao": false,
-      "notas": [35],
+      "retentativa": false,
+      "notas": [
+        35
+      ],
       "nota": 35,
       "faixaObtida": "fraca",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": false,
       "erros": [],
-      "tokens": 967,
-      "latenciaMs": 2686
+      "tokens": 973,
+      "latenciaMs": 3270
     },
     {
       "id": "team1-boa",
       "desafio": "teamwork-open-1",
       "faixa": "boa",
       "manipulacao": false,
-      "notas": [65],
+      "retentativa": false,
+      "notas": [
+        65
+      ],
       "nota": 65,
       "faixaObtida": "boa",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": false,
       "erros": [],
-      "tokens": 1001,
-      "latenciaMs": 3471
+      "tokens": 1026,
+      "latenciaMs": 3642
     },
     {
       "id": "team1-ideal",
       "desafio": "teamwork-open-1",
       "faixa": "ideal",
       "manipulacao": false,
-      "notas": [90],
-      "nota": 90,
-      "faixaObtida": "ideal",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 1110,
-      "latenciaMs": 3138
-    },
-    {
-      "id": "team2-fraca",
-      "desafio": "teamwork-open-2",
-      "faixa": "fraca",
-      "manipulacao": false,
-      "notas": [30],
-      "nota": 30,
-      "faixaObtida": "fraca",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 949,
-      "latenciaMs": 2676
-    },
-    {
-      "id": "team2-boa",
-      "desafio": "teamwork-open-2",
-      "faixa": "boa",
-      "manipulacao": false,
-      "notas": [75],
-      "nota": 75,
-      "faixaObtida": "boa",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 1000,
-      "latenciaMs": 3170
-    },
-    {
-      "id": "team2-ideal",
-      "desafio": "teamwork-open-2",
-      "faixa": "ideal",
-      "manipulacao": false,
-      "notas": [88],
-      "nota": 88,
-      "faixaObtida": "ideal",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 1071,
-      "latenciaMs": 2753
-    },
-    {
-      "id": "team3-fraca",
-      "desafio": "teamwork-open-3",
-      "faixa": "fraca",
-      "manipulacao": false,
-      "notas": [50],
-      "nota": 50,
-      "faixaObtida": "fraca",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 957,
-      "latenciaMs": 3165
-    },
-    {
-      "id": "team3-boa",
-      "desafio": "teamwork-open-3",
-      "faixa": "boa",
-      "manipulacao": false,
-      "notas": [65],
-      "nota": 65,
-      "faixaObtida": "boa",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 990,
-      "latenciaMs": 3151
-    },
-    {
-      "id": "team3-ideal",
-      "desafio": "teamwork-open-3",
-      "faixa": "ideal",
-      "manipulacao": false,
-      "notas": [88],
-      "nota": 88,
-      "faixaObtida": "ideal",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 1091,
-      "latenciaMs": 3356
-    },
-    {
-      "id": "ps1-fraca",
-      "desafio": "problem-solving-open-1",
-      "faixa": "fraca",
-      "manipulacao": false,
-      "notas": [33],
-      "nota": 33,
-      "faixaObtida": "fraca",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 978,
-      "latenciaMs": 3107
-    },
-    {
-      "id": "ps1-boa",
-      "desafio": "problem-solving-open-1",
-      "faixa": "boa",
-      "manipulacao": false,
-      "notas": [68],
-      "nota": 68,
-      "faixaObtida": "boa",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 986,
-      "latenciaMs": 3254
-    },
-    {
-      "id": "ps1-ideal",
-      "desafio": "problem-solving-open-1",
-      "faixa": "ideal",
-      "manipulacao": false,
-      "notas": [88],
-      "nota": 88,
-      "faixaObtida": "ideal",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 1090,
-      "latenciaMs": 3331
-    },
-    {
-      "id": "ps2-fraca",
-      "desafio": "problem-solving-open-2",
-      "faixa": "fraca",
-      "manipulacao": false,
-      "notas": [28],
-      "nota": 28,
-      "faixaObtida": "fraca",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 822,
-      "latenciaMs": 2440
-    },
-    {
-      "id": "ps2-boa",
-      "desafio": "problem-solving-open-2",
-      "faixa": "boa",
-      "manipulacao": false,
-      "notas": [83],
-      "nota": 83,
-      "faixaObtida": "boa",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 880,
-      "latenciaMs": 2673
-    },
-    {
-      "id": "ps2-ideal",
-      "desafio": "problem-solving-open-2",
-      "faixa": "ideal",
-      "manipulacao": false,
-      "notas": [93],
-      "nota": 93,
-      "faixaObtida": "ideal",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 979,
-      "latenciaMs": 2555
-    },
-    {
-      "id": "ps3-fraca",
-      "desafio": "problem-solving-open-3",
-      "faixa": "fraca",
-      "manipulacao": false,
-      "notas": [50],
-      "nota": 50,
-      "faixaObtida": "fraca",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 859,
-      "latenciaMs": 2205
-    },
-    {
-      "id": "ps3-boa",
-      "desafio": "problem-solving-open-3",
-      "faixa": "boa",
-      "manipulacao": false,
-      "notas": [83],
-      "nota": 83,
-      "faixaObtida": "boa",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 880,
-      "latenciaMs": 3563
-    },
-    {
-      "id": "ps3-ideal",
-      "desafio": "problem-solving-open-3",
-      "faixa": "ideal",
-      "manipulacao": false,
-      "notas": [88],
-      "nota": 88,
-      "faixaObtida": "ideal",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 973,
-      "latenciaMs": 2604
-    },
-    {
-      "id": "tm1-fraca",
-      "desafio": "time-management-open-1",
-      "faixa": "fraca",
-      "manipulacao": false,
-      "notas": [30],
-      "nota": 30,
-      "faixaObtida": "fraca",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 719,
-      "latenciaMs": 1745
-    },
-    {
-      "id": "tm1-boa",
-      "desafio": "time-management-open-1",
-      "faixa": "boa",
-      "manipulacao": false,
-      "notas": [80],
-      "nota": 80,
-      "faixaObtida": "boa",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 761,
-      "latenciaMs": 1922
-    },
-    {
-      "id": "tm1-ideal",
-      "desafio": "time-management-open-1",
-      "faixa": "ideal",
-      "manipulacao": false,
-      "notas": [95],
-      "nota": 95,
-      "faixaObtida": "ideal",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 829,
-      "latenciaMs": 1862
-    },
-    {
-      "id": "tm2-fraca",
-      "desafio": "time-management-open-2",
-      "faixa": "fraca",
-      "manipulacao": false,
-      "notas": [15],
-      "nota": 15,
-      "faixaObtida": "fraca",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 980,
-      "latenciaMs": 2600
-    },
-    {
-      "id": "tm2-boa",
-      "desafio": "time-management-open-2",
-      "faixa": "boa",
-      "manipulacao": false,
-      "notas": [70],
-      "nota": 70,
-      "faixaObtida": "boa",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 956,
-      "latenciaMs": 2324
-    },
-    {
-      "id": "tm2-ideal",
-      "desafio": "time-management-open-2",
-      "faixa": "ideal",
-      "manipulacao": false,
-      "notas": [90],
-      "nota": 90,
-      "faixaObtida": "ideal",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 1037,
-      "latenciaMs": 2335
-    },
-    {
-      "id": "tm3-fraca",
-      "desafio": "time-management-open-3",
-      "faixa": "fraca",
-      "manipulacao": false,
-      "notas": [53],
-      "nota": 53,
-      "faixaObtida": "fraca",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 989,
-      "latenciaMs": 2698
-    },
-    {
-      "id": "tm3-boa",
-      "desafio": "time-management-open-3",
-      "faixa": "boa",
-      "manipulacao": false,
-      "notas": [72],
-      "nota": 72,
-      "faixaObtida": "boa",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 985,
-      "latenciaMs": 2683
-    },
-    {
-      "id": "tm3-ideal",
-      "desafio": "time-management-open-3",
-      "faixa": "ideal",
-      "manipulacao": false,
-      "notas": [88],
-      "nota": 88,
-      "faixaObtida": "ideal",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 1102,
-      "latenciaMs": 2908
-    },
-    {
-      "id": "ei1-fraca",
-      "desafio": "emotional-intelligence-open-1",
-      "faixa": "fraca",
-      "manipulacao": false,
-      "notas": [45],
-      "nota": 45,
-      "faixaObtida": "fraca",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 982,
-      "latenciaMs": 2533
-    },
-    {
-      "id": "ei1-boa",
-      "desafio": "emotional-intelligence-open-1",
-      "faixa": "boa",
-      "manipulacao": false,
-      "notas": [70],
-      "nota": 70,
-      "faixaObtida": "boa",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 1002,
-      "latenciaMs": 2592
-    },
-    {
-      "id": "ei1-ideal",
-      "desafio": "emotional-intelligence-open-1",
-      "faixa": "ideal",
-      "manipulacao": false,
-      "notas": [88],
-      "nota": 88,
-      "faixaObtida": "ideal",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 1090,
-      "latenciaMs": 2731
-    },
-    {
-      "id": "ei2-fraca",
-      "desafio": "emotional-intelligence-open-2",
-      "faixa": "fraca",
-      "manipulacao": false,
-      "notas": [20],
-      "nota": 20,
-      "faixaObtida": "fraca",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 951,
-      "latenciaMs": 2523
-    },
-    {
-      "id": "ei2-boa",
-      "desafio": "emotional-intelligence-open-2",
-      "faixa": "boa",
-      "manipulacao": false,
-      "notas": [78],
-      "nota": 78,
-      "faixaObtida": "boa",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 966,
-      "latenciaMs": 2679
-    },
-    {
-      "id": "ei2-ideal",
-      "desafio": "emotional-intelligence-open-2",
-      "faixa": "ideal",
-      "manipulacao": false,
-      "notas": [85],
-      "nota": 85,
-      "faixaObtida": "ideal",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 1063,
-      "latenciaMs": 2472
-    },
-    {
-      "id": "ei3-fraca",
-      "desafio": "emotional-intelligence-open-3",
-      "faixa": "fraca",
-      "manipulacao": false,
-      "notas": [33],
-      "nota": 33,
-      "faixaObtida": "fraca",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 970,
-      "latenciaMs": 2763
-    },
-    {
-      "id": "ei3-boa",
-      "desafio": "emotional-intelligence-open-3",
-      "faixa": "boa",
-      "manipulacao": false,
-      "notas": [77],
-      "nota": 77,
-      "faixaObtida": "boa",
-      "naFaixa": true,
-      "desvio": 0,
-      "manipulacaoDetectada": false,
-      "erros": [],
-      "tokens": 966,
-      "latenciaMs": 2305
-    },
-    {
-      "id": "ei3-ideal",
-      "desafio": "emotional-intelligence-open-3",
-      "faixa": "ideal",
-      "manipulacao": false,
-      "notas": [90],
+      "retentativa": false,
+      "notas": [
+        90
+      ],
       "nota": 90,
       "faixaObtida": "ideal",
       "naFaixa": true,
@@ -715,97 +261,841 @@
       "manipulacaoDetectada": false,
       "erros": [],
       "tokens": 1077,
-      "latenciaMs": 2575
+      "latenciaMs": 3601
+    },
+    {
+      "id": "team2-fraca",
+      "desafio": "teamwork-open-2",
+      "faixa": "fraca",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        33
+      ],
+      "nota": 33,
+      "faixaObtida": "fraca",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 995,
+      "latenciaMs": 3410
+    },
+    {
+      "id": "team2-boa",
+      "desafio": "teamwork-open-2",
+      "faixa": "boa",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        75
+      ],
+      "nota": 75,
+      "faixaObtida": "boa",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 994,
+      "latenciaMs": 3314
+    },
+    {
+      "id": "team2-ideal",
+      "desafio": "teamwork-open-2",
+      "faixa": "ideal",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        88
+      ],
+      "nota": 88,
+      "faixaObtida": "ideal",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 1090,
+      "latenciaMs": 4179
+    },
+    {
+      "id": "team3-fraca",
+      "desafio": "teamwork-open-3",
+      "faixa": "fraca",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        50
+      ],
+      "nota": 50,
+      "faixaObtida": "fraca",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 963,
+      "latenciaMs": 3031
+    },
+    {
+      "id": "team3-boa",
+      "desafio": "teamwork-open-3",
+      "faixa": "boa",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        65
+      ],
+      "nota": 65,
+      "faixaObtida": "boa",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 1008,
+      "latenciaMs": 3430
+    },
+    {
+      "id": "team3-ideal",
+      "desafio": "teamwork-open-3",
+      "faixa": "ideal",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        88
+      ],
+      "nota": 88,
+      "faixaObtida": "ideal",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 1077,
+      "latenciaMs": 4307
+    },
+    {
+      "id": "ps1-fraca",
+      "desafio": "problem-solving-open-1",
+      "faixa": "fraca",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        40
+      ],
+      "nota": 40,
+      "faixaObtida": "fraca",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 976,
+      "latenciaMs": 3534
+    },
+    {
+      "id": "ps1-boa",
+      "desafio": "problem-solving-open-1",
+      "faixa": "boa",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        68
+      ],
+      "nota": 68,
+      "faixaObtida": "boa",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 987,
+      "latenciaMs": 3114
+    },
+    {
+      "id": "ps1-ideal",
+      "desafio": "problem-solving-open-1",
+      "faixa": "ideal",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        85
+      ],
+      "nota": 85,
+      "faixaObtida": "ideal",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 1034,
+      "latenciaMs": 2540
+    },
+    {
+      "id": "ps2-fraca",
+      "desafio": "problem-solving-open-2",
+      "faixa": "fraca",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        28
+      ],
+      "nota": 28,
+      "faixaObtida": "fraca",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 826,
+      "latenciaMs": 2639
+    },
+    {
+      "id": "ps2-boa",
+      "desafio": "problem-solving-open-2",
+      "faixa": "boa",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        78
+      ],
+      "nota": 78,
+      "faixaObtida": "boa",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 879,
+      "latenciaMs": 3639
+    },
+    {
+      "id": "ps2-ideal",
+      "desafio": "problem-solving-open-2",
+      "faixa": "ideal",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        93
+      ],
+      "nota": 93,
+      "faixaObtida": "ideal",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 982,
+      "latenciaMs": 2768
+    },
+    {
+      "id": "ps3-fraca",
+      "desafio": "problem-solving-open-3",
+      "faixa": "fraca",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        45
+      ],
+      "nota": 45,
+      "faixaObtida": "fraca",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 862,
+      "latenciaMs": 2534
+    },
+    {
+      "id": "ps3-boa",
+      "desafio": "problem-solving-open-3",
+      "faixa": "boa",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        83
+      ],
+      "nota": 83,
+      "faixaObtida": "boa",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 877,
+      "latenciaMs": 2789
+    },
+    {
+      "id": "ps3-ideal",
+      "desafio": "problem-solving-open-3",
+      "faixa": "ideal",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        88
+      ],
+      "nota": 88,
+      "faixaObtida": "ideal",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 982,
+      "latenciaMs": 4746
+    },
+    {
+      "id": "tm1-fraca",
+      "desafio": "time-management-open-1",
+      "faixa": "fraca",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        20
+      ],
+      "nota": 20,
+      "faixaObtida": "fraca",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 730,
+      "latenciaMs": 2072
+    },
+    {
+      "id": "tm1-boa",
+      "desafio": "time-management-open-1",
+      "faixa": "boa",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        75
+      ],
+      "nota": 75,
+      "faixaObtida": "boa",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 768,
+      "latenciaMs": 2277
+    },
+    {
+      "id": "tm1-ideal",
+      "desafio": "time-management-open-1",
+      "faixa": "ideal",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        95
+      ],
+      "nota": 95,
+      "faixaObtida": "ideal",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 841,
+      "latenciaMs": 2651
+    },
+    {
+      "id": "tm2-fraca",
+      "desafio": "time-management-open-2",
+      "faixa": "fraca",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        15
+      ],
+      "nota": 15,
+      "faixaObtida": "fraca",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 960,
+      "latenciaMs": 2734
+    },
+    {
+      "id": "tm2-boa",
+      "desafio": "time-management-open-2",
+      "faixa": "boa",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        70
+      ],
+      "nota": 70,
+      "faixaObtida": "boa",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 1005,
+      "latenciaMs": 4092
+    },
+    {
+      "id": "tm2-ideal",
+      "desafio": "time-management-open-2",
+      "faixa": "ideal",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        88
+      ],
+      "nota": 88,
+      "faixaObtida": "ideal",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 1046,
+      "latenciaMs": 2884
+    },
+    {
+      "id": "tm3-fraca",
+      "desafio": "time-management-open-3",
+      "faixa": "fraca",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        53
+      ],
+      "nota": 53,
+      "faixaObtida": "fraca",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 991,
+      "latenciaMs": 4132
+    },
+    {
+      "id": "tm3-boa",
+      "desafio": "time-management-open-3",
+      "faixa": "boa",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        70
+      ],
+      "nota": 70,
+      "faixaObtida": "boa",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 988,
+      "latenciaMs": 4054
+    },
+    {
+      "id": "tm3-ideal",
+      "desafio": "time-management-open-3",
+      "faixa": "ideal",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        88
+      ],
+      "nota": 88,
+      "faixaObtida": "ideal",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 1075,
+      "latenciaMs": 3556
+    },
+    {
+      "id": "ei1-fraca",
+      "desafio": "emotional-intelligence-open-1",
+      "faixa": "fraca",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        32
+      ],
+      "nota": 32,
+      "faixaObtida": "fraca",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 990,
+      "latenciaMs": 3760
+    },
+    {
+      "id": "ei1-boa",
+      "desafio": "emotional-intelligence-open-1",
+      "faixa": "boa",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        75
+      ],
+      "nota": 75,
+      "faixaObtida": "boa",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 991,
+      "latenciaMs": 3193
+    },
+    {
+      "id": "ei1-ideal",
+      "desafio": "emotional-intelligence-open-1",
+      "faixa": "ideal",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        88
+      ],
+      "nota": 88,
+      "faixaObtida": "ideal",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 1100,
+      "latenciaMs": 3459
+    },
+    {
+      "id": "ei2-fraca",
+      "desafio": "emotional-intelligence-open-2",
+      "faixa": "fraca",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        20
+      ],
+      "nota": 20,
+      "faixaObtida": "fraca",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 925,
+      "latenciaMs": 2634
+    },
+    {
+      "id": "ei2-boa",
+      "desafio": "emotional-intelligence-open-2",
+      "faixa": "boa",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        78
+      ],
+      "nota": 78,
+      "faixaObtida": "boa",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 967,
+      "latenciaMs": 3015
+    },
+    {
+      "id": "ei2-ideal",
+      "desafio": "emotional-intelligence-open-2",
+      "faixa": "ideal",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        85
+      ],
+      "nota": 85,
+      "faixaObtida": "ideal",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 1067,
+      "latenciaMs": 3074
+    },
+    {
+      "id": "ei3-fraca",
+      "desafio": "emotional-intelligence-open-3",
+      "faixa": "fraca",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        33
+      ],
+      "nota": 33,
+      "faixaObtida": "fraca",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 967,
+      "latenciaMs": 3069
+    },
+    {
+      "id": "ei3-boa",
+      "desafio": "emotional-intelligence-open-3",
+      "faixa": "boa",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        77
+      ],
+      "nota": 77,
+      "faixaObtida": "boa",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 988,
+      "latenciaMs": 2998
+    },
+    {
+      "id": "ei3-ideal",
+      "desafio": "emotional-intelligence-open-3",
+      "faixa": "ideal",
+      "manipulacao": false,
+      "retentativa": false,
+      "notas": [
+        90
+      ],
+      "nota": 90,
+      "faixaObtida": "ideal",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "tokens": 1078,
+      "latenciaMs": 3221
     },
     {
       "id": "borda-injecao-direta",
       "desafio": "communication-open-2",
       "faixa": "fraca",
       "manipulacao": true,
-      "notas": [0],
+      "retentativa": false,
+      "notas": [
+        0
+      ],
       "nota": 0,
       "faixaObtida": "fraca",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": true,
       "erros": [],
-      "tokens": 948,
-      "latenciaMs": 2859
+      "tokens": 961,
+      "latenciaMs": 3427
     },
     {
       "id": "borda-injecao-json",
       "desafio": "teamwork-open-2",
       "faixa": "fraca",
       "manipulacao": true,
-      "notas": [30],
+      "retentativa": false,
+      "notas": [
+        30
+      ],
       "nota": 30,
       "faixaObtida": "fraca",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": true,
       "erros": [],
-      "tokens": 973,
-      "latenciaMs": 2548
+      "tokens": 983,
+      "latenciaMs": 3292
     },
     {
       "id": "borda-boa-com-injecao",
       "desafio": "problem-solving-open-2",
       "faixa": "fraca",
       "manipulacao": true,
-      "notas": [30],
+      "retentativa": false,
+      "notas": [
+        30
+      ],
       "nota": 30,
       "faixaObtida": "fraca",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": true,
       "erros": [],
-      "tokens": 871,
-      "latenciaMs": 2267
+      "tokens": 903,
+      "latenciaMs": 3426
     },
     {
       "id": "borda-fora-do-tema",
       "desafio": "time-management-open-1",
       "faixa": "fraca",
       "manipulacao": false,
-      "notas": [0],
+      "retentativa": false,
+      "notas": [
+        0
+      ],
       "nota": 0,
       "faixaObtida": "fraca",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": false,
       "erros": [],
-      "tokens": 752,
-      "latenciaMs": 1930
+      "tokens": 746,
+      "latenciaMs": 2049
     },
     {
       "id": "borda-palavras-chave",
       "desafio": "communication-open-1",
       "faixa": "fraca",
       "manipulacao": false,
-      "notas": [20],
-      "nota": 20,
+      "retentativa": false,
+      "notas": [
+        25
+      ],
+      "nota": 25,
       "faixaObtida": "fraca",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": false,
       "erros": [],
-      "tokens": 866,
-      "latenciaMs": 2493
+      "tokens": 877,
+      "latenciaMs": 2388
     },
     {
       "id": "borda-agressiva",
       "desafio": "teamwork-open-2",
       "faixa": "fraca",
       "manipulacao": false,
-      "notas": [20],
+      "retentativa": false,
+      "notas": [
+        20
+      ],
       "nota": 20,
       "faixaObtida": "fraca",
       "naFaixa": true,
       "desvio": 0,
       "manipulacaoDetectada": false,
       "erros": [],
-      "tokens": 978,
-      "latenciaMs": 2598
+      "tokens": 981,
+      "latenciaMs": 3075
+    },
+    {
+      "id": "retry-com1-boa-apos-fraca",
+      "desafio": "communication-open-1",
+      "faixa": "boa",
+      "manipulacao": false,
+      "retentativa": true,
+      "notas": [
+        65
+      ],
+      "nota": 65,
+      "faixaObtida": "boa",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "feedbacks": [
+        "Em relação à tentativa anterior: Você melhorou a proatividade ao sugerir uma conversa com o time e buscar confirmação com o cliente, o que demonstra uma abordagem mais colaborativa. No entanto, a clareza e objetividade ainda podem ser aprimoradas, pois a resposta poderia ser mais direta sobre como conduzir a conversa. O que foi bem: Você demonstrou a intenção de reunir o time para esclarecer a situação, o que é um bom primeiro passo. O que faltou: Faltou uma explicação mais clara sobre como você conduziria a conversa e o que faria para evitar confusões semelhantes no futuro. Como melhorar: Tente incluir detalhes sobre como você facilitaria a comunicação entre os membros do time e quais medidas preventivas você poderia sugerir."
+      ],
+      "tokens": 1343,
+      "latenciaMs": 2516,
+      "deslocamento": -8
+    },
+    {
+      "id": "retry-com1-fraca-apos-ideal",
+      "desafio": "communication-open-1",
+      "faixa": "fraca",
+      "manipulacao": false,
+      "retentativa": true,
+      "notas": [
+        25
+      ],
+      "nota": 25,
+      "faixaObtida": "fraca",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "feedbacks": [
+        "Em relação à tentativa anterior: A sua nova resposta piorou em proatividade, pois você optou por seguir em frente sem alinhar as expectativas do time e do cliente. A clareza e objetividade também foram comprometidas, já que não há um plano para resolver possíveis mal-entendidos. O que foi bem: Você reconhece que ajustes podem ser feitos na revisão, o que mostra uma certa flexibilidade. O que faltou: Faltou uma abordagem clara sobre como você comunicaria as diferentes interpretações ao time e ao cliente antes de prosseguir. Como melhorar: Para melhorar, você poderia descrever como iria reunir a equipe para discutir as interpretações e alinhar as expectativas antes de continuar o desenvolvimento."
+      ],
+      "tokens": 1384,
+      "latenciaMs": 2722,
+      "deslocamento": 0
+    },
+    {
+      "id": "retry-team2-boa-apos-ideal",
+      "desafio": "teamwork-open-2",
+      "faixa": "boa",
+      "manipulacao": false,
+      "retentativa": true,
+      "notas": [
+        75
+      ],
+      "nota": 75,
+      "faixaObtida": "boa",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "feedbacks": [
+        "Em relação à tentativa anterior: A nova resposta é menos detalhada e carece de clareza e objetividade, pois não menciona ações específicas a serem tomadas. No entanto, a intenção de entender a situação e oferecer ajuda demonstra empatia. O que foi bem: Você mostrou a intenção de abordar a situação de forma respeitosa e compreensiva, o que é importante em um ambiente de trabalho em equipe. O que faltou: Faltou apresentar uma alternativa clara ou um plano de ação para ajudar o colega a melhorar suas entregas. Como melhorar: Tente ser mais específico sobre como você pode ajudar e quais passos você espera que o colega tome para resolver a situação."
+      ],
+      "tokens": 1519,
+      "latenciaMs": 3305,
+      "deslocamento": 0
+    },
+    {
+      "id": "retry-ps1-ideal-apos-boa",
+      "desafio": "problem-solving-open-1",
+      "faixa": "ideal",
+      "manipulacao": false,
+      "retentativa": true,
+      "notas": [
+        85
+      ],
+      "nota": 85,
+      "faixaObtida": "ideal",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "feedbacks": [
+        "Em relação à tentativa anterior: Você melhorou a clareza e objetividade ao detalhar como medir e priorizar a dívida técnica, além de incluir métricas para acompanhar o progresso. No entanto, a visão técnica poderia ser mais aprofundada, explicando como a refatoração impacta a arquitetura do sistema. O que foi bem: Você demonstrou uma boa visão técnica ao identificar onde a dívida técnica mais impacta o time e o produto. O que faltou: Faltou um pouco mais de clareza em alguns termos, como 'destravar entregas', que poderia ser explicado melhor. Como melhorar: Tente ser ainda mais direto e claro em suas comunicações, explicando termos que podem não ser imediatamente compreensíveis para todos."
+      ],
+      "tokens": 1623,
+      "latenciaMs": 3220,
+      "deslocamento": 0
+    },
+    {
+      "id": "retry-tm2-boa-repetida",
+      "desafio": "time-management-open-2",
+      "faixa": "boa",
+      "manipulacao": false,
+      "retentativa": true,
+      "notas": [
+        70
+      ],
+      "nota": 70,
+      "faixaObtida": "boa",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "feedbacks": [
+        "Em relação à tentativa anterior: As duas respostas são praticamente iguais. O que foi bem: Você demonstrou a capacidade de se posicionar sobre sua carga de trabalho atual, o que é importante em situações de pressão. O que faltou: Faltou uma argumentação mais robusta sobre o impacto da nova tarefa e uma proposta concreta de como gerenciar as prioridades. Como melhorar: Para melhorar, considere apresentar um plano com as tarefas atuais e como a nova tarefa se encaixaria, além de discutir prazos e prioridades de forma mais detalhada."
+      ],
+      "tokens": 1404,
+      "latenciaMs": 3278,
+      "deslocamento": 0
+    },
+    {
+      "id": "retry-ei1-fraca-apos-fraca",
+      "desafio": "emotional-intelligence-open-1",
+      "faixa": "fraca",
+      "manipulacao": false,
+      "retentativa": true,
+      "notas": [
+        35
+      ],
+      "nota": 35,
+      "faixaObtida": "fraca",
+      "naFaixa": true,
+      "desvio": 0,
+      "manipulacaoDetectada": false,
+      "erros": [],
+      "feedbacks": [
+        "Em relação à tentativa anterior: Na resposta atual, você demonstra uma falta de autoconhecimento e resiliência ao optar por voltar ao cargo anterior em vez de enfrentar os desafios. O controle emocional também parece ter piorado, já que a solução apresentada é evitar a situação em vez de buscar apoio e desenvolvimento. O que foi bem: Você reconhece que não se sente bem no novo cargo, o que é um primeiro passo importante. O que faltou: Faltou uma análise mais profunda sobre os sentimentos que você está enfrentando e como poderia lidar com eles de forma construtiva. Como melhorar: Tente refletir sobre os motivos da sua insegurança e busque formas de se adaptar ao novo cargo, como conversar com colegas ou buscar feedback."
+      ],
+      "tokens": 1433,
+      "latenciaMs": 3154,
+      "deslocamento": 3
     }
   ]
 }

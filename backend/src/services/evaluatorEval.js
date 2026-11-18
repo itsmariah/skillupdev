@@ -37,9 +37,35 @@ function validateCases(data, getChallenge) {
     if (item?.manipulacao && item.faixa !== "fraca") {
       errors.push(`${label}: caso de manipulação precisa esperar a faixa fraca.`);
     }
+    if (item?.anterior !== undefined) {
+      const previous = cases.find((other) => other?.id === item.anterior?.caso);
+      const nota = item.anterior?.nota;
+      if (!previous) errors.push(`${label}: anterior.caso "${item.anterior?.caso}" não existe.`);
+      else if (previous.anterior)
+        errors.push(`${label}: anterior.caso não pode ser outra retentativa.`);
+      else if (previous.desafio !== item.desafio) {
+        errors.push(`${label}: anterior.caso é de outro desafio.`);
+      }
+      if (!Number.isInteger(nota) || nota < 0 || nota > 100) {
+        errors.push(`${label}: anterior.nota deve ser um inteiro de 0 a 100.`);
+      }
+    }
   }
 
   return errors;
+}
+
+// Casos de nova tentativa: a resposta de outro caso entra como tentativa anterior, com uma nota
+// fixa (sem nota por critério). Servem para ver se o histórico puxa a nota atual.
+function buildPreviousAttempt(item, casesById) {
+  if (!item.anterior) return null;
+  return {
+    id: null,
+    tentativa: 1,
+    resposta: casesById.get(item.anterior.caso).resposta,
+    nota: item.anterior.nota,
+    criterios: [],
+  };
 }
 
 const average = (values) => values.reduce((total, value) => total + value, 0) / values.length;
@@ -71,6 +97,7 @@ async function runCases({
     Array.from({ length: repetitions }, (_, round) => ({ item, round })),
   );
   const runs = new Map(cases.map((item) => [item.id, []]));
+  const casesById = new Map(cases.map((item) => [item.id, item]));
   let next = 0;
   let finished = 0;
 
@@ -82,6 +109,7 @@ async function runCases({
         const result = await evaluate({
           resposta: item.resposta,
           challenge: getChallenge(item.desafio),
+          anterior: buildPreviousAttempt(item, casesById),
         });
         const evaluator = result.evaluation?.evaluator || null;
         run =
@@ -93,7 +121,12 @@ async function runCases({
                 nota: Number(result.nota),
                 manipulacaoDetectada: Boolean(result.evaluation?.flaggedManipulation),
                 latenciaMs: result.evaluation?.latencyMs ?? null,
-                tokens: result.evaluation?.tokens ?? null,
+                tokens:
+                  (Number(result.evaluation?.tokens) || 0) +
+                  (Number(result.evaluation?.evolution?.tokens) || 0),
+                // Nas retentativas, o feedback fica no relatório para ler o texto de evolução.
+                feedback: item.anterior ? result.feedback : undefined,
+                erroEvolucao: result.evaluation?.evolution?.error || undefined,
               };
       } catch (error) {
         run = { erro: error.message };
@@ -105,7 +138,7 @@ async function runCases({
 
   await Promise.all(Array.from({ length: Math.max(1, concurrency) }, worker));
 
-  return cases.map((item) => {
+  const results = cases.map((item) => {
     const ok = runs.get(item.id).filter((run) => run.erro === undefined);
     const notas = ok.map((run) => run.nota);
     const nota = notas.length ? Math.round(average(notas)) : null;
@@ -115,6 +148,7 @@ async function runCases({
       desafio: item.desafio,
       faixa: item.faixa,
       manipulacao: Boolean(item.manipulacao),
+      retentativa: Boolean(item.anterior),
       notas,
       nota,
       faixaObtida: nota === null ? null : bandOf(nota),
@@ -123,22 +157,37 @@ async function runCases({
       manipulacaoDetectada: ok.some((run) => run.manipulacaoDetectada),
       erros: runs
         .get(item.id)
-        .filter((run) => run.erro !== undefined)
-        .map((run) => run.erro),
+        .map((run) => run.erro ?? (run.erroEvolucao && `evolução: ${run.erroEvolucao}`))
+        .filter(Boolean),
+      ...(item.anterior ? { feedbacks: ok.map((run) => run.feedback) } : {}),
       tokens: ok.reduce((total, run) => total + (Number(run.tokens) || 0), 0),
       latenciaMs: ok.length
         ? Math.round(average(ok.map((run) => Number(run.latenciaMs) || 0)))
         : null,
     };
   });
+
+  // Retentativa com a mesma resposta de um caso avaliado sozinho: quanto a nota se deslocou.
+  for (const [index, item] of cases.entries()) {
+    if (!item.anterior) continue;
+    const alone = cases.findIndex(
+      (other) =>
+        !other.anterior && other.desafio === item.desafio && other.resposta === item.resposta,
+    );
+    if (alone >= 0 && results[index].nota !== null && results[alone].nota !== null) {
+      results[index].deslocamento = results[index].nota - results[alone].nota;
+    }
+  }
+
+  return results;
 }
 
 // Por desafio, as notas médias por faixa precisam crescer: fraca < boa < ideal.
-// Só entram os casos sem manipulação (os de borda testam outra coisa).
+// Só entram os casos sem manipulação nem tentativa anterior (esses testam outra coisa).
 function checkOrdering(results) {
   const byChallenge = new Map();
   for (const result of results) {
-    if (result.manipulacao || result.nota === null) continue;
+    if (result.manipulacao || result.retentativa || result.nota === null) continue;
     const bands = byChallenge.get(result.desafio) || {};
     (bands[result.faixa] = bands[result.faixa] || []).push(result.nota);
     byChallenge.set(result.desafio, bands);
@@ -166,7 +215,9 @@ function summarize(results) {
   const valid = results.filter((result) => result.nota !== null);
   const porFaixa = Object.fromEntries(
     BAND_ORDER.map((band) => {
-      const inBand = valid.filter((result) => result.faixa === band && !result.manipulacao);
+      const inBand = valid.filter(
+        (result) => result.faixa === band && !result.manipulacao && !result.retentativa,
+      );
       return [
         band,
         {
@@ -178,6 +229,7 @@ function summarize(results) {
     }),
   );
   const manipulation = results.filter((result) => result.manipulacao);
+  const retries = valid.filter((result) => result.retentativa);
 
   return {
     casos: results.length,
@@ -193,6 +245,20 @@ function summarize(results) {
       casos: manipulation.length,
       detectadas: manipulation.filter((result) => result.manipulacaoDetectada).length,
       limitadas: manipulation.filter((result) => result.nota !== null && result.naFaixa).length,
+    },
+    retentativas: {
+      casos: retries.length,
+      naFaixa: retries.filter((result) => result.naFaixa).length,
+      // Quanto a tentativa anterior mudou a nota da mesma resposta avaliada sozinha.
+      deslocamentoMedio: retries.some((result) => result.deslocamento !== undefined)
+        ? Math.round(
+            average(
+              retries
+                .filter((result) => result.deslocamento !== undefined)
+                .map((result) => Math.abs(result.deslocamento)),
+            ) * 10,
+          ) / 10
+        : null,
     },
     desvioMedio: valid.length
       ? Math.round(average(valid.map((result) => result.desvio)) * 10) / 10

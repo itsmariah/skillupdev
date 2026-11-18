@@ -7,7 +7,7 @@ const { buildPublicTaxonomy, getSkillById } = require("../content/competencies")
 const db = require("../db");
 const { authenticateRequest } = require("../middleware/auth");
 const { challengeSubmitLimiter } = require("../middleware/rateLimits");
-const { evaluateOpenChallengeWithAI } = require("../services/evaluation");
+const { evaluateOpenChallengeWithAI, toPreviousAttemptContext } = require("../services/evaluation");
 const {
   buildRewardSummary,
   calculateLevel,
@@ -115,7 +115,8 @@ router.post("/api/challenges/:challengeId/submit", submitGuards, async (req, res
   }
 
   // A trava da trilha vale no servidor também, não só na interface.
-  const unlockedIds = getUnlockedChallengeIds(await db.listAttemptsByUser(req.user.id));
+  const userAttempts = await db.listAttemptsByUser(req.user.id);
+  const unlockedIds = getUnlockedChallengeIds(userAttempts);
   if (!unlockedIds.has(challenge.id)) {
     return res.status(403).json({
       message:
@@ -134,13 +135,24 @@ router.post("/api/challenges/:challengeId/submit", submitGuards, async (req, res
   submissionsInFlight.add(submissionKey);
 
   try {
-    return await handleChallengeSubmission(req, res, challenge);
+    return await handleChallengeSubmission(req, res, challenge, userAttempts);
   } finally {
     submissionsInFlight.delete(submissionKey);
   }
 });
 
-async function handleChallengeSubmission(req, res, challenge) {
+// A tentativa mais recente deste desafio, que o avaliador usa para comentar a evolução.
+function findLatestAttempt(userAttempts, challengeId) {
+  return userAttempts
+    .filter((attempt) => attempt.challengeId === challengeId)
+    .reduce(
+      (latest, attempt) =>
+        !latest || Number(attempt.attemptNumber) > Number(latest.attemptNumber) ? attempt : latest,
+      null,
+    );
+}
+
+async function handleChallengeSubmission(req, res, challenge, userAttempts) {
   let answer = "";
   let score = 0;
   let feedback = "";
@@ -180,6 +192,7 @@ async function handleChallengeSubmission(req, res, challenge) {
     const aiResult = await evaluateOpenChallengeWithAI({
       resposta: texto,
       challenge,
+      anterior: toPreviousAttemptContext(findLatestAttempt(userAttempts, challenge.id)),
     });
 
     score = aiResult.nota;
@@ -284,6 +297,8 @@ async function handleChallengeSubmission(req, res, challenge) {
       tentativaId: attempts[attempts.length - 1].id,
       revisao: Boolean(result.review),
       melhorFaixaAnterior: result.previousBestTier || null,
+      // Abertos refeitos: nota final e por critério, antes e agora.
+      comparacao: evaluation.comparison || null,
       xpBreakdown: result.xpBreakdown,
       unlockedBadges,
       evaluator: evaluation.evaluator,

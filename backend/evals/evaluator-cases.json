@@ -1,5 +1,5 @@
 {
-  "descricao": "Respostas de referência para avaliar o avaliador de IA. Cada caso tem a faixa de nota esperada (fraca 0-59, boa 60-84, ideal 85-100), na mesma régua da rubrica do prompt. Usa os 15 desafios abertos da semente (content/challenges.js), que não mudam com edições no painel.",
+  "descricao": "Respostas de referência para avaliar o avaliador de IA. Cada caso tem a faixa de nota esperada (fraca 0-59, boa 60-84, ideal 85-100), na mesma régua da rubrica do prompt. Usa os 15 desafios abertos da semente (content/challenges.js), que não mudam com edições no painel. Casos retry-*: a mesma resposta de outro caso, agora com uma tentativa anterior (anterior.caso, com a nota anterior.nota); a faixa esperada não muda, porque o histórico não deve mexer na nota.",
   "casos": [
     {
       "id": "com1-fraca",
@@ -309,6 +309,66 @@
       "desafio": "teamwork-open-2",
       "faixa": "fraca",
       "resposta": "Mandaria uma mensagem no grupo do time dizendo que ele é preguiçoso e que, se não entregar desta vez, vou pedir a demissão dele para o gestor."
+    },
+    {
+      "id": "retry-com1-boa-apos-fraca",
+      "desafio": "communication-open-1",
+      "faixa": "boa",
+      "anterior": {
+        "caso": "com1-fraca",
+        "nota": 40
+      },
+      "resposta": "Eu chamaria o time para uma conversa rápida e mostraria que cada um entendeu uma coisa diferente. Depois mandaria uma mensagem ao cliente pedindo para confirmar o que ele quis dizer."
+    },
+    {
+      "id": "retry-com1-fraca-apos-ideal",
+      "desafio": "communication-open-1",
+      "faixa": "fraca",
+      "anterior": {
+        "caso": "com1-ideal",
+        "nota": 90
+      },
+      "resposta": "Eu continuaria desenvolvendo do jeito que entendi e, se der problema depois, a gente ajusta na revisão."
+    },
+    {
+      "id": "retry-team2-boa-apos-ideal",
+      "desafio": "teamwork-open-2",
+      "faixa": "boa",
+      "anterior": {
+        "caso": "team2-ideal",
+        "nota": 90
+      },
+      "resposta": "Conversaria com ele em particular para entender o que está acontecendo e dizer que as entregas atrasadas estão atrapalhando o time. Tentaria ajudar no que fosse possível."
+    },
+    {
+      "id": "retry-ps1-ideal-apos-boa",
+      "desafio": "problem-solving-open-1",
+      "faixa": "ideal",
+      "anterior": {
+        "caso": "ps1-boa",
+        "nota": 72
+      },
+      "resposta": "Começo medindo onde a dívida mais custa: quais módulos concentram bugs, onde as mudanças demoram mais e o que o time mais teme mexer. Priorizo pelo impacto no produto, não pela feiura do código. Traduzo isso para o produto e a gestão em termos de prazo e risco: 'cada funcionalidade nessa área leva o dobro do tempo'. Proponho reservar uma fatia fixa de cada sprint, atacando primeiro o que destrava entregas, com testes antes de refatorar, e acompanho métricas simples para mostrar se a velocidade melhora."
+    },
+    {
+      "id": "retry-tm2-boa-repetida",
+      "desafio": "time-management-open-2",
+      "faixa": "boa",
+      "anterior": {
+        "caso": "tm2-boa",
+        "nota": 75
+      },
+      "resposta": "Explicaria ao gestor que minha semana já está cheia e perguntaria se alguma das outras tarefas pode ser adiada para eu conseguir encaixar a nova."
+    },
+    {
+      "id": "retry-ei1-fraca-apos-fraca",
+      "desafio": "emotional-intelligence-open-1",
+      "faixa": "fraca",
+      "anterior": {
+        "caso": "ei1-boa",
+        "nota": 70
+      },
+      "resposta": "Acho que eu pediria para voltar ao cargo anterior, porque não adianta ficar num lugar em que não me sinto bem."
     }
   ]
 }

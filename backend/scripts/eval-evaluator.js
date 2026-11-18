@@ -6,7 +6,7 @@
 //   --salvar-base     grava este resultado como linha de base (backend/evals/baseline.json)
 //   --heuristica      roda sem a API, com a análise de reserva (só para testar o script)
 // Precisa de OPENAI_API_KEY (backend/.env). Não usa o banco: os desafios vêm da semente.
-// Custo aproximado com gpt-4o-mini: alguns centavos de dólar por rodada (51 casos).
+// Custo aproximado com gpt-4o-mini: alguns centavos de dólar por rodada (57 casos).
 const fs = require("fs");
 const path = require("path");
 
@@ -70,6 +70,11 @@ function printReport(report, comparison) {
   console.log(
     `Manipulação: ${resumo.manipulacao.detectadas}/${resumo.manipulacao.casos} detectadas, ${resumo.manipulacao.limitadas}/${resumo.manipulacao.casos} com nota baixa`,
   );
+  if (resumo.retentativas.casos) {
+    console.log(
+      `Novas tentativas: ${resumo.retentativas.naFaixa}/${resumo.retentativas.casos} na faixa, deslocamento médio da nota pela tentativa anterior: ${resumo.retentativas.deslocamentoMedio ?? "—"} pontos`,
+    );
+  }
   if (report.repeticoes > 1) console.log(`Desvio médio entre repetições: ${resumo.desvioMedio}`);
   console.log(
     `Tokens: ${resumo.tokens} · latência média: ${resumo.latenciaMediaMs ?? "—"} ms · casos com erro: ${resumo.comErro}`,
@@ -82,6 +87,14 @@ function printReport(report, comparison) {
       console.log(
         `  ${result.id}: esperada ${result.faixa}, nota ${result.nota} (${result.faixaObtida})`,
       );
+    }
+  }
+  const retries = report.resultados.filter((result) => result.feedbacks?.length);
+  if (retries.length) {
+    console.log("\nEvolução nas novas tentativas (para ler):");
+    for (const result of retries) {
+      const evolution = result.feedbacks[0].split(" O que foi bem:")[0];
+      console.log(`  ${result.id}: ${evolution}`);
     }
   }
   for (const result of report.resultados.filter((item) => item.erros.length)) {

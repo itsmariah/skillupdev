@@ -2559,6 +2559,10 @@
       .skill-scores strong {
          color: var(--color-primary-strong);
       }
+
+      .attempt-comparison .attempt-delta {
+         color: var(--color-text-muted);
+      }
 /* FIM VÁRIAS TENTATIVAS */
 
 /* DIÁRIO DE REFLEXÃO */

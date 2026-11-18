@@ -371,6 +371,27 @@
       .replace(/'/g, "&#39;");
   }
 
+  // Nova tentativa de um aberto: nota final e por critério, da tentativa anterior para agora.
+  function renderComparison(comparison) {
+    if (!comparison) {
+      return "";
+    }
+
+    const item = (label, before, after) => {
+      const delta = Number(after) - Number(before);
+      const signal = delta > 0 ? "+" : "";
+      return `<li><span>${escapeHtml(label)}</span><strong>${escapeHtml(before)} → ${escapeHtml(after)}</strong><span class="attempt-delta">(${signal}${escapeHtml(delta)})</span></li>`;
+    };
+
+    return `
+      <p class="feedback-attempt-note mb-1">Comparado com a tentativa ${escapeHtml(comparison.tentativaAnterior)}:</p>
+      <ul class="skill-scores attempt-comparison mt-0 mb-3">
+        ${item("Nota", comparison.notaAnterior, comparison.nota)}
+        ${(comparison.criterios || []).map((c) => item(c.criterio, c.antes, c.depois)).join("")}
+      </ul>
+    `;
+  }
+
   function renderResult(result) {
     const feedbackElement = document.getElementById("feedback");
     const nextButton = document.getElementById("nextBtn");
@@ -423,6 +444,7 @@
         ${escapeHtml(getQualityLabel(result.qualityTier))} | Nota: ${escapeHtml(result.nota)} | XP ganho: ${escapeHtml(result.xpGanho)}
       </p>
       ${attemptNote ? `<p class="feedback-attempt-note">${escapeHtml(attemptNote)}</p>` : ""}
+      ${renderComparison(result.comparacao)}
       <p>${escapeHtml(result.feedback)}</p>
       ${
         result.evaluator === "heuristic"

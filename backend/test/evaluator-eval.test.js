@@ -153,3 +153,62 @@ test("reserva heurística limita a nota quando detecta manipulação", async () 
   assert.equal(result.evaluation.flaggedManipulation, true);
   assert.ok(result.nota <= MANIPULATION_SCORE_CAP);
 });
+
+test("novas tentativas: anterior validado, passado ao avaliador e deslocamento medido", async () => {
+  const retryCases = [
+    ...cases.slice(0, 2),
+    {
+      id: "r",
+      desafio: "communication-open-1",
+      faixa: "boa",
+      resposta: "B",
+      anterior: { caso: "f", nota: 30 },
+    },
+  ];
+  assert.deepEqual(validateCases({ casos: retryCases }, getChallengeById), []);
+  assert.equal(
+    validateCases(
+      {
+        casos: [
+          ...retryCases,
+          {
+            id: "x",
+            desafio: "communication-open-1",
+            faixa: "boa",
+            resposta: "B",
+            anterior: { caso: "nao", nota: 30 },
+          },
+          {
+            id: "y",
+            desafio: "communication-open-2",
+            faixa: "boa",
+            resposta: "B",
+            anterior: { caso: "f", nota: 300 },
+          },
+        ],
+      },
+      getChallengeById,
+    ).length,
+    3,
+  );
+
+  const seen = [];
+  const results = await runCases({
+    cases: retryCases,
+    evaluate: async ({ resposta, anterior }) => {
+      seen.push(anterior);
+      return { nota: anterior ? 66 : { F: 30, B: 70 }[resposta], evaluation: { evaluator: "ai" } };
+    },
+    getChallenge: getChallengeById,
+    concurrency: 1,
+  });
+
+  assert.deepEqual(seen[2], { id: null, tentativa: 1, resposta: "F", nota: 30, criterios: [] });
+  assert.equal(results[2].retentativa, true);
+  assert.equal(results[2].deslocamento, -4);
+  const summary = summarize(results);
+  assert.deepEqual(summary.retentativas, { casos: 1, naFaixa: 1, deslocamentoMedio: 4 });
+  // A retentativa não entra na média por faixa nem na checagem de ordem.
+  assert.equal(summary.porFaixa.boa.casos, 1);
+  assert.equal(summary.porFaixa.boa.notaMedia, 70);
+});

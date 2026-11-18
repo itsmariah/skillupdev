@@ -98,6 +98,16 @@ test("refazer um aberto: XP só quando a nota sobe de faixa", async () => {
   assert.equal(third.data.result.xpGanho, 0);
   assert.equal(third.data.user.gamification.idealAnswers, idealBefore + 1);
 
+  // A primeira resposta não tem comparação; as seguintes comparam com a tentativa anterior.
+  assert.equal(first.data.result.comparacao, null);
+  assert.equal(second.data.result.comparacao.tentativaAnterior, 1);
+  assert.equal(second.data.result.comparacao.notaAnterior, first.data.result.nota);
+  assert.equal(second.data.result.comparacao.nota, second.data.result.nota);
+  assert.match(second.data.result.feedback, /^Em relação à tentativa anterior:/);
+  assert.equal(third.data.result.comparacao.tentativaAnterior, 2);
+  const [, secondAttempt] = await db.listAttemptsForChallenge(userId, CHALLENGE);
+  assert.equal(secondAttempt.evaluation.previousAttemptId, first.data.result.tentativaId);
+
   // Continua sendo um desafio só.
   assert.equal(third.data.user.completedChallenges, 1);
 });

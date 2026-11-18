@@ -162,7 +162,7 @@ Passar de "responder uma vez" para "praticar e evoluir".
 IA como coach auditável.
 
 - [x] Conjunto fixo de respostas para avaliar o avaliador a cada mudança de prompt ou modelo (`npm run eval:ai`)
-- [ ] Feedback que considera tentativas anteriores
+- [x] Feedback que considera tentativas anteriores
 - [ ] Recomendação da próxima trilha e resumo de evolução
 - [ ] Geração de cenários com revisão humana
 - [ ] Monitoramento de custo e latência; remoção de dados pessoais antes do envio

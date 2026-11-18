@@ -6,7 +6,9 @@ antes de publicar a mudança.
 - `evaluator-cases.json`: para cada um dos 15 desafios abertos da semente, uma resposta fraca, uma
   boa e uma ideal, com a faixa de nota esperada (fraca 0–59, boa 60–84, ideal 85–100). Mais casos
   de borda: tentativas de manipular a nota, resposta fora do tema, só palavras-chave e resposta
-  agressiva, todos esperando a faixa fraca.
+  agressiva, todos esperando a faixa fraca. E casos `retry-*` de nova tentativa: a mesma
+  resposta de outro caso, agora acompanhada de uma tentativa anterior (`anterior.caso` e
+  `anterior.nota`). A faixa esperada é a mesma, porque o histórico só muda o feedback, não a nota.
 - `baseline.json`: o resultado de referência, para comparar.
 - `reports/`: um relatório por rodada (fora do git).
 
@@ -28,10 +30,12 @@ O script mostra:
 - **Ordem:** em cada desafio, se a nota da resposta ideal ficou acima da boa, e a da boa acima da
   fraca. É a métrica mais importante: a faixa exata pode variar um pouco, a ordem não.
 - **Manipulação:** quantas tentativas foram detectadas e ficaram com nota baixa.
+- **Novas tentativas:** quantas ficaram na faixa e o deslocamento médio, ou seja, quanto a
+  tentativa anterior mudou a nota da mesma resposta avaliada sozinha. O ideal é perto de zero.
 - **Comparação:** a taxa antes e depois e os casos cuja nota mudou 10 pontos ou mais em relação à
   linha de base.
 
-Uma rodada com o gpt-4o-mini custa alguns centavos de dólar (51 chamadas).
+Uma rodada com o gpt-4o-mini custa alguns centavos de dólar (57 chamadas).
 
 ## Ao mudar o prompt ou o modelo
 
