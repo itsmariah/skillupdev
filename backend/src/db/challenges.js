@@ -65,10 +65,11 @@ async function listChallengesForAdmin(db = getClient()) {
            latest.version AS latest_version,
            latest.content AS latest_content,
            latest.published_at IS NULL AS has_draft,
+           latest.generation,
            COALESCE(stats.attempts, 0)::int AS attempts
     FROM challenges c
     JOIN LATERAL (
-      SELECT version, content, published_at FROM challenge_versions v
+      SELECT version, content, published_at, generation FROM challenge_versions v
       WHERE v.challenge_id = c.id ORDER BY version DESC LIMIT 1
     ) latest ON true
     LEFT JOIN (
@@ -84,6 +85,8 @@ async function listChallengesForAdmin(db = getClient()) {
     publishedVersion: row.published_version,
     latestVersion: row.latest_version,
     hasDraft: row.has_draft,
+    // Rascunho gerado por IA esperando revisão.
+    draftGenerated: row.has_draft && Boolean(row.generation),
     titulo: row.latest_content.titulo,
     categoria: row.latest_content.categoria,
     dificuldade: row.latest_content.dificuldade || null,
@@ -99,8 +102,11 @@ async function findChallengeForAdmin(id, db = getClient()) {
   }
 
   const { rows: versions } = await db.query(
-    `SELECT v.version, v.content, v.created_at, v.published_at, u.nome AS created_by_name
-     FROM challenge_versions v LEFT JOIN users u ON u.id = v.created_by
+    `SELECT v.version, v.content, v.created_at, v.published_at, v.generation,
+            u.nome AS created_by_name, p.nome AS published_by_name
+     FROM challenge_versions v
+     LEFT JOIN users u ON u.id = v.created_by
+     LEFT JOIN users p ON p.id = v.published_by
      WHERE v.challenge_id = $1 ORDER BY v.version DESC`,
     [id],
   );
@@ -120,12 +126,16 @@ async function findChallengeForAdmin(id, db = getClient()) {
     publishedVersion: row.published_version,
     attempts: stats[0].total,
     published: publishedRow ? publishedRow.content : null,
-    draft: draft ? { version: draft.version, content: draft.content } : null,
+    draft: draft
+      ? { version: draft.version, content: draft.content, generation: draft.generation || null }
+      : null,
     versions: versions.map((version) => ({
       version: version.version,
       createdAt: toIso(version.created_at),
       publishedAt: toIso(version.published_at),
       createdBy: version.created_by_name || null,
+      publishedBy: version.published_by_name || null,
+      generated: Boolean(version.generation),
       isPublished: version.version === row.published_version,
     })),
   };
@@ -133,15 +143,16 @@ async function findChallengeForAdmin(id, db = getClient()) {
 
 // Grava um desafio novo como rascunho (versão 1). Dentro de uma transação já aberta (tx),
 // use insertChallengeDraftRows; insertChallengeDraft abre a própria transação.
-async function insertChallengeDraftRows({ id, tipo, content, createdBy }, tx) {
+async function insertChallengeDraftRows({ id, tipo, content, createdBy, generation = null }, tx) {
   const { rows } = await tx.query("SELECT COALESCE(MAX(position), 0) + 1 AS next FROM challenges");
   await tx.query(
     "INSERT INTO challenges (id, tipo, status, position) VALUES ($1, $2, 'rascunho', $3)",
     [id, tipo, rows[0].next],
   );
   await tx.query(
-    "INSERT INTO challenge_versions (challenge_id, version, content, created_by) VALUES ($1, 1, $2, $3)",
-    [id, JSON.stringify(content), createdBy],
+    `INSERT INTO challenge_versions (challenge_id, version, content, created_by, generation)
+     VALUES ($1, 1, $2, $3, $4)`,
+    [id, JSON.stringify(content), createdBy, generation ? JSON.stringify(generation) : null],
   );
 }
 
@@ -180,13 +191,13 @@ async function saveChallengeDraft({ id, content, createdBy }, db = getClient()) 
 }
 
 // Publica o rascunho: ele vira a versão atual e o desafio volta a aparecer (se arquivado).
-async function publishChallengeDraft(id, db = getClient()) {
+async function publishChallengeDraft(id, { publishedBy = null } = {}, db = getClient()) {
   return db.transaction(async (tx) => {
     const { rows } = await tx.query(
-      `UPDATE challenge_versions SET published_at = now()
+      `UPDATE challenge_versions SET published_at = now(), published_by = $2
        WHERE challenge_id = $1 AND published_at IS NULL
        RETURNING version`,
-      [id],
+      [id, publishedBy],
     );
     if (!rows[0]) {
       return null;
@@ -231,7 +242,18 @@ async function setChallengeStatus(id, status, db = getClient()) {
   return Boolean(rows[0]);
 }
 
+// Títulos já usados numa competência (todas as versões, inclusive rascunhos e arquivados).
+async function listChallengeTitles(categoria, db = getClient()) {
+  const { rows } = await db.query(
+    `SELECT DISTINCT content->>'titulo' AS titulo FROM challenge_versions
+     WHERE content->>'categoria' = $1 ORDER BY 1`,
+    [categoria],
+  );
+  return rows.map((row) => row.titulo);
+}
+
 module.exports = {
+  listChallengeTitles,
   seedChallengesIfEmpty,
   loadCatalogEntries,
   reloadCatalog,

@@ -54,3 +54,11 @@ da taxonomia (`backend/src/content/competencies.js`), de 1 a 3 habilidades, difi
 - **Básico**: situação clara, um interlocutor, uma resposta claramente melhor.
 - **Intermediário**: interesses em conflito, duas habilidades em jogo, um trade-off a explicar.
 - **Avançado**: ambiguidade, várias partes, pressão e nenhuma resposta óbvia (de preferência aberto).
+
+## Gerar com IA pelo painel
+
+Para um desafio de cada vez, o painel tem o botão **Gerar com IA** (aba Conteúdo): escolha
+competência, nível, tipo e, se quiser, habilidades e um tema. A IA escreve um rascunho no mesmo
+formato, usando desafios publicados como referência de tom. Ele passa pela mesma validação, entra
+marcado como **gerado por IA** e só pode ser publicado depois de você marcar que o revisou. O
+filtro **Gerados por IA, a revisar** lista os pendentes.

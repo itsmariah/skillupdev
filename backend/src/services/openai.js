@@ -50,7 +50,7 @@ async function callOpenAI(messages, schema) {
   const message = data?.choices?.[0]?.message;
 
   if (message?.refusal) {
-    throw new Error("O modelo recusou a avaliação.");
+    throw new Error("O modelo recusou o pedido.");
   }
 
   return { parsed: extractJsonObject(message?.content), data };

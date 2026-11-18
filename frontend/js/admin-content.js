@@ -44,9 +44,10 @@
 
   function statusLabel(item) {
     if (item.status === "arquivado") return "Arquivado";
-    if (item.status === "rascunho") return "Rascunho (nunca publicado)";
+    const generated = item.draftGenerated ? " · gerado por IA, a revisar" : "";
+    if (item.status === "rascunho") return `Rascunho (nunca publicado)${generated}`;
     return item.hasDraft
-      ? `Publicado (v${item.publishedVersion}) · rascunho pendente`
+      ? `Publicado (v${item.publishedVersion}) · rascunho pendente${generated}`
       : `Publicado (v${item.publishedVersion})`;
   }
 
@@ -57,7 +58,8 @@
     const search = $("filterSearch").value.trim().toLowerCase();
 
     if (status === "pendente" && !(item.status === "publicado" && item.hasDraft)) return false;
-    if (status && status !== "pendente" && item.status !== status) return false;
+    if (status === "gerado" && !item.draftGenerated) return false;
+    if (status && !["pendente", "gerado"].includes(status) && item.status !== status) return false;
     if (category && item.categoria !== category) return false;
     if (difficulty && item.dificuldade !== difficulty) return false;
     if (search && !String(item.titulo).toLowerCase().includes(search)) return false;
@@ -243,7 +245,18 @@
       radio.disabled = !isNew;
     });
 
-    $("publishBtn").disabled = isNew || !current.draft;
+    // Rascunho gerado por IA: aviso e confirmação de revisão antes de publicar.
+    const generation = current?.draft?.generation || null;
+    $("generatedNotice").classList.toggle("d-none", !generation);
+    $("generatedNotice").textContent = generation
+      ? `Rascunho gerado por IA em ${new Date(generation.geradoEm).toLocaleString("pt-BR")}${
+          generation.parametros?.tema ? ` (tema: "${generation.parametros.tema}")` : ""
+        }. Leia tudo com atenção: a IA pode errar o tom, exagerar a situação ou deixar a alternativa ideal óbvia demais. Ajuste o que precisar e salve antes de publicar.`
+      : "";
+    $("reviewField").classList.toggle("d-none", !generation);
+    $("reviewedCheck").checked = false;
+
+    $("publishBtn").disabled = isNew || !current.draft || Boolean(generation);
     $("discardBtn").disabled = isNew || !current.draft;
     $("archiveBtn").classList.toggle("d-none", isNew || !current.publishedVersion);
     $("archiveBtn").textContent = current?.status === "arquivado" ? "Restaurar" : "Arquivar";
@@ -279,7 +292,13 @@
               : version.publishedAt
                 ? "publicada"
                 : "rascunho";
-            return `<li>Versão ${version.version}: ${label} · ${escapeHtml(when)}${version.createdBy ? ` · ${escapeHtml(version.createdBy)}` : ""}</li>`;
+            const details = [
+              escapeHtml(when),
+              version.generated ? "gerada por IA" : "",
+              version.createdBy ? escapeHtml(version.createdBy) : "",
+              version.publishedBy ? `publicada por ${escapeHtml(version.publishedBy)}` : "",
+            ].filter(Boolean);
+            return `<li>Versão ${version.version}: ${label} · ${details.join(" · ")}</li>`;
           })
           .join("");
   }
@@ -349,10 +368,10 @@
     }
   }
 
-  async function runAction(path, method = "POST") {
+  async function runAction(path, method = "POST", body) {
     const data = await window.skillUpApi.request(
       `/api/admin/challenges/${encodeURIComponent(state.current.id)}${path}`,
-      { method },
+      { method, body },
     );
     if (data.challenge) {
       state.current = data.challenge;
@@ -369,9 +388,10 @@
   }
 
   async function handlePublish() {
+    const reviewed = $("reviewedCheck").checked;
     if (!(await saveDraft())) return;
     try {
-      await runAction("/publish");
+      await runAction("/publish", "POST", { revisado: reviewed });
       setFeedback(`Versão ${state.current.publishedVersion} publicada.`);
     } catch (error) {
       setFeedback(error.message, "danger");
@@ -413,6 +433,94 @@
     }
   }
 
+  // --- Geração com IA ---
+
+  function toggleGeneratePanel(open) {
+    const panel = $("generatePanel");
+    const show = open ?? panel.classList.contains("d-none");
+    panel.classList.toggle("d-none", !show);
+    $("generateToggleBtn").setAttribute("aria-expanded", String(show));
+    if (show) {
+      showView("list");
+      renderGenerateSkills();
+      $("genCategoria").focus();
+    }
+  }
+
+  // Habilidades da competência escolhida (opcionais, até 3).
+  function renderGenerateSkills() {
+    const competency = state.taxonomy.find((item) => item.nome === $("genCategoria").value);
+    $("genSkillOptions").innerHTML = (competency?.habilidades || [])
+      .map(
+        (skill) => `
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="gen-skill-${skill.id}" value="${skill.id}">
+          <label class="form-check-label" for="gen-skill-${skill.id}" title="${escapeHtml(skill.descricao)}">
+            ${escapeHtml(skill.nome)}
+          </label>
+        </div>`,
+      )
+      .join("");
+  }
+
+  function enforceGenerateSkillLimit() {
+    const boxes = [...$("genSkillOptions").querySelectorAll('input[type="checkbox"]')];
+    const full = boxes.filter((box) => box.checked).length >= MAX_SKILLS;
+    boxes.forEach((box) => {
+      box.disabled = full && !box.checked;
+    });
+  }
+
+  function showGenerateErrors(message, errors = []) {
+    const box = $("generateErrors");
+    if (!message) {
+      box.classList.add("d-none");
+      box.innerHTML = "";
+      return;
+    }
+    box.innerHTML = `<p class="mb-${errors.length ? 1 : 0}"><strong>${escapeHtml(message)}</strong></p>${
+      errors.length
+        ? `<ul class="mb-0">${errors.map((error) => `<li>${escapeHtml(error)}</li>`).join("")}</ul>`
+        : ""
+    }`;
+    box.classList.remove("d-none");
+    box.focus();
+  }
+
+  async function handleGenerate(event) {
+    event.preventDefault();
+    showGenerateErrors(null);
+    const button = $("generateBtn");
+    button.disabled = true;
+    $("generateStatus").textContent = "Gerando o rascunho. Isso pode levar até meio minuto...";
+
+    try {
+      const data = await window.skillUpApi.request("/api/admin/challenges/generate", {
+        method: "POST",
+        body: {
+          tipo: document.querySelector('input[name="genTipo"]:checked').value,
+          categoria: $("genCategoria").value,
+          dificuldade: $("genDificuldade").value,
+          habilidades: [...$("genSkillOptions").querySelectorAll("input:checked")].map(
+            (box) => box.value,
+          ),
+          tema: $("genTema").value,
+        },
+      });
+      $("generateStatus").textContent = "";
+      $("genTema").value = "";
+      toggleGeneratePanel(false);
+      await loadList();
+      await openEditor(data.challenge.id);
+      setFeedback("Rascunho gerado. Revise com atenção antes de publicar.", "info");
+    } catch (error) {
+      $("generateStatus").textContent = "";
+      showGenerateErrors(error.message, error.payload?.errors || []);
+    } finally {
+      button.disabled = false;
+    }
+  }
+
   async function backToList(message) {
     await loadList();
     showView("list");
@@ -441,6 +549,14 @@
     $("publishBtn").addEventListener("click", handlePublish);
     $("discardBtn").addEventListener("click", handleDiscard);
     $("archiveBtn").addEventListener("click", handleArchive);
+    $("reviewedCheck").addEventListener("change", (event) => {
+      $("publishBtn").disabled = !event.target.checked || !state.current?.draft;
+    });
+    $("generateToggleBtn").addEventListener("click", () => toggleGeneratePanel());
+    $("cancelGenerateBtn").addEventListener("click", () => toggleGeneratePanel(false));
+    $("generateForm").addEventListener("submit", handleGenerate);
+    $("genCategoria").addEventListener("change", renderGenerateSkills);
+    $("genSkillOptions").addEventListener("change", enforceGenerateSkillLimit);
 
     try {
       await loadList();
@@ -455,6 +571,10 @@
         )
         .join("");
       $("fieldDificuldade").innerHTML = difficultyOptions;
+      $("genDificuldade").innerHTML = difficultyOptions;
+      $("genCategoria").innerHTML = categories
+        .map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
+        .join("");
       $("filterDifficulty").innerHTML += difficultyOptions;
       $("filterCategory").innerHTML += categories
         .map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)

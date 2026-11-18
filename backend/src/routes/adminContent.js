@@ -5,9 +5,15 @@ const express = require("express");
 const db = require("../db");
 const { DIFFICULTIES, buildPublicTaxonomy } = require("../content/competencies");
 const { authenticateRequest, requireRole } = require("../middleware/auth");
+const { scenarioGenerationLimiter } = require("../middleware/rateLimits");
 const { validateChallengeContent, createChallengeId } = require("../services/content");
 const { findBadgesRequiringChallenge } = require("../services/gamification");
 const { ROLES } = require("../services/roles");
+const {
+  GenerationError,
+  validateGenerationRequest,
+  generateChallengeDraft,
+} = require("../services/scenarioGeneration");
 
 const router = express.Router();
 
@@ -52,6 +58,50 @@ router.post("/api/admin/challenges", adminOnly, async (req, res) => {
   return respondWithChallenge(res, id, 201);
 });
 
+// Gera um desafio com IA. Ele entra só como rascunho, marcado como gerado, e publicar exige
+// confirmar a revisão. Um pedido de geração por admin de cada vez.
+const generationsInFlight = new Set();
+
+router.post(
+  "/api/admin/challenges/generate",
+  [...adminOnly, scenarioGenerationLimiter],
+  async (req, res) => {
+    const { errors, params, competency } = validateGenerationRequest(req.body);
+    if (errors.length > 0) {
+      return res.status(400).json({ message: "O pedido de geração tem campos inválidos.", errors });
+    }
+
+    if (generationsInFlight.has(req.user.id)) {
+      return res.status(409).json({ message: "Já há um cenário sendo gerado. Aguarde." });
+    }
+
+    generationsInFlight.add(req.user.id);
+    try {
+      const { content, generation } = await generateChallengeDraft(params, {
+        competency,
+        existingTitles: await db.listChallengeTitles(params.categoria),
+        requestedBy: req.user.id,
+      });
+      const id = createChallengeId(content.titulo);
+      await db.insertChallengeDraft({
+        id,
+        tipo: params.tipo,
+        content,
+        createdBy: req.user.id,
+        generation,
+      });
+      return respondWithChallenge(res, id, 201);
+    } catch (error) {
+      if (error instanceof GenerationError) {
+        return res.status(error.status).json({ message: error.message, errors: error.errors });
+      }
+      throw error;
+    } finally {
+      generationsInFlight.delete(req.user.id);
+    }
+  },
+);
+
 // Salva o rascunho (cria a próxima versão se o desafio estava só publicado).
 router.put("/api/admin/challenges/:id/draft", adminOnly, async (req, res) => {
   const current = await db.findChallengeForAdmin(req.params.id);
@@ -86,7 +136,16 @@ router.delete("/api/admin/challenges/:id/draft", adminOnly, async (req, res) => 
 });
 
 router.post("/api/admin/challenges/:id/publish", adminOnly, async (req, res) => {
-  const version = await db.publishChallengeDraft(req.params.id);
+  // Rascunho gerado por IA: só publica com a confirmação explícita de que alguém o revisou.
+  const current = await db.findChallengeForAdmin(req.params.id);
+  if (current?.draft?.generation && req.body?.revisado !== true) {
+    return res.status(409).json({
+      message: "Este rascunho foi gerado por IA. Confirme que você o revisou antes de publicar.",
+      precisaRevisao: true,
+    });
+  }
+
+  const version = await db.publishChallengeDraft(req.params.id, { publishedBy: req.user.id });
   if (!version) {
     return res.status(409).json({ message: "Não há rascunho para publicar." });
   }

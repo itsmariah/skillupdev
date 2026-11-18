@@ -86,6 +86,14 @@ const coachSummaryLimiter = createLimiter({
   message: "Muitos pedidos de resumo. Tente novamente mais tarde.",
 });
 
+// Por admin: cada cenário gerado é uma chamada à OpenAI.
+const scenarioGenerationLimiter = createLimiter({
+  windowMs: 60 * MINUTE,
+  limit: 30,
+  keyGenerator: byUser,
+  message: "Muitos cenários gerados em pouco tempo. Tente novamente mais tarde.",
+});
+
 // Por conta: só tentativas com senha errada contam, para não virar teste de senha.
 const accountSecurityLimiter = createLimiter({
   windowMs: 15 * MINUTE,
@@ -106,4 +114,5 @@ module.exports = {
   challengeSubmitLimiter,
   accountSecurityLimiter,
   coachSummaryLimiter,
+  scenarioGenerationLimiter,
 };

@@ -164,7 +164,7 @@ IA como coach auditável.
 - [x] Conjunto fixo de respostas para avaliar o avaliador a cada mudança de prompt ou modelo (`npm run eval:ai`)
 - [x] Feedback que considera tentativas anteriores
 - [x] Recomendação da próxima trilha e resumo de evolução
-- [ ] Geração de cenários com revisão humana
+- [x] Geração de cenários com revisão humana
 - [ ] Monitoramento de custo e latência; remoção de dados pessoais antes do envio
 
 ### Fase 5 — Empresas `P2/P3`
