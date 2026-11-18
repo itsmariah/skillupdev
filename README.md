@@ -165,7 +165,7 @@ IA como coach auditável.
 - [x] Feedback que considera tentativas anteriores
 - [x] Recomendação da próxima trilha e resumo de evolução
 - [x] Geração de cenários com revisão humana
-- [ ] Monitoramento de custo e latência; remoção de dados pessoais antes do envio
+- [x] Monitoramento de custo e latência; remoção de dados pessoais antes do envio
 
 ### Fase 5 — Empresas `P2/P3`
 

@@ -167,6 +167,7 @@ async function generateCoachSummary(attempts, recommendations = []) {
     const { parsed, data } = await callOpenAI(
       buildSummaryMessages(buildSummaryInput(attempts, recommendations)),
       SUMMARY_SCHEMA,
+      { feature: "resumo" },
     );
     const summary = {
       resumo: String(parsed?.resumo || "").trim(),

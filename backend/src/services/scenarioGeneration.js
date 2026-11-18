@@ -13,6 +13,7 @@ const {
 const { getChallenges } = require("../content/catalog");
 const { validateChallengeContent } = require("./content");
 const { callOpenAI } = require("./openai");
+const { redactPersonalData } = require("../lib/redact");
 
 const GENERATION_PROMPT_VERSION = "2026-11-scenarios-v1";
 const MAX_THEME_LENGTH = 200;
@@ -188,7 +189,11 @@ function describeSkills(competency, params) {
 
 function buildGenerationMessages(params, { competency, examples = [], existingTitles = [] }) {
   const level = DIFFICULTIES.find((item) => item.id === params.dificuldade);
-  const theme = params.tema.replace(new RegExp(`</?${THEME_TAG}[^>]*>`, "gi"), "");
+  // O tema é do admin, mas também passa pela limpeza de dados pessoais antes do envio.
+  const theme = redactPersonalData(params.tema).text.replace(
+    new RegExp(`</?${THEME_TAG}[^>]*>`, "gi"),
+    "",
+  );
 
   return [
     { role: "system", content: SYSTEM_PROMPT },
@@ -275,6 +280,7 @@ async function generateChallengeDraft(params, { competency, existingTitles = [],
         existingTitles,
       }),
       buildGenerationSchema(params.tipo, allowedSkillIds(competency, params)),
+      { feature: "geracao" },
     ));
   } catch (error) {
     console.error("Erro ao gerar cenário com IA.", error);

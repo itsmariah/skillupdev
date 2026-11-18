@@ -18,6 +18,16 @@ const PGLITE_DATA_DIR = process.env.PGLITE_DATA_DIR || path.join(__dirname, ".."
 const APP_TIMEZONE = String(process.env.APP_TIMEZONE || "").trim() || "America/Sao_Paulo";
 
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
+// Preço da OpenAI em dólares por milhão de tokens, para estimar o custo no painel. O padrão é o
+// do gpt-4o-mini; com outro modelo, defina OPENAI_PRICE_INPUT e OPENAI_PRICE_OUTPUT.
+const numberOr = (value, fallback) => {
+  const text = String(value ?? "").trim();
+  return text && Number.isFinite(Number(text)) ? Number(text) : fallback;
+};
+const OPENAI_PRICE_INPUT = numberOr(process.env.OPENAI_PRICE_INPUT, 0.15);
+const OPENAI_PRICE_OUTPUT = numberOr(process.env.OPENAI_PRICE_OUTPUT, 0.6);
+// Orçamento mensal da IA em dólares (opcional): o painel mostra quanto já foi usado.
+const AI_MONTHLY_BUDGET_USD = numberOr(process.env.AI_MONTHLY_BUDGET_USD, null);
 
 const PASSWORD_RESET_TTL_MINUTES = 30;
 const PASSWORD_RESET_TTL_MS = PASSWORD_RESET_TTL_MINUTES * 60 * 1000;
@@ -51,6 +61,9 @@ module.exports = {
   PGLITE_DATA_DIR,
   APP_TIMEZONE,
   OPENAI_MODEL,
+  OPENAI_PRICE_INPUT,
+  OPENAI_PRICE_OUTPUT,
+  AI_MONTHLY_BUDGET_USD,
   PASSWORD_RESET_TTL_MINUTES,
   PASSWORD_RESET_TTL_MS,
   SESSION_TTL_DAYS,

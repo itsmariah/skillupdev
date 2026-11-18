@@ -1,5 +1,6 @@
 const { OPENAI_MODEL } = require("../config");
 const { normalizeTextValue } = require("../lib/text");
+const { redactPersonalData, mergeCounts } = require("../lib/redact");
 const { SKILLS, getSkillById } = require("../content/competencies");
 const { callOpenAI, extractJsonObject } = require("./openai");
 const { OPEN_CHALLENGE_IDEAL_SCORE, OPEN_CHALLENGE_MEDIUM_SCORE } = require("./gamification");
@@ -404,7 +405,9 @@ function heuristicEvaluation(resposta, criteria, fallbackReason, anterior = null
 // Comentário de evolução. Uma falha aqui não derruba a avaliação: vira o texto padrão.
 async function describeEvolution(input) {
   try {
-    const { parsed, data } = await callOpenAI(buildEvolutionMessages(input), EVOLUTION_SCHEMA);
+    const { parsed, data } = await callOpenAI(buildEvolutionMessages(input), EVOLUTION_SCHEMA, {
+      feature: "evolucao",
+    });
     const text = String(parsed?.evolucao || "").trim();
     if (!text) {
       throw new Error("Evolução sem texto.");
@@ -416,9 +419,22 @@ async function describeEvolution(input) {
   }
 }
 
+// Cópias sem dados pessoais (e-mail, telefone, CPF, CNPJ, cartão e o nome da pessoa) da resposta
+// e da tentativa anterior: é isso que vai para a IA. O texto guardado na conta não muda.
+function redactForAI(resposta, anterior, nomes) {
+  const current = redactPersonalData(resposta, { names: nomes });
+  const previous = anterior ? redactPersonalData(anterior.resposta, { names: nomes }) : null;
+  return {
+    resposta: current.text,
+    anterior: previous ? { ...anterior, resposta: previous.text } : null,
+    counts: mergeCounts(current.counts, previous?.counts),
+  };
+}
+
 // `anterior` (opcional, de toPreviousAttemptContext): a tentativa anterior do mesmo desafio.
 // A nota não vê o histórico; ele só entra no comentário de evolução, pedido em paralelo.
-async function evaluateOpenChallengeWithAI({ resposta, challenge, anterior = null }) {
+// `nomes`: nomes da pessoa (da conta), removidos do texto antes do envio.
+async function evaluateOpenChallengeWithAI({ resposta, challenge, anterior = null, nomes = [] }) {
   const criteria =
     Array.isArray(challenge.criteriosAvaliacao) && challenge.criteriosAvaliacao.length
       ? challenge.criteriosAvaliacao
@@ -429,14 +445,16 @@ async function evaluateOpenChallengeWithAI({ resposta, challenge, anterior = nul
   }
 
   const startedAt = Date.now();
+  const safe = redactForAI(resposta, anterior, nomes);
   const evolution = anterior
-    ? describeEvolution({ resposta, challenge, criteria, anterior })
+    ? describeEvolution({ resposta: safe.resposta, challenge, criteria, anterior: safe.anterior })
     : Promise.resolve(null);
 
   try {
     const { parsed, data } = await callOpenAI(
-      buildEvaluationMessages({ resposta, challenge, criteria }),
+      buildEvaluationMessages({ resposta: safe.resposta, challenge, criteria }),
       EVALUATION_SCHEMA,
+      { feature: "avaliacao" },
     );
     const result = interpretEvaluation(parsed, criteria);
     const flaggedManipulation = result.modelFlaggedManipulation || detectManipulation(resposta);
@@ -463,6 +481,8 @@ async function evaluateOpenChallengeWithAI({ resposta, challenge, anterior = nul
               error: evolutionResult.error,
             }
           : null,
+        // Quantos dados pessoais de cada tipo foram tirados antes do envio (sem o conteúdo).
+        redactions: Object.keys(safe.counts).length ? safe.counts : null,
         latencyMs: Date.now() - startedAt,
         tokens: data?.usage?.total_tokens ?? null,
       },

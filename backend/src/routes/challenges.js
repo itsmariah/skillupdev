@@ -193,6 +193,7 @@ async function handleChallengeSubmission(req, res, challenge, userAttempts) {
       resposta: texto,
       challenge,
       anterior: toPreviousAttemptContext(findLatestAttempt(userAttempts, challenge.id)),
+      nomes: [req.user.nome],
     });
 
     score = aiResult.nota;

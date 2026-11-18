@@ -13,6 +13,12 @@ const studyRoutes = require("./routes/study");
 const adminRoutes = require("./routes/admin");
 const adminContentRoutes = require("./routes/adminContent");
 const adminBadgeRoutes = require("./routes/adminBadges");
+const adminAiRoutes = require("./routes/adminAi");
+const db = require("./db");
+const { setUsageRecorder } = require("./services/openai");
+
+// Toda chamada à OpenAI feita pelo app fica registrada para o monitoramento (aba IA do painel).
+setUsageRecorder((entry) => db.recordAiUsage(entry));
 
 const app = express();
 app.set("trust proxy", 1);
@@ -66,5 +72,6 @@ app.use(studyRoutes);
 app.use(adminRoutes);
 app.use(adminContentRoutes);
 app.use(adminBadgeRoutes);
+app.use(adminAiRoutes);
 
 module.exports = app;

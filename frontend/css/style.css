@@ -2625,6 +2625,57 @@
       }
 /* FIM COACH */
 
+/* PAINEL ADMIN: USO DA IA */
+      .ai-period-select {
+         min-width: 200px;
+      }
+
+      .ai-month-summary {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+         gap: var(--space-3);
+      }
+
+      .ai-month-summary > div {
+         padding: 14px 16px;
+         border-radius: var(--radius-md);
+         background: var(--color-surface-soft);
+      }
+
+      .ai-month-summary dt {
+         font-size: var(--font-size-sm);
+         font-weight: 600;
+         color: var(--color-ink-soft);
+      }
+
+      .ai-month-summary dd {
+         margin: 4px 0 0;
+         font-size: 1.25rem;
+         font-weight: 700;
+         color: var(--color-ink);
+      }
+
+      .ai-error-list {
+         list-style: none;
+         margin: 0;
+         padding: 0;
+         display: grid;
+         gap: var(--space-2);
+      }
+
+      .ai-error-list li {
+         display: grid;
+         gap: 2px;
+         padding: 10px 12px;
+         border-radius: var(--radius-md);
+         background: var(--color-surface-soft);
+      }
+
+      .ai-error-list small {
+         color: var(--color-text-muted);
+      }
+/* FIM USO DA IA */
+
 /* DIÁRIO DE REFLEXÃO */
       .reflection-box {
          margin-top: var(--space-4);

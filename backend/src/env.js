@@ -107,6 +107,19 @@ function validateEnv(env = process.env) {
     warnings.push("OPENAI_API_KEY não definida. Respostas abertas usarão a avaliação heurística.");
   }
 
+  for (const name of ["OPENAI_PRICE_INPUT", "OPENAI_PRICE_OUTPUT", "AI_MONTHLY_BUDGET_USD"]) {
+    const value = read(env, name);
+    if (value && !(Number.isFinite(Number(value)) && Number(value) >= 0)) {
+      errors.push(`${name} inválido ("${value}"): use um número maior ou igual a zero, como 0.15.`);
+    }
+  }
+  const model = read(env, "OPENAI_MODEL");
+  if (model && !model.startsWith("gpt-4o-mini") && !read(env, "OPENAI_PRICE_INPUT")) {
+    warnings.push(
+      `OPENAI_MODEL=${model} sem OPENAI_PRICE_INPUT/OUTPUT: o custo no painel usa o preço do gpt-4o-mini.`,
+    );
+  }
+
   // Administrador
   const adminEmail = read(env, "ADMIN_EMAIL");
   if (adminEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adminEmail)) {

@@ -28,4 +28,5 @@ module.exports = {
   ...require("./challenges"),
   ...require("./badges"),
   ...require("./coachSummaries"),
+  ...require("./aiUsage"),
 };
