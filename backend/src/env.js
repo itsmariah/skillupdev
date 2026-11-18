@@ -3,6 +3,7 @@
 // Função pura sobre o objeto de ambiente, para ser testável sem mexer em process.env.
 const NODE_ENVS = ["development", "production", "test"];
 const EMAIL_PROVIDERS = ["resend"];
+const LOG_LEVELS = ["debug", "info", "warn", "error", "silent"];
 
 const read = (env, name) => String(env[name] ?? "").trim();
 
@@ -118,6 +119,23 @@ function validateEnv(env = process.env) {
     warnings.push(
       `OPENAI_MODEL=${model} sem OPENAI_PRICE_INPUT/OUTPUT: o custo no painel usa o preço do gpt-4o-mini.`,
     );
+  }
+
+  // Logs e alertas
+  const logLevel = read(env, "LOG_LEVEL").toLowerCase();
+  if (logLevel && !LOG_LEVELS.includes(logLevel)) {
+    errors.push(`LOG_LEVEL inválido ("${logLevel}"): use ${LOG_LEVELS.join(", ")}.`);
+  }
+  const logFormat = read(env, "LOG_FORMAT").toLowerCase();
+  if (logFormat && !["json", "pretty"].includes(logFormat)) {
+    errors.push(`LOG_FORMAT inválido ("${logFormat}"): use json ou pretty.`);
+  }
+  const alertWebhook = read(env, "ALERT_WEBHOOK_URL");
+  if (alertWebhook && !parseUrl(alertWebhook, ["https:"])) {
+    errors.push("ALERT_WEBHOOK_URL inválida: use a URL https do webhook (Discord ou Slack).");
+  }
+  if (!alertWebhook && production) {
+    warnings.push("ALERT_WEBHOOK_URL não definida: erros graves ficarão só no log, sem alerta.");
   }
 
   // Administrador

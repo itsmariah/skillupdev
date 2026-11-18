@@ -6,6 +6,7 @@ const { buildEvolution } = require("./history");
 const { countedAttempts, latestAttemptPerChallenge } = require("./gamification");
 const { getChallengeVersion } = require("../content/catalog");
 const { callOpenAI } = require("./openai");
+const { logger } = require("../lib/logger");
 
 const SUMMARY_PROMPT_VERSION = "2026-11-summary-v1";
 // Com menos desafios respondidos, não há evolução para resumir.
@@ -190,7 +191,7 @@ async function generateCoachSummary(attempts, recommendations = []) {
       },
     };
   } catch (error) {
-    console.error("Erro ao gerar o resumo de evolução com IA. Usando texto por regras.", error);
+    logger.warn("Resumo de evolução sem IA: usando o texto por regras.", { err: error });
     return heuristicResult(attempts, recommendations, error.message);
   }
 }

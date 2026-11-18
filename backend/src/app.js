@@ -14,14 +14,19 @@ const adminRoutes = require("./routes/admin");
 const adminContentRoutes = require("./routes/adminContent");
 const adminBadgeRoutes = require("./routes/adminBadges");
 const adminAiRoutes = require("./routes/adminAi");
+const { requestContext } = require("./middleware/requestContext");
+const { apiNotFound, errorHandler } = require("./middleware/errorHandler");
 const db = require("./db");
 const { setUsageRecorder } = require("./services/openai");
+
+const HEALTH_DB_TIMEOUT_MS = 3000;
 
 // Toda chamada à OpenAI feita pelo app fica registrada para o monitoramento (aba IA do painel).
 setUsageRecorder((entry) => db.recordAiUsage(entry));
 
 const app = express();
 app.set("trust proxy", 1);
+app.use(requestContext);
 
 const allowedOrigins = FRONTEND_URL
   ? [FRONTEND_URL]
@@ -51,10 +56,26 @@ app.use(express.json());
 app.use(express.static(FRONTEND_DIR));
 app.use("/api", apiLimiter, createSameOriginCheck(allowedOrigins));
 
-app.get("/api/health", (_req, res) => {
-  res.json({
-    status: "ok",
+// Para o health check do Render e monitores externos: confere também o banco.
+app.get("/api/health", async (_req, res) => {
+  let database = "ok";
+  try {
+    await Promise.race([
+      db.getClient().query("SELECT 1"),
+      new Promise((_resolve, reject) => {
+        setTimeout(() => reject(new Error("timeout")), HEALTH_DB_TIMEOUT_MS).unref();
+      }),
+    ]);
+  } catch (_error) {
+    database = "erro";
+  }
+
+  res.status(database === "ok" ? 200 : 503).json({
+    status: database === "ok" ? "ok" : "degradado",
     service: "skillupdev-backend",
+    database,
+    version: process.env.RENDER_GIT_COMMIT?.slice(0, 7) || null,
+    uptimeSeconds: Math.round(process.uptime()),
     timestamp: new Date().toISOString(),
   });
 });
@@ -73,5 +94,7 @@ app.use(adminRoutes);
 app.use(adminContentRoutes);
 app.use(adminBadgeRoutes);
 app.use(adminAiRoutes);
+app.use(apiNotFound);
+app.use(errorHandler);
 
 module.exports = app;

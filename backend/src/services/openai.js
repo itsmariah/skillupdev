@@ -7,6 +7,7 @@ const {
   OPENAI_PRICE_INPUT,
   OPENAI_PRICE_OUTPUT,
 } = require("../config");
+const { logger } = require("../lib/logger");
 
 function extractJsonObject(text) {
   const rawText = String(text || "").trim();
@@ -75,7 +76,7 @@ async function recordUsage(entry) {
     await usageRecorder(entry);
   } catch (error) {
     // Falha no registro não pode atrapalhar a avaliação de ninguém.
-    console.error("Não foi possível registrar o uso da IA.", error.message);
+    logger.warn("Não foi possível registrar o uso da IA.", { reason: error.message });
   }
 }
 

@@ -12,6 +12,7 @@ const productionEnv = {
   RESEND_API_KEY: "re_teste",
   EMAIL_FROM: "SkillUp Dev <no-reply@exemplo.com>",
   OPENAI_API_KEY: "sk-teste",
+  ALERT_WEBHOOK_URL: "https://hooks.exemplo.com/alertas",
   ADMIN_EMAIL: "admin@exemplo.com",
   ADMIN_PASSWORD: "uma-senha-bem-longa",
 };

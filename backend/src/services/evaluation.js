@@ -4,6 +4,8 @@ const { redactPersonalData, mergeCounts } = require("../lib/redact");
 const { SKILLS, getSkillById } = require("../content/competencies");
 const { callOpenAI, extractJsonObject } = require("./openai");
 const { OPEN_CHALLENGE_IDEAL_SCORE, OPEN_CHALLENGE_MEDIUM_SCORE } = require("./gamification");
+const { logger } = require("../lib/logger");
+const { sendAlert } = require("./alerts");
 
 // Palavras-chave da análise de reserva, por nome de habilidade (vêm da taxonomia).
 const CRITERIA_KEYWORDS = Object.fromEntries(
@@ -414,7 +416,7 @@ async function describeEvolution(input) {
     }
     return { text, tokens: data?.usage?.total_tokens ?? null, error: null };
   } catch (error) {
-    console.error("Erro ao descrever a evolução com IA. Usando texto padrão.", error);
+    logger.warn("Comentário de evolução sem IA: usando o texto padrão.", { err: error });
     return { text: null, tokens: null, error: error.message };
   }
 }
@@ -489,7 +491,14 @@ async function evaluateOpenChallengeWithAI({ resposta, challenge, anterior = nul
     };
   } catch (error) {
     // A chamada de evolução, se houver, termina sozinha (e já trata o próprio erro).
-    console.error("Erro ao avaliar resposta com IA. Usando fallback local.", error);
+    logger.error("Avaliação sem IA: usando a análise simplificada.", { err: error });
+    // Quem respondeu recebe a nota da análise simplificada: vale avisar (chave revogada,
+    // cota estourada, OpenAI fora do ar).
+    sendAlert({
+      key: "ai-fallback",
+      title: "avaliação caiu para a análise simplificada",
+      error,
+    });
     return heuristicEvaluation(resposta, criteria, error.message, anterior);
   }
 }

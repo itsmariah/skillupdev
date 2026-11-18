@@ -39,6 +39,8 @@ const {
   applyDailyLoginReward,
 } = require("../services/gamification");
 const { hydrateUser, buildUserResponse } = require("../services/users");
+const { logger } = require("../lib/logger");
+const { sendAlert } = require("../services/alerts");
 
 const router = express.Router();
 
@@ -204,7 +206,8 @@ router.post("/api/auth/forgot-password", forgotPasswordLimiters, async (req, res
           expiresAt: record.expiresAt,
         });
       } catch (error) {
-        console.error("Falha ao enviar email de recuperação:", error);
+        logger.error("Falha ao enviar o e-mail de recuperação.", { requestId: req.id, err: error });
+        sendAlert({ key: "reset-email", title: "falha no envio do e-mail de recuperação", error });
       }
     } else if (shouldExposeResetPreview()) {
       response.message =
@@ -213,7 +216,7 @@ router.post("/api/auth/forgot-password", forgotPasswordLimiters, async (req, res
       response.previewExpiresAt = record.expiresAt;
       return res.json(response);
     } else {
-      console.error(
+      logger.error(
         "Envio de e-mail não configurado. Defina EMAIL_PROVIDER, EMAIL_FROM e RESEND_API_KEY.",
       );
     }

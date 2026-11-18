@@ -177,7 +177,7 @@ IA como coach auditável.
 ### Fase 6 — Operação `P3`
 
 - [ ] Hospedagem sem hibernação, ambiente de staging e backups testados
-- [ ] Logs estruturados, monitoramento de erros e alertas
+- [x] Logs estruturados, monitoramento de erros e alertas
 - [ ] Login com Google/Microsoft
 - [ ] Planos e cobrança
 

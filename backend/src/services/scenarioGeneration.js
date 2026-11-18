@@ -14,6 +14,7 @@ const { getChallenges } = require("../content/catalog");
 const { validateChallengeContent } = require("./content");
 const { callOpenAI } = require("./openai");
 const { redactPersonalData } = require("../lib/redact");
+const { logger } = require("../lib/logger");
 
 const GENERATION_PROMPT_VERSION = "2026-11-scenarios-v1";
 const MAX_THEME_LENGTH = 200;
@@ -283,7 +284,7 @@ async function generateChallengeDraft(params, { competency, existingTitles = [],
       { feature: "geracao" },
     ));
   } catch (error) {
-    console.error("Erro ao gerar cenário com IA.", error);
+    logger.warn("Geração de cenário falhou.", { err: error });
     throw new GenerationError(`A IA não respondeu: ${error.message}. Tente de novo.`);
   }
 

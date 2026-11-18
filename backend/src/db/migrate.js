@@ -2,6 +2,7 @@
 // Cada migração roda numa transação e fica registrada em schema_migrations.
 const fs = require("fs");
 const path = require("path");
+const { logger } = require("../lib/logger");
 
 const MIGRATIONS_DIR = path.join(__dirname, "migrations");
 
@@ -28,7 +29,7 @@ async function runMigrations(client) {
       await tx.query("INSERT INTO schema_migrations (name) VALUES ($1)", [file]);
     });
 
-    console.log(`[Banco] Migração aplicada: ${file}`);
+    logger.info("Migração aplicada.", { migration: file });
   }
 
   return pending;
